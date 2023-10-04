@@ -26,3 +26,6 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+      env:
+        PACER_USERNAME: ${{ secrets.PACER_USERNAME }}
+        PACER_PASSWORD: ${{ secrets.PACER_PASSWORD }}
