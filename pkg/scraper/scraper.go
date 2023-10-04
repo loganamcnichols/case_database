@@ -34,7 +34,10 @@ func LoggedIn(ctx context.Context) (bool, error) {
 		return false, err
 	}
 	if url != "https://pacer.login.uscourts.gov/csologin/login.jsf" {
-		chromedp.RunResponse(ctx, chromedp.Navigate(`https://pacer.login.uscourts.gov/csologin/login.jsf`))
+		_, err = chromedp.RunResponse(ctx, chromedp.Navigate(`https://pacer.login.uscourts.gov/csologin/login.jsf`))
+		if err != nil {
+			return loggedIn, err
+		}
 	}
 
 	// Check if we are logged in.
