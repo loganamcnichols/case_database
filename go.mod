@@ -1,6 +1,6 @@
 module github.com/loganamcnichols/case_database
 
-go 1.21.1
+go 1.21
 
 require (
 	github.com/chromedp/cdproto v0.0.0-20230802225258-3cf4e6d46a89 // indirect
