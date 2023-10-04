@@ -10,6 +10,10 @@ import (
 )
 
 func LoginToPacer(ctx context.Context) (*network.Response, error) {
+	err := NavigateToLoginPage(ctx)
+	if err != nil {
+		return nil, err
+	}
 	// Fetch credentials.
 	username := os.Getenv("PACER_USERNAME")
 	password := os.Getenv("PACER_PASSWORD")
@@ -26,18 +30,9 @@ func LoginToPacer(ctx context.Context) (*network.Response, error) {
 
 func LoggedIn(ctx context.Context) (bool, error) {
 	loggedIn := false
-
-	// Check if we are on the login page.
-	var url string
-	err := chromedp.Run(ctx, chromedp.Location(&url))
+	err := NavigateToLoginPage(ctx)
 	if err != nil {
-		return false, err
-	}
-	if url != "https://pacer.login.uscourts.gov/csologin/login.jsf" {
-		_, err = chromedp.RunResponse(ctx, chromedp.Navigate(`https://pacer.login.uscourts.gov/csologin/login.jsf`))
-		if err != nil {
-			return loggedIn, err
-		}
+		return loggedIn, err
 	}
 
 	// Check if we are logged in.
@@ -54,4 +49,22 @@ func LoggedIn(ctx context.Context) (bool, error) {
 		loggedIn = false
 	}
 	return loggedIn, nil
+}
+
+func NavigateToLoginPage(ctx context.Context) error {
+	var url string
+	// Check if we are already on the login page.
+	err := chromedp.Run(ctx, chromedp.Location(&url))
+	if err != nil {
+		return err
+	}
+	if url == "https://pacer.login.uscourts.gov/csologin/login.jsf" {
+		return nil
+	}
+	// Navigate to the login page.
+	_, err = chromedp.RunResponse(ctx, chromedp.Navigate(`https://pacer.login.uscourts.gov/csologin/login.jsf`))
+	if err != nil {
+		return err
+	}
+	return nil
 }
