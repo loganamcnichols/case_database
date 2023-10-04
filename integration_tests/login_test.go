@@ -13,20 +13,26 @@ func TestLoginToPacer(t *testing.T) {
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
 
-	_, err := scraper.LoginToPacer(ctx)
+	// Check if we are logged in, should be false.
+	var loggedIn bool
+	loggedIn, err := scraper.LoggedIn(ctx)
+	if err != nil {
+		t.Fatal(err)
+	} else if loggedIn {
+		t.Fatal("false login signal")
+	}
+
+	// Log in.
+	_, err = scraper.LoginToPacer(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// Check if login was successful
-	var xpathSelector = `//*[contains(text(), "Logan McNichols")]`
-
-	var outerHTML string
-	err = chromedp.Run(ctx,
-		chromedp.OuterHTML(xpathSelector, &outerHTML, chromedp.BySearch))
-
+	// Check if we are logged in. Should be true.
+	loggedIn, err = scraper.LoggedIn(ctx)
 	if err != nil {
 		t.Fatal(err)
+	} else if !loggedIn {
+		t.Fatal("should be logged in")
 	}
-	t.Log(outerHTML)
 }
