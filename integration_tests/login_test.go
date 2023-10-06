@@ -1,38 +1,28 @@
 package integrationtests
 
 import (
-	"context"
+	"net/url"
 	"testing"
 
 	"github.com/loganamcnichols/case_database/pkg/scraper"
-
-	"github.com/chromedp/chromedp"
 )
 
 func TestLoginToPacer(t *testing.T) {
-	ctx, cancel := chromedp.NewContext(context.Background())
-	defer cancel()
-
-	// Check if we are logged in, should be false.
-	var loggedIn bool
-	loggedIn, err := scraper.LoggedIn(ctx)
+	client, err := scraper.LoginToPacer()
 	if err != nil {
-		t.Fatal(err)
-	} else if loggedIn {
-		t.Fatal("false login signal")
+		t.Fatalf("LoginToPacer() returned error: %v", err)
 	}
-
-	// Log in.
-	_, err = scraper.LoginToPacer(ctx)
+	u, err := url.Parse(scraper.LoginURL)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("url.Parse() returned error: %v", err)
 	}
+	cookies := client.Jar.Cookies(u)
+	cookieName := "nextGenCSO"
+	for _, cookie := range cookies {
+		if cookie.Name == cookieName {
+			return
+		}
+	}
+	t.Fatalf("LoginToPacer() did not return a %s cookie", cookieName)
 
-	// Check if we are logged in. Should be true.
-	loggedIn, err = scraper.LoggedIn(ctx)
-	if err != nil {
-		t.Fatal(err)
-	} else if !loggedIn {
-		t.Fatal("should be logged in")
-	}
 }
