@@ -1,70 +1,79 @@
 package scraper
 
 import (
-	"context"
+	"bytes"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"net/http"
+	"net/http/cookiejar"
+	"net/url"
 	"os"
-
-	"github.com/chromedp/cdproto/cdp"
-	"github.com/chromedp/cdproto/network"
-	"github.com/chromedp/chromedp"
+	"time"
 )
 
-func LoginToPacer(ctx context.Context) (*network.Response, error) {
-	err := NavigateToLoginPage(ctx)
-	if err != nil {
-		return nil, err
-	}
+const LoginURL = "https://pacer.login.uscourts.gov/services/cso-auth"
+
+func LoginToPacer() (*http.Client, error) {
 	// Fetch credentials.
 	username := os.Getenv("PACER_USERNAME")
 	password := os.Getenv("PACER_PASSWORD")
 
-	// Define login tasks.
-	tasks := chromedp.Tasks{
-		chromedp.WaitVisible(`#loginForm\:fbtnLogin`, chromedp.ByID),
-		chromedp.SendKeys(`#loginForm\:loginName`, username, chromedp.ByID),
-		chromedp.SendKeys(`#loginForm\:password`, password, chromedp.ByID),
-		chromedp.Click(`#loginForm\:fbtnLogin`, chromedp.ByID),
-	}
-	return chromedp.RunResponse(ctx, tasks)
-}
-
-func LoggedIn(ctx context.Context) (bool, error) {
-	loggedIn := false
-	err := NavigateToLoginPage(ctx)
-	if err != nil {
-		return loggedIn, err
+	// Check for empty credentials
+	if username == "" || password == "" {
+		return nil, errors.New("PACER_USERNAME or PACER_PASSWORD environment variables are not set")
 	}
 
-	// Check if we are logged in.
-	var xpathSelector = `//*[contains(text(), "Logan McNichols")]`
-	var nodes []*cdp.Node
-	err = chromedp.Run(ctx,
-		chromedp.Nodes(xpathSelector, &nodes, chromedp.BySearch, chromedp.AtLeast(0)))
+	// Create request.
+	jsonBody := []byte(fmt.Sprintf(`{"loginId":"%s","password":"%s","redactFlag":"1"}`, username, password))
+	bodyReader := bytes.NewReader(jsonBody)
+	req, err := http.NewRequest("POST", LoginURL, bodyReader)
 	if err != nil {
-		return loggedIn, err
+		return nil, err
 	}
-	if len(nodes) > 0 {
-		loggedIn = true
-	} else {
-		loggedIn = false
-	}
-	return loggedIn, nil
-}
+	req.Header.Set("User-Agent", username)
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	req.Header.Set("Accept", "application/json")
 
-func NavigateToLoginPage(ctx context.Context) error {
-	var url string
-	// Check if we are already on the login page.
-	err := chromedp.Run(ctx, chromedp.Location(&url))
+	jar, err := cookiejar.New(nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	if url == "https://pacer.login.uscourts.gov/csologin/login.jsf" {
-		return nil
+	client := &http.Client{
+		Timeout: time.Second * 10, // Making the timeout explicit as 10 seconds
+		Jar:     jar,
 	}
-	// Navigate to the login page.
-	_, err = chromedp.RunResponse(ctx, chromedp.Navigate(`https://pacer.login.uscourts.gov/csologin/login.jsf`))
+	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		return client, err
 	}
-	return nil
+
+	// Check for non-2xx status codes
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return client, fmt.Errorf("received non-2xx response status: %d %s", resp.StatusCode, resp.Status)
+	}
+	defer resp.Body.Close()
+
+	pacerResp := struct {
+		ErrorDescription string `json:"errorDescription"`
+		NextGenCSO       string `json:"nextGenCSO"`
+	}{}
+	// Check for errors or an empty NextGenCSO cookie.
+	if err := json.NewDecoder(resp.Body).Decode(&pacerResp); err != nil {
+		return client, fmt.Errorf("failed to decode response body: %v", err)
+	} else if pacerResp.ErrorDescription != "" {
+		return client, fmt.Errorf("error from PACER authentication: %s", pacerResp.ErrorDescription)
+	} else if pacerResp.NextGenCSO == "" {
+		return client, fmt.Errorf("no NextGenCSO cookie found in response")
+	}
+	// Set the cookie.
+	cookie := &http.Cookie{
+		Name:   "nextGenCSO",
+		Value:  pacerResp.NextGenCSO,
+		Domain: "uscourts.gov",
+		Path:   "/",
+	}
+	u, _ := url.Parse(LoginURL)
+	jar.SetCookies(u, []*http.Cookie{cookie})
+	return client, nil
 }
