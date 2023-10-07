@@ -12,6 +12,7 @@ func main() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/", handlers.HomeHandler).Methods("GET")
+	r.HandleFunc("/pacer-lookup", handlers.PacerLookupHandler).Methods("GET") // Add this line
 
 	http.Handle("/", r)
 	log.Println("Starting server on :8080")
