@@ -17,9 +17,114 @@
     </header>
     <main>
         <input type="text" placeholder="Case Name" />
-        <select name="court">
-            <!-- Populate this with court options -->
-            <option>Select Court</option>
+        <select class="courtSelect">
+        <option value="" disabled selected>Select Court</option>
+        <optgroup label="Appellate Courts">
+            <option value="DCCir">D.C. Circuit</option>
+            <option value="FCCir">Federal Circuit</option>
+            <option value="1stCir">First Circuit</option>
+            <option value="2ndCir">Second Circuit</option>
+            <option value="3rdCir">Third Circuit</option>
+            <option value="4thCir">Fourth Circuit</option>
+            <option value="5thCir">Fifth Circuit</option>
+            <option value="6thCir">Sixth Circuit</option>
+            <option value="7thCir">Seventh Circuit</option>
+            <option value="8thCir">Eighth Circuit</option>
+            <option value="9thCir">Ninth Circuit</option>
+            <option value="10thCir">Tenth Circuit</option>
+            <option value="11thCir">Eleventh Circuit</option>
+        </optgroup>
+        <optgroup label="District Courts">
+            <option value="d_ak">District of Alaska</option>
+            <option value="d_az">District of Arizona</option>
+            <option value="ed_ar">Eastern District of Arkansas</option>
+            <option value="wd_ar">Western District of Arkansas</option>
+            <option value="cd_ca">Central District of California</option>
+            <option value="ed_ca">Eastern District of California</option>
+            <option value="nd_ca">Northern District of California</option>
+            <option value="sd_ca">Southern District of California</option>
+            <option value="d_co">District of Colorado</option>
+            <option value="d_ct">District of Connecticut</option>
+            <option value="d_dc">District of Columbia</option>
+            <option value="d_de">District of Delaware</option>
+            <option value="md_fl">Middle District of Florida</option>
+            <option value="nd_fl">Northern District of Florida</option>
+            <option value="sd_fl">Southern District of Florida</option>
+            <option value="md_ga">Middle District of Georgia</option>
+            <option value="nd_ga">Northern District of Georgia</option>
+            <option value="sd_ga">Southern District of Georgia</option>
+            <option value="d_gu">District of Guam</option>
+            <option value="d_hi">District of Hawaii</option>
+            <option value="d_id">District of Idaho</option>
+            <option value="cd_il">Central District of Illinois</option>
+            <option value="nd_il">Northern District of Illinois</option>
+            <option value="sd_il">Southern District of Illinois</option>
+            <option value="nd_in">Northern District of Indiana</option>
+            <option value="sd_in">Southern District of Indiana</option>
+            <option value="nd_ia">Northern District of Iowa</option>
+            <option value="sd_ia">Southern District of Iowa</option>
+            <option value="d_ks">District of Kansas</option>
+            <option value="ed_ky">Eastern District of Kentucky</option>
+            <option value="wd_ky">Western District of Kentucky</option>
+            <option value="ed_la">Eastern District of Louisiana</option>
+            <option value="md_la">Middle District of Louisiana</option>
+            <option value="wd_la">Western District of Louisiana</option>
+            <option value="d_me">District of Maine</option>
+            <option value="d_md">District of Maryland</option>
+            <option value="d_ma">District of Massachusetts</option>
+            <option value="ed_mi">Eastern District of Michigan</option>
+            <option value="wd_mi">Western District of Michigan</option>
+            <option value="d_mn">District of Minnesota</option>
+            <option value="nd_ms">Northern District of Mississippi</option>
+            <option value="sd_ms">Southern District of Mississippi</option>
+            <option value="ed_mo">Eastern District of Missouri</option>
+            <option value="wd_mo">Western District of Missouri</option>
+            <option value="d_mt">District of Montana</option>
+            <option value="d_ne">District of Nebraska</option>
+            <option value="d_nv">District of Nevada</option>
+            <option value="d_nh">District of New Hampshire</option>
+            <option value="d_nj">District of New Jersey</option>
+            <option value="d_nm">District of New Mexico</option>
+            <option value="ed_ny">Eastern District of New York</option>
+            <option value="nd_ny">Northern District of New York</option>
+            <option value="sd_ny">Southern District of New York</option>
+            <option value="wd_ny">Western District of New York</option>
+            <option value="ed_nc">Eastern District of North Carolina</option>
+            <option value="md_nc">Middle District of North Carolina</option>
+            <option value="wd_nc">Western District of North Carolina</option>
+            <option value="d_nd">District of North Dakota</option>
+            <option value="nd_oh">Northern District of Ohio</option>
+            <option value="sd_oh">Southern District of Ohio</option>
+            <option value="ed_ok">Eastern District of Oklahoma</option>
+            <option value="nd_ok">Northern District of Oklahoma</option>
+            <option value="wd_ok">Western District of Oklahoma</option>
+            <option value="d_or">District of Oregon</option>
+            <option value="ed_pa">Eastern District of Pennsylvania</option>
+            <option value="md_pa">Middle District of Pennsylvania</option>
+            <option value="wd_pa">Western District of Pennsylvania</option>
+            <option value="d_pr">District of Puerto Rico</option>
+            <option value="d_ri">District of Rhode Island</option>
+            <option value="d_sc">District of South Carolina</option>
+            <option value="d_sd">District of South Dakota</option>
+            <option value="ed_tn">Eastern District of Tennessee</option>
+            <option value="md_tn">Middle District of Tennessee</option>
+            <option value="wd_tn">Western District of Tennessee</option>
+            <option value="ed_tx">Eastern District of Texas</option>
+            <option value="nd_tx">Northern District of Texas</option>
+            <option value="sd_tx">Southern District of Texas</option>
+            <option value="wd_tx">Western District of Texas</option>
+            <option value="d_ut">District of Utah</option>
+            <option value="d_vt">District of Vermont</option>
+            <option value="ed_va">Eastern District of Virginia</option>
+            <option value="wd_va">Western District of Virginia</option>
+            <option value="ed_wa">Eastern District of Washington</option>
+            <option value="wd_wa">Western District of Washington</option>
+            <option value="nd_wv">Northern District of West Virginia</option>
+            <option value="sd_wv">Southern District of West Virginia</option>
+            <option value="ed_wi">Eastern District of Wisconsin</option>
+            <option value="wd_wi">Western District of Wisconsin</option>
+            <option value="d_wy">District of Wyoming</option>
+        </optgroup>
         </select>
         <div>
             <!-- Display list of cases here -->
