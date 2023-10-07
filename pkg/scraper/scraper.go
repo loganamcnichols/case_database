@@ -11,7 +11,11 @@ import (
 	"net/http/cookiejar"
 	"net/url"
 	"os"
+	"regexp"
+	"strconv"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 const LoginURL = "https://pacer.login.uscourts.gov/services/cso-auth"
@@ -123,4 +127,51 @@ func SearchByDocketNumber(client *http.Client, url string) (CaseNumberResponse, 
 	}
 
 	return respStruct, nil
+}
+
+func DocketCountFromCaseId(baseURL string, client *http.Client, id int) (int, error) {
+	var docketCount int
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		return docketCount, err
+	}
+	q := u.Query()
+	q.Set("search", "caseInfo")
+	q.Set("caseid", strconv.Itoa(id))
+	u.RawQuery = q.Encode()
+
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return docketCount, err
+	}
+
+	req.Header.Set("User-Agent", "loganamcnichols")
+	req.Header.Set("Accept", "text/html")
+	req.Header.Set("Referer", "https://ecf.azd.uscourts.gov/cgi-bin/iquery.pl")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return docketCount, err
+	}
+	defer resp.Body.Close()
+
+	// body, _ := io.ReadAll(resp.Body)
+
+	// fmt.Println(string(body))
+	document, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return docketCount, err
+	}
+	fmt.Println(document.Text())
+	spanElement := document.Find("a#entriesLink").First()
+	re := regexp.MustCompile("[0-9]+")
+	digitString := re.FindString(spanElement.Text())
+
+	// Convert string of digits to integer
+	docketCount, err = strconv.Atoi(digitString)
+	if err != nil {
+		return docketCount, err
+	}
+	return docketCount, nil
+
 }
