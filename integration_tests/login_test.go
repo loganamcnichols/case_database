@@ -1,11 +1,27 @@
 package integrationtests
 
 import (
+	"fmt"
+	"net/http"
 	"net/url"
+	"os"
 	"testing"
 
 	"github.com/loganamcnichols/case_database/pkg/scraper"
 )
+
+var client *http.Client
+
+func TestMain(m *testing.M) {
+	// setup code
+	var err error
+	client, err = scraper.LoginToPacer()
+	if err != nil {
+		fmt.Println("Error logging in to PACER")
+		os.Exit(1)
+	}
+	m.Run()
+}
 
 func TestLoginToPacer(t *testing.T) {
 	client, err := scraper.LoginToPacer()
@@ -53,5 +69,18 @@ func TestDocketCountFromCaseId(t *testing.T) {
 	}
 	if count != 25 {
 		t.Fatalf("DocketCountFromCaseId() returned incorrect docket count: %d", count)
+	}
+}
+
+func TestGetDownloadLink(t *testing.T) {
+	client, _ := scraper.LoginToPacer()
+	requestUrl := "https://ecf.almd.uscourts.gov/cgi-bin/qryDocument.pl?10245329495945-L_1_0-1"
+	expectedResponseURL := "https://ecf.almd.uscourts.gov/doc1/01713440705"
+	responseURL, err := scraper.GetDownloadLink(client, requestUrl, 1, 72385)
+	if err != nil {
+		t.Fatalf("GetDownloadLink() returned error: %v", err)
+	}
+	if responseURL != expectedResponseURL {
+		t.Fatalf("GetDownloadLink() returned incorrect response URL: %s", responseURL)
 	}
 }
