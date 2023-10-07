@@ -43,3 +43,15 @@ func TestSearchByDocketNumber(t *testing.T) {
 		t.Fatalf("SearchByDocketNumber() returned incorrect case ID: %s", data.Cases[2].ID)
 	}
 }
+
+func TestDocketCountFromCaseId(t *testing.T) {
+	client, _ := scraper.LoginToPacer()
+	baseURL := "https://ecf.azd.uscourts.gov/cgi-bin/mobile_query.pl"
+	count, err := scraper.DocketCountFromCaseId(baseURL, client, 1313500)
+	if err != nil {
+		t.Fatalf("DocketCountFromCaseId() returned error: %v", err)
+	}
+	if count != 25 {
+		t.Fatalf("DocketCountFromCaseId() returned incorrect docket count: %d", count)
+	}
+}
