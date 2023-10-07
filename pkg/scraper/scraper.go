@@ -3,8 +3,10 @@ package scraper
 import (
 	"bytes"
 	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
@@ -47,12 +49,12 @@ func LoginToPacer() (*http.Client, error) {
 	if err != nil {
 		return client, err
 	}
+	defer resp.Body.Close()
 
 	// Check for non-2xx status codes
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return client, fmt.Errorf("received non-2xx response status: %d %s", resp.StatusCode, resp.Status)
 	}
-	defer resp.Body.Close()
 
 	pacerResp := struct {
 		ErrorDescription string `json:"errorDescription"`
@@ -68,7 +70,7 @@ func LoginToPacer() (*http.Client, error) {
 	}
 	// Set the cookie.
 	cookie := &http.Cookie{
-		Name:   "nextGenCSO",
+		Name:   "NextGenCSO",
 		Value:  pacerResp.NextGenCSO,
 		Domain: "uscourts.gov",
 		Path:   "/",
@@ -76,4 +78,49 @@ func LoginToPacer() (*http.Client, error) {
 	u, _ := url.Parse(LoginURL)
 	jar.SetCookies(u, []*http.Cookie{cookie})
 	return client, nil
+}
+
+type CaseNumberResponse struct {
+	Number string            `xml:"number,attr"`
+	Cases  []CaseNumberEntry `xml:"case"`
+}
+
+type CaseNumberEntry struct {
+	Number   string `xml:"number,attr"`
+	ID       string `xml:"id,attr"`
+	Title    string `xml:"title,attr"`
+	Sortable string `xml:"sortable,attr"`
+}
+
+func SearchByDocketNumber(client *http.Client, url string) (CaseNumberResponse, error) {
+	var respStruct CaseNumberResponse
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return respStruct, err
+	}
+	req.Header.Set("User-Agent", "loganamcnichols")
+	req.Header.Set("Accept", "application/xml")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return respStruct, err
+	}
+	defer resp.Body.Close()
+
+	// Check for non-2xx status codes
+	if resp.StatusCode != http.StatusOK {
+		return respStruct, fmt.Errorf("received non-2xx response status: %d %s", resp.StatusCode, resp.Status)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	fmt.Println(string(body))
+	if err != nil {
+		return respStruct, fmt.Errorf("failed to read response body: %v", err)
+	}
+	err = xml.Unmarshal(body, &respStruct)
+	if err != nil {
+		return respStruct, fmt.Errorf("failed to unmarshal response body: %v", err)
+	}
+
+	return respStruct, nil
 }
