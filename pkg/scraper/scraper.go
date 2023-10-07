@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
@@ -173,5 +174,48 @@ func DocketCountFromCaseId(baseURL string, client *http.Client, id int) (int, er
 		return docketCount, err
 	}
 	return docketCount, nil
+
+}
+
+func GetDownloadLink(client *http.Client, url string, docNo int, caseNum int) (string, error) {
+	var downloadLink string
+	var buffer bytes.Buffer
+	writer := multipart.NewWriter(&buffer)
+
+	field1, err := writer.CreateFormField(fmt.Sprintf("CaseNum_%d", caseNum))
+	if err != nil {
+		return downloadLink, err
+	}
+	field1.Write([]byte("on"))
+
+	field2, err := writer.CreateFormField("document_number")
+	if err != nil {
+		return downloadLink, err
+	}
+	field2.Write([]byte(strconv.Itoa(docNo)))
+	writer.Close()
+
+	req, err := http.NewRequest("POST", url, &buffer)
+	if err != nil {
+		return downloadLink, err
+	}
+	req.Header.Set("User-Agent", "loganamcnichols")
+	req.Header.Set("Accept", "text/html")
+	req.Header.Set("Referer", "https://ecf.almd.uscourts.gov/cgi-bin/qryDocument.pl?72385")
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return downloadLink, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return downloadLink, fmt.Errorf("recieved non found code")
+	}
+	u := resp.Request.URL
+	u.RawQuery = ""
+	downloadLink = u.String()
+
+	return downloadLink, nil
 
 }

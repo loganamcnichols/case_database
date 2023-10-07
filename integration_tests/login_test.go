@@ -55,3 +55,16 @@ func TestDocketCountFromCaseId(t *testing.T) {
 		t.Fatalf("DocketCountFromCaseId() returned incorrect docket count: %d", count)
 	}
 }
+
+func TestGetDownloadLink(t *testing.T) {
+	client, _ := scraper.LoginToPacer()
+	requestUrl := "https://ecf.almd.uscourts.gov/cgi-bin/qryDocument.pl?10245329495945-L_1_0-1"
+	expectedResponseURL := "https://ecf.almd.uscourts.gov/doc1/01713440705"
+	responseURL, err := scraper.GetDownloadLink(client, requestUrl, 1, 72385)
+	if err != nil {
+		t.Fatalf("GetDownloadLink() returned error: %v", err)
+	}
+	if responseURL != expectedResponseURL {
+		t.Fatalf("GetDownloadLink() returned incorrect response URL: %s", responseURL)
+	}
+}
