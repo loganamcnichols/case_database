@@ -1,11 +1,27 @@
 package integrationtests
 
 import (
+	"fmt"
+	"net/http"
 	"net/url"
+	"os"
 	"testing"
 
 	"github.com/loganamcnichols/case_database/pkg/scraper"
 )
+
+var client *http.Client
+
+func TestMain(m *testing.M) {
+	// setup code
+	var err error
+	client, err = scraper.LoginToPacer()
+	if err != nil {
+		fmt.Println("Error logging in to PACER")
+		os.Exit(1)
+	}
+	m.Run()
+}
 
 func TestLoginToPacer(t *testing.T) {
 	client, err := scraper.LoginToPacer()
