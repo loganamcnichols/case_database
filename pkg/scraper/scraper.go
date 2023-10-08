@@ -157,7 +157,7 @@ func PossbleCasesSearch(client *http.Client, url string) (PossibleCases, error) 
 	return respStruct, nil
 }
 
-func DocketCountFromCaseId(baseURL string, client *http.Client, id int) (int, error) {
+func DocketCountFromCaseId(baseURL string, refererURL string, client *http.Client, id string) (int, error) {
 	var docketCount int
 	u, err := url.Parse(baseURL)
 	if err != nil {
@@ -165,7 +165,7 @@ func DocketCountFromCaseId(baseURL string, client *http.Client, id int) (int, er
 	}
 	q := u.Query()
 	q.Set("search", "caseInfo")
-	q.Set("caseid", strconv.Itoa(id))
+	q.Set("caseid", id)
 	u.RawQuery = q.Encode()
 
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -175,7 +175,7 @@ func DocketCountFromCaseId(baseURL string, client *http.Client, id int) (int, er
 
 	req.Header.Set("User-Agent", "loganamcnichols")
 	req.Header.Set("Accept", "text/html")
-	req.Header.Set("Referer", "https://ecf.azd.uscourts.gov/cgi-bin/iquery.pl")
+	req.Header.Set("Referer", refererURL)
 
 	resp, err := client.Do(req)
 	if err != nil {

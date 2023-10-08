@@ -23,6 +23,7 @@ func PacerLookupCase(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	baseURL := fmt.Sprintf("https://ecf.%s.uscourts.gov/cgi-bin/iquery.pl", court)
+	moblileURL := fmt.Sprintf("https://ecf.%s.uscourts.gov/cgi-bin/mobile_query.pl", court)
 	caseURL, err := scraper.GetCaseURL(client, baseURL)
 	if err != nil {
 		http.Error(w, "Error getting case URL", http.StatusInternalServerError)
@@ -42,4 +43,11 @@ func PacerLookupCase(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Fprint(w, metadataHTML)
+
+	count, err := scraper.DocketCountFromCaseId(moblileURL, caseURL, client, caseID)
+	if err != nil {
+		http.Error(w, "Error getting docket count", http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintf(w, "Docket count: %d\n", count)
 }
