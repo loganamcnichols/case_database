@@ -278,7 +278,7 @@ func GetDocketSummaryLink(doc goquery.Document) string {
 	return docketSummaryLink
 }
 
-func GetCaseMainPage(client *http.Client, url string, case_id int, case_number string) (*goquery.Document, error) {
+func GetCaseMainPage(client *http.Client, url string, case_id string, case_number string) (*goquery.Document, error) {
 	var document *goquery.Document
 	buffer := bytes.Buffer{}
 	writer := multipart.NewWriter(&buffer)
@@ -292,7 +292,7 @@ func GetCaseMainPage(client *http.Client, url string, case_id int, case_number s
 	if err != nil {
 		return document, err
 	}
-	field2.Write([]byte(strconv.Itoa(case_id)))
+	field2.Write([]byte(case_id))
 	field3, err := writer.CreateFormField("case_num")
 	if err != nil {
 		return document, err
