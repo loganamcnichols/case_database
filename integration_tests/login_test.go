@@ -45,7 +45,7 @@ func TestLoginToPacer(t *testing.T) {
 
 func TestSearchByDocketNumber(t *testing.T) {
 	client, _ := scraper.LoginToPacer()
-	data, err := scraper.SearchByDocketNumber(client, "https://ecf.azd.uscourts.gov/cgi-bin/possible_case_numbers.pl?22-02189")
+	data, err := scraper.PossbleCasesSearch(client, "https://ecf.azd.uscourts.gov/cgi-bin/possible_case_numbers.pl?22-02189")
 	if err != nil {
 		t.Fatalf("SearchByDocketNumber() returned error: %v", err)
 	}
