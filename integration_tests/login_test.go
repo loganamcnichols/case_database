@@ -85,21 +85,20 @@ func TestGetDownloadLink(t *testing.T) {
 	}
 }
 
-// func TestGetDocketSummaryLink(t *testing.T) {
-// 	requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/iquery.pl?13573439176722-L_1_0-1"
-// 	expectedResponseURL := "https://ecf.almd.uscourts.gov/cgi-bin/DktRpt.pl?56135"
-// 	responseURL, err := scraper.GetDocketSummaryLink(client, requestURL)
-// 	if err != nil {
-// 		t.Fatalf("GetDocketSummaryLink() returned error: %v", err)
-// 	}
-// 	if responseURL != expectedResponseURL {
-// 		t.Fatalf("GetDocketSummaryLink() returned incorrect response URL: %s", responseURL)
-// 	}
-// }
-
+//	func TestGetDocketSummaryLink(t *testing.T) {
+//		requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/iquery.pl?13573439176722-L_1_0-1"
+//		expectedResponseURL := "https://ecf.almd.uscourts.gov/cgi-bin/DktRpt.pl?56135"
+//		responseURL, err := scraper.GetDocketSummaryLink(client, requestURL)
+//		if err != nil {
+//			t.Fatalf("GetDocketSummaryLink() returned error: %v", err)
+//		}
+//		if responseURL != expectedResponseURL {
+//			t.Fatalf("GetDocketSummaryLink() returned incorrect response URL: %s", responseURL)
+//		}
+//	}
 func TestGetCaseMainPage(t *testing.T) {
 	requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/iquery.pl?154632979339918-L_1_0-1"
-	document, err := scraper.GetCaseMainPage(client, requestURL, 56135, "2:14-cr-646")
+	document, err := scraper.GetCaseMainPage(client, requestURL, "56135", "2:14-cr-646")
 	if err != nil {
 		t.Fatalf("GetCaseMainPage() returned error: %v", err)
 	}
@@ -111,7 +110,7 @@ func TestGetCaseMainPage(t *testing.T) {
 
 func TestGetDocketSummaryLink(t *testing.T) {
 	requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/iquery.pl?154632979339918-L_1_0-1"
-	document, err := scraper.GetCaseMainPage(client, requestURL, 56135, "2:14-cr-646")
+	document, err := scraper.GetCaseMainPage(client, requestURL, "56135", "2:14-cr-646")
 	if err != nil {
 		t.Fatalf("GetCaseMainPage() returned error: %v", err)
 	}
@@ -127,7 +126,7 @@ func TestGetCaseURL(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetCaseURL() returned error: %v", err)
 	}
-	document, err := scraper.GetCaseMainPage(client, respURL, 56135, "2:14-cr-646")
+	document, err := scraper.GetCaseMainPage(client, respURL, "56135", "2:14-cr-646")
 	if err != nil {
 		t.Fatalf("GetCaseMainPage() returned error: %v", err)
 	}
