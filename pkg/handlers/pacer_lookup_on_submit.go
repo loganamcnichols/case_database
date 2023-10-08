@@ -11,6 +11,11 @@ import (
 
 var possibleCasesTemplate = template.Must(template.ParseFiles("web/templates/possible-cases.html"))
 
+type TemplateData struct {
+	Court string
+	Cases scraper.PossibleCases
+}
+
 func PacerLookupOnSubmit(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	court := r.FormValue("court")
@@ -31,6 +36,10 @@ func PacerLookupOnSubmit(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error searching for possible cases", http.StatusInternalServerError)
 		return
 	}
-	possibleCasesTemplate.Execute(w, res)
+	templateData := TemplateData{
+		Court: court,
+		Cases: res,
+	}
+	possibleCasesTemplate.Execute(w, templateData)
 
 }
