@@ -15,6 +15,7 @@ func main() {
 	r.HandleFunc("/pacer-lookup", handlers.PacerLookupHandler).Methods("GET") // Add this line
 	r.HandleFunc("/pacer-lookup-submit", handlers.PacerLookupOnSubmit).Methods("POST")
 	r.HandleFunc("/pacer-lookup-case", handlers.PacerLookupCase).Methods("GET")
+	r.HandleFunc("/pacer-lookup-docket-request", handlers.PacerLookupDocketRequest).Methods("POST")
 
 	http.Handle("/", r)
 	log.Println("Starting server on :8080")

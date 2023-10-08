@@ -6,8 +6,12 @@ import (
 	"fmt"
 	"net/http"
 
+	"html/template"
+
 	"github.com/loganamcnichols/case_database/pkg/scraper"
 )
+
+var docketNumber = template.Must(template.ParseFiles("web/templates/docket-number.html"))
 
 func PacerLookupCase(w http.ResponseWriter, r *http.Request) {
 	// For hx-get with hx-vals, values are sent as query parameters
@@ -50,4 +54,5 @@ func PacerLookupCase(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Fprintf(w, "Docket count: %d\n", count)
+	docketNumber.Execute(w, count)
 }
