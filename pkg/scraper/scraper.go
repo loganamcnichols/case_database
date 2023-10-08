@@ -260,47 +260,14 @@ func appendToEnvFile(key, value string) error {
 	return err
 }
 
-// type DocketSummary = struct {
-// }
-
-func GetDocketSummaryLink(client *http.Client, targetURL string) (string, error) {
+func GetDocketSummaryLink(doc goquery.Document) string {
 	var docketSummaryLink string
-	urlObj, err := url.Parse(targetURL)
-	if err != nil {
-		fmt.Println(err)
-	}
-	urlObj.RawQuery = ""
-	referringURL := urlObj.String()
-	req, err := http.NewRequest("GET", targetURL, nil)
-	if err != nil {
-		return docketSummaryLink, err
-	}
-	req.Header.Set("User-Agent", "loganamcnichols")
-	req.Header.Set("Accept", "text/html")
-	req.Header.Set("Referer", referringURL)
-
-	resp, err := client.Do(req)
-	// bodyBytes, _ := io.ReadAll(resp.Body)
-	// fmt.Println(string(bodyBytes))
-	if err != nil {
-		return docketSummaryLink, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return docketSummaryLink, fmt.Errorf("recieved non found code")
-	}
-	document, err := goquery.NewDocumentFromReader(resp.Body)
-	text := document.Find("body").Text()
-	fmt.Println(text)
-	if err != nil {
-		return docketSummaryLink, err
-	}
-	document.Find("table").First().Find("a").Each(func(i int, s *goquery.Selection) {
+	doc.Find("table").First().Find("a").Each(func(i int, s *goquery.Selection) {
 		if strings.Contains(s.Text(), "Docket Report") {
 			docketSummaryLink, _ = s.Attr("href")
 		}
 	})
-	return docketSummaryLink, nil
+	return docketSummaryLink
 }
 
 func GetCaseMainPage(client *http.Client, url string, case_id int, case_number string) (*goquery.Document, error) {
