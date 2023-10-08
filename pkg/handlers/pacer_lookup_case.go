@@ -11,6 +11,12 @@ import (
 	"github.com/loganamcnichols/case_database/pkg/scraper"
 )
 
+type DocumentTemplateData struct {
+	Count  int
+	CaseID string
+	Court  string
+}
+
 var docketNumber = template.Must(template.ParseFiles("web/templates/docket-number.html"))
 
 func PacerLookupCase(w http.ResponseWriter, r *http.Request) {
@@ -53,6 +59,11 @@ func PacerLookupCase(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error getting docket count", http.StatusInternalServerError)
 		return
 	}
+	templateData := DocumentTemplateData{
+		Count:  count,
+		CaseID: caseID,
+		Court:  court,
+	}
 	fmt.Fprintf(w, "Docket count: %d\n", count)
-	docketNumber.Execute(w, count)
+	docketNumber.Execute(w, templateData)
 }
