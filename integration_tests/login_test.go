@@ -120,3 +120,19 @@ func TestGetDocketSummaryLink(t *testing.T) {
 		t.Fatalf("GetDocketSummaryLink() returned incorrect URL: %s", queryPage)
 	}
 }
+
+func TestGetCaseURL(t *testing.T) {
+	requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/iquery.pl"
+	respURL, err := scraper.GetCaseURL(client, requestURL)
+	if err != nil {
+		t.Fatalf("GetCaseURL() returned error: %v", err)
+	}
+	document, err := scraper.GetCaseMainPage(client, respURL, 56135, "2:14-cr-646")
+	if err != nil {
+		t.Fatalf("GetCaseMainPage() returned error: %v", err)
+	}
+	docText := document.Find("body").Text()
+	if !strings.Contains(docText, "USA v. Manniken") {
+		t.Fatalf("GetCaseMainPage() returned incorrect document: %s", docText)
+	}
+}

@@ -357,3 +357,40 @@ func GetCaseMainPage(client *http.Client, url string, case_id int, case_number s
 	}
 	return document, nil
 }
+
+func GetCaseURL(client *http.Client, queryURL string) (string, error) {
+	var caseURL string
+	req, err := http.NewRequest("GET", queryURL, nil)
+	if err != nil {
+		return caseURL, err
+	}
+	req.Header.Set("User-Agent", "loganamcnichols")
+	req.Header.Set("Accept", "text/html")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return caseURL, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return caseURL, fmt.Errorf("recieved non found code")
+	}
+	document, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return caseURL, err
+	}
+	caseAction, exists := document.Find("form").First().Attr("action")
+	if !exists {
+		return caseURL, fmt.Errorf("no action attribute found")
+	}
+	baseURL, err := url.Parse(queryURL)
+	if err != nil {
+		return caseURL, err
+	}
+	actionURL, err := url.Parse(caseAction)
+	if err != nil {
+		return caseURL, err
+	}
+	caseURL = baseURL.ResolveReference(actionURL).String()
+	return caseURL, nil
+}
