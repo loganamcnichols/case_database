@@ -14,6 +14,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -145,7 +146,6 @@ func PossbleCasesSearch(client *http.Client, url string) (PossibleCases, error) 
 	}
 
 	body, err := io.ReadAll(resp.Body)
-	fmt.Println(string(body))
 	if err != nil {
 		return respStruct, fmt.Errorf("failed to read response body: %v", err)
 	}
@@ -258,4 +258,127 @@ func appendToEnvFile(key, value string) error {
 	// Write the new key-value pair to the file
 	_, err = file.WriteString(fmt.Sprintf("%s=%s\n", key, value))
 	return err
+}
+
+// type DocketSummary = struct {
+// }
+
+func GetDocketSummaryLink(client *http.Client, targetURL string) (string, error) {
+	var docketSummaryLink string
+	urlObj, err := url.Parse(targetURL)
+	if err != nil {
+		fmt.Println(err)
+	}
+	urlObj.RawQuery = ""
+	referringURL := urlObj.String()
+	req, err := http.NewRequest("GET", targetURL, nil)
+	if err != nil {
+		return docketSummaryLink, err
+	}
+	req.Header.Set("User-Agent", "loganamcnichols")
+	req.Header.Set("Accept", "text/html")
+	req.Header.Set("Referer", referringURL)
+
+	resp, err := client.Do(req)
+	// bodyBytes, _ := io.ReadAll(resp.Body)
+	// fmt.Println(string(bodyBytes))
+	if err != nil {
+		return docketSummaryLink, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return docketSummaryLink, fmt.Errorf("recieved non found code")
+	}
+	document, err := goquery.NewDocumentFromReader(resp.Body)
+	text := document.Find("body").Text()
+	fmt.Println(text)
+	if err != nil {
+		return docketSummaryLink, err
+	}
+	document.Find("table").First().Find("a").Each(func(i int, s *goquery.Selection) {
+		if strings.Contains(s.Text(), "Docket Report") {
+			docketSummaryLink, _ = s.Attr("href")
+		}
+	})
+	return docketSummaryLink, nil
+}
+
+func GetCaseMainPage(client *http.Client, url string, case_id int, case_number string) (*goquery.Document, error) {
+	var document *goquery.Document
+	buffer := bytes.Buffer{}
+	writer := multipart.NewWriter(&buffer)
+
+	_, err := writer.CreateFormField("UserType")
+	if err != nil {
+		return document, err
+	}
+
+	field2, err := writer.CreateFormField("all_case_ids")
+	if err != nil {
+		return document, err
+	}
+	field2.Write([]byte(strconv.Itoa(case_id)))
+	field3, err := writer.CreateFormField("case_num")
+	if err != nil {
+		return document, err
+	}
+	field3.Write([]byte(case_number))
+	_, err = writer.CreateFormField("Qry_filed_from")
+	if err != nil {
+		return document, err
+	}
+	_, err = writer.CreateFormField("Qry_filed_to")
+	if err != nil {
+		return document, err
+	}
+	_, err = writer.CreateFormField("lastentry_from")
+	if err != nil {
+		return document, err
+	}
+	_, err = writer.CreateFormField("lastentry_to")
+	if err != nil {
+		return document, err
+	}
+	_, err = writer.CreateFormField("last_name")
+	if err != nil {
+		return document, err
+	}
+	_, err = writer.CreateFormField("first_name")
+	if err != nil {
+		return document, err
+	}
+	_, err = writer.CreateFormField("middle_name")
+	if err != nil {
+		return document, err
+	}
+	_, err = writer.CreateFormField("person_type")
+	if err != nil {
+		return document, err
+	}
+	writer.Close()
+	fmt.Println(buffer.String())
+
+	req, err := http.NewRequest("POST", url, &buffer)
+	if err != nil {
+		return document, err
+	}
+
+	req.Header.Set("User-Agent", "loganamcnichols")
+	req.Header.Set("Accept", "text/html")
+	req.Header.Set("Origin", "https://ecf.almd.uscourts.gov")
+	req.Header.Set("Referer", "https://ecf.almd.uscourts.gov/cgi-bin/iquery.pl")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return document, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return document, fmt.Errorf("recieved non found code")
+	}
+	document, err = goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return document, err
+	}
+	return document, nil
 }

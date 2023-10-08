@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/loganamcnichols/case_database/pkg/scraper"
@@ -61,7 +62,6 @@ func TestSearchByDocketNumber(t *testing.T) {
 }
 
 func TestDocketCountFromCaseId(t *testing.T) {
-	client, _ := scraper.LoginToPacer()
 	baseURL := "https://ecf.azd.uscourts.gov/cgi-bin/mobile_query.pl"
 	count, err := scraper.DocketCountFromCaseId(baseURL, client, 1313500)
 	if err != nil {
@@ -73,7 +73,6 @@ func TestDocketCountFromCaseId(t *testing.T) {
 }
 
 func TestGetDownloadLink(t *testing.T) {
-	client, _ := scraper.LoginToPacer()
 	requestUrl := "https://ecf.almd.uscourts.gov/cgi-bin/qryDocument.pl?10245329495945-L_1_0-1"
 	expectedResponseURL := "https://ecf.almd.uscourts.gov/doc1/01713440705"
 	responseURL, err := scraper.GetDownloadLink(client, requestUrl, 1, 72385)
@@ -82,5 +81,29 @@ func TestGetDownloadLink(t *testing.T) {
 	}
 	if responseURL != expectedResponseURL {
 		t.Fatalf("GetDownloadLink() returned incorrect response URL: %s", responseURL)
+	}
+}
+
+// func TestGetDocketSummaryLink(t *testing.T) {
+// 	requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/iquery.pl?13573439176722-L_1_0-1"
+// 	expectedResponseURL := "https://ecf.almd.uscourts.gov/cgi-bin/DktRpt.pl?56135"
+// 	responseURL, err := scraper.GetDocketSummaryLink(client, requestURL)
+// 	if err != nil {
+// 		t.Fatalf("GetDocketSummaryLink() returned error: %v", err)
+// 	}
+// 	if responseURL != expectedResponseURL {
+// 		t.Fatalf("GetDocketSummaryLink() returned incorrect response URL: %s", responseURL)
+// 	}
+// }
+
+func TestGetCaseMainPage(t *testing.T) {
+	requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/iquery.pl?154632979339918-L_1_0-1"
+	document, err := scraper.GetCaseMainPage(client, requestURL, 56135, "2:14-cr-646")
+	if err != nil {
+		t.Fatalf("GetCaseMainPage() returned error: %v", err)
+	}
+	docText := document.Find("body").Text()
+	if !strings.Contains(docText, "USA v. Manniken") {
+		t.Fatalf("GetCaseMainPage() returned incorrect document: %s", docText)
 	}
 }
