@@ -1,6 +1,6 @@
 <div>
     {{range .Cases}}
-    <div>
+    <div hx-get="/pacer-lookup-case" hx-vals='{"caseID": "{{.ID}}", "CaseNumber": "{{.Number}}"}'>
         {{.Title}}
     </div>
     {{end}}
