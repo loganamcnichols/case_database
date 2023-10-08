@@ -394,3 +394,56 @@ func GetFormURL(client *http.Client, queryURL string) (string, error) {
 	caseURL = baseURL.ResolveReference(actionURL).String()
 	return caseURL, nil
 }
+
+func PerformDownload(client *http.Client, reqURL string, caseID string, deSeqNum string) (*goquery.Document, error) {
+	var document *goquery.Document
+	buffer := bytes.Buffer{}
+	writer := multipart.NewWriter(&buffer)
+
+	field1, err := writer.CreateFormField("caseid")
+	if err != nil {
+		return document, err
+	}
+	field1.Write([]byte(caseID))
+	field2, err := writer.CreateFormField("de_seq_num")
+	if err != nil {
+		return document, err
+	}
+	field2.Write([]byte(deSeqNum))
+	field3, err := writer.CreateFormField("got_receipt")
+	if err != nil {
+		return document, err
+	}
+	field3.Write([]byte("1"))
+	writer.Close()
+	field4, err := writer.CreateFormField("pd_toggle_possible")
+	if err != nil {
+		return document, err
+	}
+	field4.Write([]byte("1"))
+	writer.Close()
+
+	req, err := http.NewRequest("POST", reqURL, &buffer)
+	if err != nil {
+		return document, err
+	}
+
+	req.Header.Set("User-Agent", "loganamcnichols")
+	req.Header.Set("Accept", "text/html")
+	req.Header.Set("Referer", reqURL)
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return document, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return document, fmt.Errorf("recieved non found code")
+	}
+	document, err = goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return document, err
+	}
+	return document, nil
+}
