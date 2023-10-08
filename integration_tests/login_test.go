@@ -123,7 +123,7 @@ func TestGetDocketSummaryLink(t *testing.T) {
 
 func TestGetCaseURL(t *testing.T) {
 	requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/iquery.pl"
-	respURL, err := scraper.GetCaseURL(client, requestURL)
+	respURL, err := scraper.GetFormURL(client, requestURL)
 	if err != nil {
 		t.Fatalf("GetCaseURL() returned error: %v", err)
 	}
@@ -134,5 +134,21 @@ func TestGetCaseURL(t *testing.T) {
 	docText := document.Find("body").Text()
 	if !strings.Contains(docText, "USA v. Manniken") {
 		t.Fatalf("GetCaseMainPage() returned incorrect document: %s", docText)
+	}
+}
+
+func TestGetDocumentURL(t *testing.T) {
+	requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/qryDocument.pl?56135"
+	expectedResponseURL := "https://ecf.almd.uscourts.gov/doc1/01712410676"
+	respURL, err := scraper.GetFormURL(client, requestURL)
+	if err != nil {
+		t.Fatalf("GetDocumentURL() returned error: %v", err)
+	}
+	downLoadLink, err := scraper.GetDownloadLink(client, respURL, requestURL, 1, 72385)
+	if err != nil {
+		t.Fatalf("GetDocumentURL() returned error: %v", err)
+	}
+	if downLoadLink != expectedResponseURL {
+		t.Fatalf("GetDocumentURL() returned incorrect URL: %s", downLoadLink)
 	}
 }
