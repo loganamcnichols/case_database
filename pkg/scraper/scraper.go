@@ -367,6 +367,7 @@ func GetCaseMainPage(client *http.Client, url string, case_id int, case_number s
 	req.Header.Set("Accept", "text/html")
 	req.Header.Set("Origin", "https://ecf.almd.uscourts.gov")
 	req.Header.Set("Referer", "https://ecf.almd.uscourts.gov/cgi-bin/iquery.pl")
+	req.Header.Set("Content-Type", writer.FormDataContentType())
 
 	resp, err := client.Do(req)
 	if err != nil {
