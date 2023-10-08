@@ -190,7 +190,6 @@ func DocketCountFromCaseId(baseURL string, client *http.Client, id int) (int, er
 	if err != nil {
 		return docketCount, err
 	}
-	fmt.Println(document.Text())
 	spanElement := document.Find("a#entriesLink").First()
 	re := regexp.MustCompile("[0-9]+")
 	digitString := re.FindString(spanElement.Text())
@@ -323,7 +322,6 @@ func GetCaseMainPage(client *http.Client, url string, case_id int, case_number s
 		return document, err
 	}
 	writer.Close()
-	fmt.Println(buffer.String())
 
 	req, err := http.NewRequest("POST", url, &buffer)
 	if err != nil {
