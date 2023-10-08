@@ -28,7 +28,7 @@ func PacerLookupCase(w http.ResponseWriter, r *http.Request) {
 	}
 	baseURL := fmt.Sprintf("https://ecf.%s.uscourts.gov/cgi-bin/iquery.pl", court)
 	moblileURL := fmt.Sprintf("https://ecf.%s.uscourts.gov/cgi-bin/mobile_query.pl", court)
-	caseURL, err := scraper.GetCaseURL(client, baseURL)
+	caseURL, err := scraper.GetFormURL(client, baseURL)
 	if err != nil {
 		http.Error(w, "Error getting case URL", http.StatusInternalServerError)
 		return

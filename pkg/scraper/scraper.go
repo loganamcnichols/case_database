@@ -358,7 +358,7 @@ func GetCaseMainPage(client *http.Client, url string, case_id string, case_numbe
 	return document, nil
 }
 
-func GetCaseURL(client *http.Client, queryURL string) (string, error) {
+func GetFormURL(client *http.Client, queryURL string) (string, error) {
 	var caseURL string
 	req, err := http.NewRequest("GET", queryURL, nil)
 	if err != nil {
