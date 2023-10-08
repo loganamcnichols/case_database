@@ -49,7 +49,7 @@ func LoginToPacer() (*http.Client, error) {
 	jar.SetCookies(u, []*http.Cookie{cookie})
 
 	// Try accessing pacer resource with cookie
-	data, err := SearchByDocketNumber(client, "https://ecf.azd.uscourts.gov/cgi-bin/possible_case_numbers.pl?22-02189")
+	data, err := PossbleCasesSearch(client, "https://ecf.azd.uscourts.gov/cgi-bin/possible_case_numbers.pl?22-02189")
 	if err == nil && len(data.Cases) > 0 {
 		// CSO token still valid.
 		return client, nil
@@ -112,20 +112,20 @@ func LoginToPacer() (*http.Client, error) {
 	return client, nil
 }
 
-type CaseNumberResponse struct {
-	Number string            `xml:"number,attr"`
-	Cases  []CaseNumberEntry `xml:"case"`
+type PossibleCases struct {
+	Number string         `xml:"number,attr"`
+	Cases  []PossibleCase `xml:"case"`
 }
 
-type CaseNumberEntry struct {
+type PossibleCase struct {
 	Number   string `xml:"number,attr"`
 	ID       string `xml:"id,attr"`
 	Title    string `xml:"title,attr"`
 	Sortable string `xml:"sortable,attr"`
 }
 
-func SearchByDocketNumber(client *http.Client, url string) (CaseNumberResponse, error) {
-	var respStruct CaseNumberResponse
+func PossbleCasesSearch(client *http.Client, url string) (PossibleCases, error) {
+	var respStruct PossibleCases
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return respStruct, err
