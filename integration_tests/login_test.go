@@ -63,7 +63,8 @@ func TestSearchByDocketNumber(t *testing.T) {
 
 func TestDocketCountFromCaseId(t *testing.T) {
 	baseURL := "https://ecf.azd.uscourts.gov/cgi-bin/mobile_query.pl"
-	count, err := scraper.DocketCountFromCaseId(baseURL, client, 1313500)
+	refererURL := "https://ecf.azd.uscourts.gov/cgi-bin/iquery.pl"
+	count, err := scraper.DocketCountFromCaseId(baseURL, refererURL, client, "1313500")
 	if err != nil {
 		t.Fatalf("DocketCountFromCaseId() returned error: %v", err)
 	}
