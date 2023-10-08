@@ -203,7 +203,7 @@ func DocketCountFromCaseId(baseURL string, client *http.Client, id int) (int, er
 
 }
 
-func GetDownloadLink(client *http.Client, url string, docNo int, caseNum int) (string, error) {
+func GetDownloadLink(client *http.Client, url string, referer string, docNo int, caseNum int) (string, error) {
 	var downloadLink string
 	var buffer bytes.Buffer
 	writer := multipart.NewWriter(&buffer)
@@ -225,15 +225,24 @@ func GetDownloadLink(client *http.Client, url string, docNo int, caseNum int) (s
 	if err != nil {
 		return downloadLink, err
 	}
+	if err != nil {
+		return downloadLink, err
+	}
 	req.Header.Set("User-Agent", "loganamcnichols")
 	req.Header.Set("Accept", "text/html")
-	req.Header.Set("Referer", "https://ecf.almd.uscourts.gov/cgi-bin/qryDocument.pl?72385")
+	req.Header.Set("Referer", referer)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 
 	resp, err := client.Do(req)
 	if err != nil {
 		return downloadLink, err
 	}
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return downloadLink, err
+	}
+	fmt.Println(string(bodyBytes))
+
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
 		return downloadLink, fmt.Errorf("recieved non found code")

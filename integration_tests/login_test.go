@@ -73,9 +73,10 @@ func TestDocketCountFromCaseId(t *testing.T) {
 }
 
 func TestGetDownloadLink(t *testing.T) {
-	requestUrl := "https://ecf.almd.uscourts.gov/cgi-bin/qryDocument.pl?10245329495945-L_1_0-1"
-	expectedResponseURL := "https://ecf.almd.uscourts.gov/doc1/01713440705"
-	responseURL, err := scraper.GetDownloadLink(client, requestUrl, 1, 72385)
+	requestUrl := "https://ecf.almd.uscourts.gov/cgi-bin/qryDocument.pl?644448178352274-L_1_0-1"
+	referer := "https://ecf.almd.uscourts.gov/cgi-bin/qryDocument.pl?56135"
+	expectedResponseURL := "https://ecf.almd.uscourts.gov/doc1/01712410676"
+	responseURL, err := scraper.GetDownloadLink(client, requestUrl, referer, 1, 72385)
 	if err != nil {
 		t.Fatalf("GetDownloadLink() returned error: %v", err)
 	}
