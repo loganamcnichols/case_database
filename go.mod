@@ -6,6 +6,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/gorilla/mux v1.8.0
 	github.com/joho/godotenv v1.5.1
+	github.com/stripe/stripe-go/v75 v75.9.0
 )
 
 require (
