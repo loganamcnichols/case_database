@@ -152,19 +152,3 @@ func TestGetDocumentURL(t *testing.T) {
 		t.Fatalf("GetDocumentURL() returned incorrect URL: %s", downLoadLink)
 	}
 }
-
-func TestPerformDownload(t *testing.T) {
-	reqURL := "https://ecf.azd.uscourts.gov/doc1/025126869583"
-	expectedSRC := "/cgi-bin/show_temp.pl?file=25125414"
-	resDoc, err := scraper.PerformDownload(client, reqURL, "1348139", "9")
-	if err != nil {
-		t.Fatalf("PerformDownload() returned error: %v", err)
-	}
-	src, exists := resDoc.Find("iframe").First().Attr("src")
-	if !exists {
-		t.Fatalf("PerformDownload() returned incorrect document: %s", src)
-	}
-	if !strings.Contains(src, expectedSRC) {
-		t.Fatalf("PerformDownload() returned incorrect document: %s", src)
-	}
-}

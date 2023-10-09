@@ -395,7 +395,7 @@ func GetFormURL(client *http.Client, queryURL string) (string, error) {
 	return caseURL, nil
 }
 
-func PerformDownload(client *http.Client, reqURL string, caseID string, deSeqNum string) (*goquery.Document, error) {
+func PurchaseDocument(client *http.Client, reqURL string, caseID string, deSeqNum string) (*goquery.Document, error) {
 	var document *goquery.Document
 	buffer := bytes.Buffer{}
 	writer := multipart.NewWriter(&buffer)
@@ -446,4 +446,45 @@ func PerformDownload(client *http.Client, reqURL string, caseID string, deSeqNum
 		return document, err
 	}
 	return document, nil
+}
+
+func PerformDownload(client *http.Client, doc *goquery.Document, baseURL string, caseID string, docNum string) error {
+	var err error
+	src, exists := doc.Find("iframe").First().Attr("src")
+	if !exists {
+		return fmt.Errorf("no src attribute found")
+	}
+	baseURLObj, err := url.Parse(baseURL)
+	if err != nil {
+		return err
+	}
+	pdfURLObj, err := url.Parse(src)
+	if err != nil {
+		return err
+	}
+	fullURLObj := baseURLObj.ResolveReference(pdfURLObj)
+	fullURL := fullURLObj.String()
+	req, err := http.NewRequest("GET", fullURL, nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("User-Agent", "loganamcnichols")
+	req.Header.Set("Accept", "text/html")
+	req.Header.Set("Referer", baseURL)
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("recieved non found code")
+	}
+	dest := fmt.Sprintf("pdfs/%s-%s.pdf", caseID, docNum)
+	out, err := os.Create(dest)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+	_, err = io.Copy(out, resp.Body)
+	return err
 }
