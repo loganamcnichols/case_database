@@ -20,7 +20,7 @@ jobs:
         env:
           POSTGRES_USER: logan
           POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD }}
-          POSTGRES_DB: case_database
+          POSTGRES_DB: casedatabase
         ports:
           - 5432:5432
         options: >-
