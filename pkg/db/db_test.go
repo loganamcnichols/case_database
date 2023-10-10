@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"testing"
 )
 
@@ -33,17 +34,26 @@ func TestInsertCases(t *testing.T) {
 		t.Errorf("Error connecting to database: %v", err)
 	}
 	defer db.Close()
+
+	tx, err := db.Begin()
+	if err != nil {
+		t.Errorf("Error beginning transaction: %v", err)
+	}
 	err = InsertCases(db, "azd", 1303801, "Test Case")
 	if err != nil {
 		t.Errorf("Error inserting cases: %v", err)
 	}
-	res, err := QueryCases(db, "azd", 1303801)
+	res, err := QueryCases(tx, "azd", 1303801)
 	if err != nil {
 		t.Errorf("Error querying database: %v", err)
 	}
 	if len(res) == 0 {
 		t.Errorf("InsertCases() did not insert case")
 	}
-
-	db.Exec("DELETE FROM cases WHERE court_id='azd' AND pacer_id=1303801")
+	defer func() {
+		err := tx.Rollback()
+		if err != nil && err != sql.ErrTxDone {
+			t.Fatalf("Failed to rollback transaction: %v", err)
+		}
+	}()
 }

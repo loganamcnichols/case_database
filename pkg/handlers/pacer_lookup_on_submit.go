@@ -5,11 +5,11 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 
+	"github.com/loganamcnichols/case_database/pkg/db"
 	"github.com/loganamcnichols/case_database/pkg/scraper"
 )
-
-var possibleCasesTemplate = template.Must(template.ParseFiles("web/templates/possible-cases.html"))
 
 type TemplateData struct {
 	Court string
@@ -17,6 +17,7 @@ type TemplateData struct {
 }
 
 func PacerLookupOnSubmit(w http.ResponseWriter, r *http.Request) {
+	var possibleCasesTemplate = template.Must(template.ParseFiles("web/templates/possible-cases.html"))
 	r.ParseForm()
 	court := r.FormValue("court")
 	docket := r.FormValue("docket")
@@ -42,5 +43,23 @@ func PacerLookupOnSubmit(w http.ResponseWriter, r *http.Request) {
 		Cases: res,
 	}
 	possibleCasesTemplate.Execute(w, templateData)
-
+	cnx, err := db.Connect()
+	if err != nil {
+		log.Printf("Error connecting to database: %v", err)
+		return
+	}
+	defer cnx.Close()
+	for _, c := range res.Cases {
+		log.Printf("Case ID: %s, Title: %s", c.ID, c.Title)
+		caseID, err := strconv.Atoi(c.ID)
+		if err != nil {
+			log.Printf("Error converting case ID to int: %v", err)
+			return
+		}
+		err = db.InsertCases(cnx, court, caseID, c.Title)
+		if err != nil {
+			log.Printf("Error inserting case into database: %v", err)
+			return
+		}
+	}
 }
