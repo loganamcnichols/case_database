@@ -128,8 +128,13 @@
             <option value="d_wy">District of Wyoming</option>
         </optgroup>
         </select>
+
         <div>
-            <!-- Display list of cases here -->
+            {{range .}}
+                <div>
+                    {{.Title}}
+                </div>
+            {{end}}
         </div>
     </main>
 </body>

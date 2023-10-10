@@ -62,3 +62,11 @@ func InsertCases(cnx Execer, courtID string, caseID int, title string) error {
 	}
 	return err
 }
+
+func Head(cnx Execer) (*sql.Rows, error) {
+	rows, err := cnx.Query("SELECT * FROM cases LIMIT 20")
+	if err != nil {
+		log.Fatal("Error querying database:", err)
+	}
+	return rows, err
+}
