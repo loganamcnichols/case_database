@@ -35,7 +35,7 @@ func LoginToPacer() (*http.Client, error) {
 
 	jar, _ := cookiejar.New(nil)
 	client := &http.Client{
-		Timeout: time.Second * 10, // Making the timeout explicit as 10 seconds
+		Timeout: time.Second * 20, // Making the timeout explicit as 10 seconds
 		Jar:     jar,
 	}
 
