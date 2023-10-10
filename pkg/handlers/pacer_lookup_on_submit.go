@@ -56,7 +56,7 @@ func PacerLookupOnSubmit(w http.ResponseWriter, r *http.Request) {
 			log.Printf("Error converting case ID to int: %v", err)
 			return
 		}
-		err = db.InsertCases(cnx, court, caseID, c.Title)
+		err = db.InsertCases(cnx, court, caseID, c.Title, c.Number)
 		if err != nil {
 			log.Printf("Error inserting case into database: %v", err)
 			return

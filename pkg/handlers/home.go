@@ -13,6 +13,7 @@ type Case struct {
 	PacerID int    `db:"pacer_id"`
 	CourtID string `db:"court_id"`
 	Title   string `db:"title"`
+	Number  string `db:"case_number"`
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +37,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	var cases []Case
 	for rows.Next() {
 		var c Case
-		err = rows.Scan(&c.ID, &c.PacerID, &c.CourtID, &c.Title)
+		err = rows.Scan(&c.ID, &c.PacerID, &c.CourtID, &c.Title, &c.Number)
 		if err != nil {
 			log.Printf("Error scanning row: %v", err)
 		}
