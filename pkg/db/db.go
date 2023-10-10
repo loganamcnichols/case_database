@@ -28,3 +28,21 @@ func Connect() (*sql.DB, error) {
 	}
 	return db, err
 }
+
+func QueryCases(cnx *sql.DB, courtID string, caseID int) ([]string, error) {
+	rows, err := cnx.Query("SELECT title FROM cases WHERE court_id=$1 AND pacer_id=$2", courtID, caseID)
+	if err != nil {
+		log.Fatal("Error querying database:", err)
+	}
+	defer rows.Close()
+	var titles []string
+	for rows.Next() {
+		var title string
+		err := rows.Scan(&title)
+		if err != nil {
+			log.Fatal("Error scanning rows:", err)
+		}
+		titles = append(titles, title)
+	}
+	return titles, err
+}
