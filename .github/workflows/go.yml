@@ -19,7 +19,7 @@ jobs:
         image: postgres:14-alpine
         env:
           POSTGRES_USER: logan
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD }}
           POSTGRES_DB: case_database
         ports:
           - 5432:5432
