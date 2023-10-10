@@ -5,21 +5,30 @@ import (
 	"encoding/json"
 	"io"
 	"log"
+	"math"
 	"net/http"
+	"strconv"
 
 	"github.com/stripe/stripe-go/v75"
 	"github.com/stripe/stripe-go/v75/paymentintent"
 )
 
 type item struct {
-	Id string `json:"id"`
+	Id     string `json:"id"`
+	Amount string `json:"amount"`
 }
 
 func calculateOrderAmount(items []item) int64 {
 	total := int64(0)
 	for _, item := range items {
-		if item.Id == "credit" {
-			total += 100
+		if item.Id == "credits" {
+			amt, err := strconv.Atoi(item.Amount)
+			amt = int(math.Round(float64(amt) / 10))
+			if err != nil {
+				log.Printf("strconv.Atoi: %v", err)
+				return 0
+			}
+			total += int64(amt)
 		}
 	}
 	return total

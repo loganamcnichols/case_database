@@ -2,16 +2,23 @@
 const stripe = Stripe("pk_test_51NvmDbLe4GVYZHj7C2eNehdnkaeqF80mqg3D2uZFptrSmVfGv3kMiVYIUJnpRgtNPoxfsS0Eh9IFM2u7pCQhyLUi00a31zu2nd");
 
 // The items the customer wants to buy
-const items = [{ id: "credit" }];
+const items = [];
 
 let elements;
 
-initialize();
-checkStatus();
 
 document
   .querySelector("#payment-form")
   .addEventListener("submit", handleSubmit);
+
+let amountElement = document.getElementById("credits");
+let amount = amountElement.getAttribute("data-amount");
+items.push({id: "credits", amount: amount});
+initialize();
+checkStatus();
+console.log(amount); // Outputs the amount value
+// Use the 'amount' variable in your JavaScript logic as needed
+
 
 let emailAddress = '';
 // Fetches a payment intent and captures the client secret

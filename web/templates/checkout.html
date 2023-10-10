@@ -6,11 +6,10 @@
     <meta name="description" content="A demo of a payment on Stripe" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="/css/checkout.css" />
-    <script src="https://js.stripe.com/v3/"></script>
-    <script src="/js/checkout.js" defer></script>
     <script src="https://unpkg.com/htmx.org"></script>
   </head>
   <body>
+    <div id="credits" data-amount="{{.Amount}}"></div>
     <!-- Display a payment form -->
     <form id="payment-form">
       <div id="link-authentication-element">
@@ -25,5 +24,7 @@
       </button>
       <div id="payment-message" class="hidden"></div>
     </form>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="/js/checkout.js" defer></script>
   </body>
 </html>
