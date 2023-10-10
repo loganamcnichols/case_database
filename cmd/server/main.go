@@ -15,6 +15,8 @@ func main() {
 	r.HandleFunc("/", handlers.HomeHandler).Methods("GET")
 	r.HandleFunc("/pacer-lookup", handlers.PacerLookupHandler).Methods("GET") // Add this line
 	r.HandleFunc("/checkout", handlers.CheckoutHandler).Methods("GET")
+	r.HandleFunc("/buy-credits", handlers.BuyCreditsHandler).Methods("GET")
+	r.HandleFunc("/credit-purchase-submit", handlers.BuyCreditsOnSubmit).Methods("POST")
 	r.HandleFunc("/pacer-lookup-submit", handlers.PacerLookupOnSubmit).Methods("POST")
 	r.HandleFunc("/pacer-lookup-case", handlers.PacerLookupCase).Methods("GET")
 	r.HandleFunc("/pacer-lookup-docket-request", handlers.PacerLookupDocketRequest).Methods("POST")
