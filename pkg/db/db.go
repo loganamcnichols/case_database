@@ -9,6 +9,14 @@ import (
 	_ "github.com/lib/pq"
 )
 
+type Execer interface {
+	Exec(query string, args ...interface{}) (sql.Result, error)
+	Query(query string, args ...interface{}) (*sql.Rows, error)
+	QueryRow(query string, args ...interface{}) *sql.Row
+
+	// Add other methods like Prepare if needed
+}
+
 func Connect() (*sql.DB, error) {
 	dbPassword := os.Getenv("PGPASSWORD")
 	connStr := fmt.Sprintf("user=logan dbname=casedatabase password=%s host=localhost sslmode=disable", dbPassword)
@@ -29,7 +37,7 @@ func Connect() (*sql.DB, error) {
 	return db, err
 }
 
-func QueryCases(cnx *sql.DB, courtID string, caseID int) ([]string, error) {
+func QueryCases(cnx Execer, courtID string, caseID int) ([]string, error) {
 	rows, err := cnx.Query("SELECT title FROM cases WHERE court_id=$1 AND pacer_id=$2", courtID, caseID)
 	if err != nil {
 		log.Fatal("Error querying database:", err)
@@ -47,7 +55,7 @@ func QueryCases(cnx *sql.DB, courtID string, caseID int) ([]string, error) {
 	return titles, err
 }
 
-func InsertCases(cnx *sql.DB, courtID string, caseID int, title string) error {
+func InsertCases(cnx Execer, courtID string, caseID int, title string) error {
 	_, err := cnx.Exec("INSERT INTO cases (court_id, pacer_id, title) VALUES ($1, $2, $3)", courtID, caseID, title)
 	if err != nil {
 		log.Fatal("Error inserting into database:", err)

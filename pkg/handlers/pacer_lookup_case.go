@@ -17,9 +17,8 @@ type DocumentTemplateData struct {
 	Court  string
 }
 
-var docketNumber = template.Must(template.ParseFiles("web/templates/docket-number.html"))
-
 func PacerLookupCase(w http.ResponseWriter, r *http.Request) {
+	var docketNumber = template.Must(template.ParseFiles("web/templates/docket-number.html"))
 	// For hx-get with hx-vals, values are sent as query parameters
 	caseID := r.URL.Query().Get("caseID")
 	court := r.URL.Query().Get("court")
