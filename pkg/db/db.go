@@ -10,7 +10,7 @@ import (
 )
 
 func Connect() (*sql.DB, error) {
-	dbPassword := os.Getenv("DB_PASSWORD")
+	dbPassword := os.Getenv("PGPASSWORD")
 	connStr := fmt.Sprintf("user=logan dbname=casedatabase password=%s host=localhost sslmode=disable", dbPassword)
 
 	db, err := sql.Open("postgres", connStr)
