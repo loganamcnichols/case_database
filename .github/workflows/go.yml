@@ -13,13 +13,36 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: logan
+          POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD }}
+          POSTGRES_DB: casedatabase
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+          
     steps:
+  
     - uses: actions/checkout@v3
 
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version: '1.20'
+
+    - name: set up database schema
+      run: |
+        psql -h localhost -U logan -d casedatabase -a -f schema.sql
+      env:
+        PGPASSWORD: ${{ secrets.PGPASSWORD }}
 
     - name: Build
       run: go build -v ./...
@@ -28,4 +51,5 @@ jobs:
       run: go test -v ./...
       env:
         PACER_USERNAME: ${{ secrets.PACER_USERNAME }}
+        PGPASSWORD: ${{ secrets.PGPASSWORD }}
         PACER_PASSWORD: ${{ secrets.PACER_PASSWORD }}
