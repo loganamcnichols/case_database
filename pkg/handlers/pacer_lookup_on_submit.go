@@ -36,6 +36,7 @@ func PacerLookupOnSubmit(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error searching for possible cases", http.StatusInternalServerError)
 		return
 	}
+
 	templateData := TemplateData{
 		Court: court,
 		Cases: res,

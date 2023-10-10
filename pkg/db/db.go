@@ -46,3 +46,11 @@ func QueryCases(cnx *sql.DB, courtID string, caseID int) ([]string, error) {
 	}
 	return titles, err
 }
+
+func InsertCases(cnx *sql.DB, courtID string, caseID int, title string) error {
+	_, err := cnx.Exec("INSERT INTO cases (court_id, pacer_id, title) VALUES ($1, $2, $3)", courtID, caseID, title)
+	if err != nil {
+		log.Fatal("Error inserting into database:", err)
+	}
+	return err
+}
