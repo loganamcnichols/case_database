@@ -12,13 +12,13 @@ import (
 )
 
 type item struct {
-	id string
+	Id string `json:"id"`
 }
 
 func calculateOrderAmount(items []item) int64 {
 	total := int64(0)
 	for _, item := range items {
-		if item.id == "1" {
+		if item.Id == "credit" {
 			total += 100
 		}
 	}
@@ -30,7 +30,8 @@ func HandleCreatePaymentIntent(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
-
+	// bodyBytes, _ := io.ReadAll(r.Body)
+	// log.Printf("bodyBytes: %v", string(bodyBytes))
 	var req struct {
 		Items []item `json:"items"`
 	}
