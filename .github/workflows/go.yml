@@ -38,11 +38,11 @@ jobs:
       with:
         go-version: '1.20'
 
-    - name: Install golang-migrate
+    - name: set up database schema
       run: |
-        curl -L https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz | tar xvz
-        sudo mv migrate.linux-amd64 /usr/bin/migrate
-        which migrate
+        psql -h localhost -U logan -d casedatabase -a -f schema.sql
+      env:
+        PGPASSWORD: ${{ secrets.PGPASSWORD }}
 
     - name: Build
       run: go build -v ./...
