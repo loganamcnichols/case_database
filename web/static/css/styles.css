@@ -1,0 +1,13 @@
+#credit-form input[type="radio"] {
+    display: none;
+}
+
+.credit-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: #ccc;
+    cursor: pointer;
+    border: 1px solid #aaa;
+    transition: background-color 0.3s;
+}

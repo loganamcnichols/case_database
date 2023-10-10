@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Case Database</title>
+    <link rel="stylesheet" href="/css/styles.css" />
     <script src="https://unpkg.com/htmx.org"></script>
 </head>
 <body>
@@ -19,31 +20,23 @@
         </nav>
     </header>
     <main>
-        <form action="/checkout" method="post">
-            <input type="radio" name="amount" value="1000">
-                <div>
-                    1,000 credits
-                </div>
-                <div>
-                    $10.00
-                </div>
-            </input>
-            <input type="radio" name="amount" value="10000">
-                <div>
-                    10,000 credits
-                </div>
-                <div>
-                    $100.00
-                </div>
-            </input>
-            <input type="radio" name="amount" value="50000">
-                <div>
-                    50,000 credits
-                </div>
-                <div>
-                    $500.00      
-                </div>
-            </input>
+        <form id="credit-form" action="/checkout" method="post">
+            <label class="credit-btn">
+                <input type="radio" name="amount" value="10000">
+                        10,000 credits
+                        ($10.00)
+            </label>
+            <label class="credit-btn">
+                <input type="radio" name="amount" value="100000">
+                        100,000 credits
+                        ($100.00)
+            </label>
+            <label class="credit-btn">
+                <input type="radio" name="amount" value="500000">
+                        500,000 credits
+                        ($500.00)
+            </label>
+
             <button type="submit" value="Submit">
                 Checkout
             </button>
