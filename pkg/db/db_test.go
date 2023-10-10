@@ -39,7 +39,7 @@ func TestInsertCases(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error beginning transaction: %v", err)
 	}
-	err = InsertCases(db, "azd", 1303801, "Test Case")
+	err = InsertCases(db, "azd", 1303801, "Test Case", "2:22-mj-2189")
 	if err != nil {
 		t.Errorf("Error inserting cases: %v", err)
 	}
