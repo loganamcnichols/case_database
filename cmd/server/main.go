@@ -14,7 +14,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", handlers.HomeHandler).Methods("GET")
 	r.HandleFunc("/pacer-lookup", handlers.PacerLookupHandler).Methods("GET") // Add this line
-	r.HandleFunc("/checkout", handlers.CheckoutHandler).Methods("GET")
+	r.HandleFunc("/checkout", handlers.CheckoutHandler).Methods("POST")
 	r.HandleFunc("/buy-credits", handlers.BuyCreditsHandler).Methods("GET")
 	r.HandleFunc("/credit-purchase-submit", handlers.BuyCreditsOnSubmit).Methods("POST")
 	r.HandleFunc("/pacer-lookup-submit", handlers.PacerLookupOnSubmit).Methods("POST")
