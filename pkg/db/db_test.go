@@ -74,11 +74,11 @@ func TestUser(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error creating user: %v", err)
 	}
-	res, err := GetUser(tx, email, password)
+	res, err := GetUserID(tx, email, password)
 	if err != nil {
 		t.Errorf("Error getting user: %v", err)
 	}
-	if !res.Next() {
+	if res == 0 {
 		t.Errorf("GetUser() returned no rows")
 	}
 	defer func() {
