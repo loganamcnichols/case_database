@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up to Case Database</title>
+    <!-- Include any additional CSS or JS files here -->
+</head>
+
+<body>
+    <header>
+        <h1>Case Database</h1>
+        <nav>
+            <a href="/">Browse</a> | 
+            <a href="/pacer-lookup">Pacer Lookup</a> | 
+            <a href="/login">Log In</a> | 
+            <a href="/signup">Sign Up</a> | 
+            <a href="/buy-credits">Buy Credits</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="signup-section">
+            <h2>Sign Up</h2>
+            <form action="/signup-submit" method="post">
+                <div class="form-group">
+                    <label for="fullname">Full Name:</label>
+                    <input type="text" name="fullname" id="fullname" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" name="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" id="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password:</label>
+                    <input type="password" name="confirm-password" id="confirm-password" required>
+                </div>
+                <button type="submit">Sign Up</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <!-- Include any footer information here -->
+    </footer>
+</body>
+
+</html>
