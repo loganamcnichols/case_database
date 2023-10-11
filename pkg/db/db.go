@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -65,6 +66,29 @@ func InsertCases(cnx Execer, courtID string, caseID int, title string, caseNumbe
 
 func Head(cnx Execer) (*sql.Rows, error) {
 	rows, err := cnx.Query("SELECT * FROM cases LIMIT 20")
+	if err != nil {
+		log.Fatal("Error querying database:", err)
+	}
+	return rows, err
+}
+
+func CreateUser(cnx Execer, email string, password string) error {
+	rows, err := cnx.Query("SELECT * FROM users WHERE email=$1", email)
+	if err != nil {
+		log.Fatal("Error querying database:", err)
+	}
+	if rows.Next() {
+		return errors.New("email already in use")
+	}
+	_, err = cnx.Exec("INSERT INTO users (email, password) VALUES ($1, $2)", email, password)
+	if err != nil {
+		log.Fatal("Error querying database:", err)
+	}
+	return err
+}
+
+func GetUser(cnx Execer, email string, password string) (*sql.Rows, error) {
+	rows, err := cnx.Query("SELECT * FROM users WHERE email=$1 AND password=$2", email, password)
 	if err != nil {
 		log.Fatal("Error querying database:", err)
 	}
