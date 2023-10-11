@@ -6,7 +6,7 @@ import (
 )
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("web/templates/login.html")
+	tmpl, err := template.ParseFiles("web/templates/signup.html")
 	if err != nil {
 		http.Error(w, "Could not load template", http.StatusInternalServerError)
 		return

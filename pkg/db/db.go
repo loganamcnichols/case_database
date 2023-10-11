@@ -7,6 +7,8 @@ import (
 	"log"
 	"os"
 
+	"golang.org/x/crypto/bcrypt"
+
 	_ "github.com/lib/pq"
 )
 
@@ -73,24 +75,32 @@ func Head(cnx Execer) (*sql.Rows, error) {
 }
 
 func CreateUser(cnx Execer, email string, password string) error {
-	rows, err := cnx.Query("SELECT * FROM users WHERE email=$1", email)
+	// Hashing the password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		log.Fatal("Error querying database:", err)
+		return err
 	}
-	if rows.Next() {
-		return errors.New("email already in use")
-	}
-	_, err = cnx.Exec("INSERT INTO users (email, password) VALUES ($1, $2)", email, password)
+	_, err = cnx.Exec("INSERT INTO users (email, password) VALUES ($1, $2)", email, hashedPassword)
 	if err != nil {
 		log.Fatal("Error querying database:", err)
 	}
 	return err
 }
 
-func GetUser(cnx Execer, email string, password string) (*sql.Rows, error) {
-	rows, err := cnx.Query("SELECT * FROM users WHERE email=$1 AND password=$2", email, password)
+func GetUserID(cnx Execer, email string, password string) (int, error) {
+	// Then you verify the provided plainPassword against the stored hashedPassword
+
+	user := cnx.QueryRow("SELECT * FROM users WHERE email=$1", email)
+	var hashedPassword []byte
+	var userID int
+	err := user.Scan(&userID, &email, &hashedPassword)
 	if err != nil {
-		log.Fatal("Error querying database:", err)
+		return userID, errors.New("user profile not found")
 	}
-	return rows, err
+	err = bcrypt.CompareHashAndPassword(hashedPassword, []byte(password))
+	if err != nil {
+		// Passwords do not match or another error occurred
+		return userID, errors.New("passwords do not match")
+	}
+	return userID, err
 }
