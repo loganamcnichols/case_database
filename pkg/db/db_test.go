@@ -57,3 +57,34 @@ func TestInsertCases(t *testing.T) {
 		}
 	}()
 }
+
+func TestUser(t *testing.T) {
+	db, err := Connect()
+	if err != nil {
+		t.Errorf("Error connecting to database: %v", err)
+	}
+	defer db.Close()
+	email := "testuser@test.com"
+	password := "testpassword"
+	tx, err := db.Begin()
+	if err != nil {
+		t.Errorf("Error beginning transaction: %v", err)
+	}
+	err = CreateUser(tx, email, password)
+	if err != nil {
+		t.Errorf("Error creating user: %v", err)
+	}
+	res, err := GetUser(tx, email, password)
+	if err != nil {
+		t.Errorf("Error getting user: %v", err)
+	}
+	if !res.Next() {
+		t.Errorf("GetUser() returned no rows")
+	}
+	defer func() {
+		err := tx.Rollback()
+		if err != nil && err != sql.ErrTxDone {
+			t.Fatalf("Failed to rollback transaction: %v", err)
+		}
+	}()
+}
