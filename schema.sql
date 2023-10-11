@@ -8,4 +8,4 @@ CREATE TABLE cases(
 
 INSERT INTO cases (pacer_id, court_id, title, case_number) VALUES (1320666, 'azd', '2:22-cv-02189-SRB Stanley v. Quintairos Prieto Wood & Boyer PA', '2:22-cv-2189');
 
-CREATE TABLE users (id SERIAL PRIMARY KEY, email, password);
+CREATE TABLE users (id SERIAL PRIMARY KEY, email TEXT, password CHAR(60));
