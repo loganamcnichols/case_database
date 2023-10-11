@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/loganamcnichols/case_database/pkg/handlers"
@@ -10,9 +11,10 @@ import (
 )
 
 func main() {
-	stripe.Key = "sk_test_51NvmDbLe4GVYZHj7zS8EOZT8S1dOcXWVpsgHYRCWwTf2gaAM3PCytQsiUrq0Pr7EPT5q20DKNq6FipoUBIOScE5c00hobQBsAk"
+	stripe.Key = os.Getenv("STRIPE_SK")
 	r := mux.NewRouter()
 	r.HandleFunc("/", handlers.HomeHandler).Methods("GET")
+	r.HandleFunc("/webhook", handlers.HandleWebhook).Methods("POST")
 	r.HandleFunc("/pacer-lookup", handlers.PacerLookupHandler).Methods("GET") // Add this line
 	r.HandleFunc("/checkout", handlers.CheckoutHandler).Methods("POST")
 	r.HandleFunc("/buy-credits", handlers.BuyCreditsHandler).Methods("GET")
