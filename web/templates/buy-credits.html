@@ -1,20 +1,24 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Case Database</title>
     <link rel="stylesheet" href="/css/styles.css" />
     <script src="https://unpkg.com/htmx.org"></script>
 </head>
+
 <body>
     <header>
         <h1>Case Database</h1>
         <nav>
-            <a href="/">Browse</a> | 
-            <a href="/pacer-lookup">Pacer Lookup</a> | 
-            <a href="/login">Log In</a> | 
+            <a href="/">Browse</a> |
+            <a href="/pacer-lookup">Pacer Lookup</a> |
+            <a href="/login">Log In</a> |
             <a href="/signup">Sign Up</a>
             <a href="/checkout">Buy Credits</a>
         </nav>
@@ -23,18 +27,18 @@
         <form id="credit-form" action="/checkout" method="post">
             <label class="credit-btn">
                 <input type="radio" name="amount" value="10000">
-                        10,000 credits
-                        ($10.00)
+                10,000 credits
+                ($10.00)
             </label>
             <label class="credit-btn">
                 <input type="radio" name="amount" value="100000">
-                        100,000 credits
-                        ($100.00)
+                100,000 credits
+                ($100.00)
             </label>
             <label class="credit-btn">
                 <input type="radio" name="amount" value="500000">
-                        500,000 credits
-                        ($500.00)
+                500,000 credits
+                ($500.00)
             </label>
 
             <button type="submit" value="Submit">

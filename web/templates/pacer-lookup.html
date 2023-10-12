@@ -1,23 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Case Database - Pacer Lookup</title>
     <script src="https://unpkg.com/htmx.org"></script>
 </head>
+
 <body>
     <header>
         <h1>Case Database</h1>
         <nav>
-            <a href="/">Browse</a> | 
-            <a href="/pacer-lookup">Pacer Lookup</a> | 
-            <a href="/login">Log In</a> | 
+            <a href="/">Browse</a> |
+            <a href="/pacer-lookup">Pacer Lookup</a> |
+            <a href="/login">Log In</a> |
             <a href="/signup">Sign Up</a>
         </nav>
     </header>
     <main>
-        <form hx-post="/pacer-lookup-submit", hx-target="#response">
+        <form hx-post="/pacer-lookup-submit" , hx-target="#response">
             <select name="court">
                 <option value="" disabled selected>Select Court</option>
                 <option value="almb">Alabama Middle Bankruptcy Court</option>
@@ -233,10 +239,11 @@
 
             </select>
             <input type="text" name="docket" placeholder="Docket # (e.g., AR-00100)" />
-            <button type="submit" value="Submit">Submit</button >
+            <button type="submit" value="Submit">Submit</button>
         </form>
         <!-- Placeholder text or area to display results from the Pacer Lookup -->
         <div id="response">Placeholder text</div>
     </main>
 </body>
+
 </html>
