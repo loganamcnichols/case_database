@@ -23,3 +23,17 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not write template", http.StatusInternalServerError)
 	}
 }
+
+func CheckSession(r *http.Request) bool {
+	// Check if the user has a session ID cookie
+	cookie, err := r.Cookie("session_id")
+	if err != nil {
+		return false
+	}
+
+	// Check if the session ID is in the session store
+	sessionMutex.RLock()
+	_, ok := sessionStore[cookie.Value]
+	sessionMutex.RUnlock()
+	return ok
+}

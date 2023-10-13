@@ -16,12 +16,19 @@ type Case struct {
 	Number  string `db:"case_number"`
 }
 
+type HomeTemplateData struct {
+	LoggedIn bool
+	Cases    []Case
+}
+
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("web/templates/home.html")
 	if err != nil {
 		http.Error(w, "Could not load template", http.StatusInternalServerError)
 		return
 	}
+
+	loggedIn := CheckSession(r)
 
 	cnx, err := db.Connect()
 	if err != nil {
@@ -44,7 +51,12 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		cases = append(cases, c)
 	}
 
-	err = tmpl.Execute(w, cases)
+	data := HomeTemplateData{
+		LoggedIn: loggedIn,
+		Cases:    cases,
+	}
+
+	err = tmpl.Execute(w, data)
 	if err != nil {
 		http.Error(w, "Could not write template", http.StatusInternalServerError)
 	}
