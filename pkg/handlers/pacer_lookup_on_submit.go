@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"regexp"
 	"strconv"
 
 	"github.com/loganamcnichols/case_database/pkg/db"
@@ -21,6 +22,12 @@ func PacerLookupOnSubmit(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	court := r.FormValue("court")
 	docket := r.FormValue("docket")
+	match, _ := regexp.MatchString(`\d{2}-\d{5}`, docket)
+	if !match {
+		log.Printf("Error verifying docket format")
+		http.Error(w, "Error verifying docket format", http.StatusInternalServerError)
+		return
+	}
 
 	log.Printf("Received court: %s, and docket number: %s", court, docket)
 	url := fmt.Sprintf("https://ecf.%s.uscourts.gov/cgi-bin/possible_case_numbers.pl?%s", court, docket)

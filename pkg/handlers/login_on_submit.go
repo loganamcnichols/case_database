@@ -36,7 +36,7 @@ func LoginOnSubmitHandler(w http.ResponseWriter, r *http.Request) {
 	defer cnx.Close()
 	userID, err := db.GetUserID(cnx, email, password)
 	if err != nil {
-		http.Error(w, "Error getting user ID", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	// Generate a session ID
 	sessionID := generateSessionID()

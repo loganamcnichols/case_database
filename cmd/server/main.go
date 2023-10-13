@@ -21,7 +21,7 @@ func main() {
 	r.HandleFunc("/credit-purchase-submit", handlers.BuyCreditsOnSubmit).Methods("POST")
 	r.HandleFunc("/pacer-lookup-submit", handlers.PacerLookupOnSubmit).Methods("POST")
 	r.HandleFunc("/pacer-lookup-case", handlers.PacerLookupCase).Methods("GET")
-	r.HandleFunc("/login", handlers.LoginHandler).Methods("GET")
+	r.HandleFunc("/login", handlers.LoginHandler).Methods("GET", "POST")
 	r.HandleFunc("/signup", handlers.SignupHandler).Methods("GET")
 	r.HandleFunc("/signup-submit", handlers.SignupOnSubmitHandler).Methods("POST")
 	r.HandleFunc("/login-submit", handlers.LoginOnSubmitHandler).Methods("POST")
