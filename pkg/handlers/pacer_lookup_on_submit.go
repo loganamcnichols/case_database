@@ -32,7 +32,8 @@ func PacerLookupOnSubmit(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Received court: %s, and docket number: %s", court, docket)
 	url := fmt.Sprintf("https://ecf.%s.uscourts.gov/cgi-bin/possible_case_numbers.pl?%s", court, docket)
 
-	client, err := scraper.LoginToPacer()
+	nextGenCSO, _ := r.Cookie("NextGenCSO")
+	client, err := scraper.LoginToPacer("", "", nextGenCSO.Value)
 	if err != nil {
 		log.Printf("Error logging in to PACER: %v", err)
 		http.Error(w, "Error logging in to PACER", http.StatusInternalServerError)

@@ -18,45 +18,35 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/joho/godotenv"
 )
 
 const LoginURL = "https://pacer.login.uscourts.gov/services/cso-auth"
 
-func LoginToPacer() (*http.Client, error) {
-
-	if err := godotenv.Load(); err != nil {
-		fmt.Println("Error loading .env file")
-	}
-	// Fetch credentials.
-	username := os.Getenv("PACER_USERNAME")
-	password := os.Getenv("PACER_PASSWORD")
-	nextGenCSO := os.Getenv("NextGenCSO")
-
+func LoginToPacer(username string, password string, token string) (*http.Client, error) {
+	// Prepare the cookie jar.
 	jar, _ := cookiejar.New(nil)
 	client := &http.Client{
 		Timeout: time.Second * 20, // Making the timeout explicit as 10 seconds
 		Jar:     jar,
 	}
-
-	// Set the cookie.
-	cookie := &http.Cookie{
-		Name:   "NextGenCSO",
-		Value:  nextGenCSO,
-		Domain: "uscourts.gov",
-		Path:   "/",
+	// Try first with provided token.
+	if token != "" {
+		// Set the cookie.
+		cookie := &http.Cookie{
+			Name:   "NextGenCSO",
+			Value:  token,
+			Domain: "uscourts.gov",
+			Path:   "/",
+		}
+		u, _ := url.Parse(LoginURL)
+		jar.SetCookies(u, []*http.Cookie{cookie})
+		data, err := PossbleCasesSearch(client, "https://ecf.azd.uscourts.gov/cgi-bin/possible_case_numbers.pl?22-02189")
+		if err == nil && len(data.Cases) > 0 {
+			// CSO token still valid.
+			return client, nil
+		}
 	}
-	u, _ := url.Parse(LoginURL)
-	jar.SetCookies(u, []*http.Cookie{cookie})
-
-	// Try accessing pacer resource with cookie
-	data, err := PossbleCasesSearch(client, "https://ecf.azd.uscourts.gov/cgi-bin/possible_case_numbers.pl?22-02189")
-	if err == nil && len(data.Cases) > 0 {
-		// CSO token still valid.
-		return client, nil
-	}
-
-	// Check for empty credentials
+	// Bail early if we don't have credentials.
 	if username == "" || password == "" {
 		return nil, errors.New("PACER_USERNAME or PACER_PASSWORD environment variables are not set")
 	}
@@ -99,16 +89,13 @@ func LoginToPacer() (*http.Client, error) {
 		return client, fmt.Errorf("no NextGenCSO cookie found in response")
 	}
 	// Set the cookie, and write it to the .env file
-	os.Setenv("NextGenCSO", pacerResp.NextGenCSO)
-	cookie = &http.Cookie{
+	cookie := &http.Cookie{
 		Name:   "NextGenCSO",
 		Value:  pacerResp.NextGenCSO,
 		Domain: "uscourts.gov",
 		Path:   "/",
 	}
-	// Set the OS environment variable
-	appendToEnvFile("NextGenCSO", pacerResp.NextGenCSO)
-	u, _ = url.Parse(LoginURL)
+	u, _ := url.Parse(LoginURL)
 	jar.SetCookies(u, []*http.Cookie{cookie})
 	return client, nil
 }
@@ -255,7 +242,7 @@ func GetDownloadLink(client *http.Client, url string, referer string, docNo int,
 
 }
 
-func appendToEnvFile(key, value string) error {
+func AppendToEnvFile(key, value string) error {
 	// Open the .env file with flags to append data and create the file if it doesn't exist
 	file, err := os.OpenFile(".env", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
