@@ -26,7 +26,8 @@ func PacerLookupCase(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Printf("Received caseID: %s, caseNumber: %s\n, courtID: %s\n", caseID, caseNumber, court)
 
-	client, err := scraper.LoginToPacer()
+	nextGenCSO, _ := r.Cookie("NextGenCSO")
+	client, err := scraper.LoginToPacer("", "", nextGenCSO.Value)
 	if err != nil {
 		http.Error(w, "Error logging in to PACER", http.StatusInternalServerError)
 		return
