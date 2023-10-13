@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300&family=Work+Sans:wght@300&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/styles.css" />
@@ -14,20 +17,49 @@
 
 <body>
     <header>
-        <h1>Case Load</h1>
+        <h1 class="logo">Case Load</h1>
         <div class="navigation">
             <nav>
                 <a href="/">Browse</a> |
                 <a href="/pacer-lookup">Pacer Lookup</a> 
             </nav>
             <nav>
-                <a href="/login">Log In</a> |
-                <a href="/signup">Sign Up</a>
-                <a href="/buy-credits">Buy Credits</a>
+                {{if .LoggedIn}}
+                    <a href="/buy-credits">Buy Credits</a>
+                {{else}}
+                    <a href="/login">Log In</a> |
+                    <a href="/signup">Sign Up</a>
+                {{end}}
+            </nav>
             </nav>
         </div>
     </header>
     <main>
+        <h1>We exists for one purpose, to make court case documents as cheap as possible</h1>
+        <h2>How it works</h2>
+        <p>Case Load is very simple. You buy credits with us. You spend credits on documents. You receive
+            credits when others buy documents you originally bought. Exchange credits for dollars at any time.
+        </p>
+        <h2>Why credits?</h2>
+        <p>Using credits reduces the number of times we have to charge credit cards. It also let's
+            document be worth less than 1c.
+        <p>
+        <h2>Getting Started</h2>
+        <ol>
+            <li>Create an account</li>
+            <li>Buy credits (remember, you can exchange them back for $ at any time)</li>
+            <li>Look for your document on our hub.</li>
+            <li>If you can't find it, use our portal to buy it from PACER.</li>
+        </ol>
+        <h2>FAQ</h2>
+        <ol>
+            <li>What if I don't know the docket #?</li>
+            <p>Court Listener is an excellent place to search for a docket number. They may even have
+                the documents you are looking for for free</p>
+            <li></li>
+        </ol>
+        <h2>Browse our cases</h2>
+        
         <input type="text" placeholder="Case Name" />
         <select class="courtSelect">
             <option value="" disabled selected>Select Court</option>
