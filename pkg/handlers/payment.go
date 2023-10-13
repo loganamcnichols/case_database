@@ -16,12 +16,12 @@ import (
 	"github.com/stripe/stripe-go/v75/webhook"
 )
 
-type item struct {
+type Item struct {
 	Id     string `json:"id"`
 	Amount string `json:"amount"`
 }
 
-func calculateOrderAmount(items []item) int64 {
+func CalculateOrderAmount(items []Item) int64 {
 	total := int64(0)
 	for _, item := range items {
 		if item.Id == "credits" {
@@ -45,7 +45,7 @@ func HandleCreatePaymentIntent(w http.ResponseWriter, r *http.Request) {
 	// bodyBytes, _ := io.ReadAll(r.Body)
 	// log.Printf("bodyBytes: %v", string(bodyBytes))
 	var req struct {
-		Items []item `json:"items"`
+		Items []Item `json:"items"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -56,7 +56,7 @@ func HandleCreatePaymentIntent(w http.ResponseWriter, r *http.Request) {
 
 	// Create a PaymentIntent with amount and currency
 	params := &stripe.PaymentIntentParams{
-		Amount:   stripe.Int64(calculateOrderAmount(req.Items)),
+		Amount:   stripe.Int64(CalculateOrderAmount(req.Items)),
 		Currency: stripe.String(string(stripe.CurrencyUSD)),
 		// In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
 		AutomaticPaymentMethods: &stripe.PaymentIntentAutomaticPaymentMethodsParams{

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -16,12 +17,25 @@ func CheckoutHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	items := []Item{
+		{
+			Id:     "credits",
+			Amount: amount,
+		},
+	}
+
+	cents := CalculateOrderAmount(items)
+
+	dollars := "$" + fmt.Sprintf("%.2f", float64(cents)/100.0)
+
 	data := struct {
-		Title  string
-		Amount string
+		Title   string
+		Amount  string
+		Dollars string
 	}{
-		Title:  "Pacer Lookup - Case Database",
-		Amount: amount,
+		Title:   "Pacer Lookup - Case Database",
+		Amount:  amount,
+		Dollars: dollars,
 	}
 
 	err = tmpl.Execute(w, data)
