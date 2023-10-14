@@ -21,11 +21,13 @@ func BuyCreditsHandler(w http.ResponseWriter, r *http.Request) {
 	loggedIn := CheckSession(r)
 
 	data := struct {
-		Title    string
-		LoggedIn bool
+		Title         string
+		LoggedIn      bool
+		PacerLoggedIn bool
 	}{
-		Title:    "Pacer Documents Resale Market",
-		LoggedIn: loggedIn,
+		Title:         "Pacer Documents Resale Market",
+		LoggedIn:      loggedIn,
+		PacerLoggedIn: CheckPacerSession(r),
 	}
 
 	err = tmpl.Execute(w, data)
