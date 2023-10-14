@@ -104,3 +104,11 @@ func GetUserID(cnx Execer, email string, password string) (int, error) {
 	}
 	return userID, err
 }
+
+func QueryUserDocs(cnx Execer, userID int) (*sql.Rows, error) {
+	rows, err := cnx.Query(`
+	SELECT documents.* FROM documents
+	INNER JOIN users_by_documents ON documents.id = users_by_documents.doc_id 
+	WHERE users_by_documents.user_id = $1`, userID)
+	return rows, err
+}

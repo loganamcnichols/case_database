@@ -88,3 +88,33 @@ func TestUser(t *testing.T) {
 		}
 	}()
 }
+
+func TestQueryUserDocs(t *testing.T) {
+	db, err := Connect()
+	if err != nil {
+		t.Errorf("Error connecting to database: %v", err)
+	}
+	defer db.Close()
+	rows, err := QueryUserDocs(db, 5)
+	if err != nil {
+		t.Errorf("Error querying user docs: %v", err)
+	}
+	var id int
+	var descritpion string
+	var file string
+	var docNumber string
+	rows.Next()
+	if err := rows.Scan(&id, &descritpion, &file, &docNumber); err != nil {
+		t.Errorf("Error scanning rows: %v", err)
+	}
+
+	if descritpion != "conflict disclosure" {
+		t.Errorf("QueryUserDocs() returned wrong description")
+	}
+	if file != "77989-2.pdf" {
+		t.Errorf("QueryUserDocs() returned wrong file")
+	}
+	if docNumber != "2" {
+		t.Errorf("QueryUserDocs() returned wrong docNumber")
+	}
+}
