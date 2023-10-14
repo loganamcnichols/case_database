@@ -10,7 +10,7 @@ INSERT INTO cases (pacer_id, court_id, title, case_number) VALUES (1320666, 'azd
 
 CREATE TABLE users (id SERIAL PRIMARY KEY, email TEXT, password CHAR(60));
 
-CREATE TABLE documents (id SERIAL PRIMARY KEY, description TEXT, file TEXT, doc_number INT);
+CREATE TABLE documents (id SERIAL PRIMARY KEY, description TEXT, file TEXT, doc_number INT, case_id INT);
 CREATE TABLE users_by_documents (user_id INT, doc_id INT);
 CREATE INDEX user_id_idx ON users_by_documents (user_id);
 CREATE INDEX doc_id_idx ON users_by_documents (doc_id);
