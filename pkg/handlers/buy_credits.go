@@ -6,6 +6,11 @@ import (
 	"net/http"
 )
 
+type BuyCreditsTemplateData struct {
+	Title    string
+	LoggedIn bool
+}
+
 func BuyCreditsHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("web/templates/buy-credits.html")
 	if err != nil {
@@ -13,10 +18,14 @@ func BuyCreditsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	loggedIn := CheckSession(r)
+
 	data := struct {
-		Title string
+		Title    string
+		LoggedIn bool
 	}{
-		Title: "Pacer Documents Resale Market",
+		Title:    "Pacer Documents Resale Market",
+		LoggedIn: loggedIn,
 	}
 
 	err = tmpl.Execute(w, data)
