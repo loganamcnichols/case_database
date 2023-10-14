@@ -34,6 +34,10 @@ func main() {
 		w.Header().Set("Content-Type", "text/css")
 		http.ServeFile(w, r, "web/static"+r.URL.Path)
 	})
+	r.PathPrefix("/pdfs/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/pdf")
+		http.ServeFile(w, r, r.URL.Path[1:])
+	})
 	r.PathPrefix("/js/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/javascript")
 		http.ServeFile(w, r, "web/static"+r.URL.Path)
