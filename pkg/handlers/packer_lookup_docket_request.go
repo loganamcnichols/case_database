@@ -24,7 +24,7 @@ func PacerLookupDocketRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	requestURL := fmt.Sprintf("https://ecf.almd.uscourts.gov/cgi-bin/qryDocument.pl?%s", caseID)
+	requestURL := fmt.Sprintf("https://ecf.%s.uscourts.gov/cgi-bin/qryDocument.pl?%s", court, caseID)
 
 	respURL, err := scraper.GetFormURL(client, requestURL)
 	if err != nil {

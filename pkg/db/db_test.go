@@ -100,18 +100,22 @@ func TestQueryUserDocs(t *testing.T) {
 		t.Errorf("Error querying user docs: %v", err)
 	}
 	var id int
+	var caseTitle string
 	var descritpion string
 	var file string
 	var docNumber string
+	var caseID int
 	rows.Next()
-	if err := rows.Scan(&id, &descritpion, &file, &docNumber); err != nil {
+	if err := rows.Scan(&caseTitle, &id, &descritpion, &file, &docNumber, &caseID); err != nil {
 		t.Errorf("Error scanning rows: %v", err)
 	}
-
-	if descritpion != "conflict disclosure" {
+	if caseTitle != "2:22-cv-02189-SRB Stanley v. Quintairos Prieto Wood & Boyer PA" {
+		t.Errorf("QueryUserDocs() returned wrong caseTitle")
+	}
+	if descritpion != "CORPORATE DISCLOSURE STATEMENT" {
 		t.Errorf("QueryUserDocs() returned wrong description")
 	}
-	if file != "77989-2.pdf" {
+	if file != "1320666-2.pdf" {
 		t.Errorf("QueryUserDocs() returned wrong file")
 	}
 	if docNumber != "2" {
