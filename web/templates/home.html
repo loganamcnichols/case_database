@@ -173,7 +173,7 @@
         </select>
 
         <div>
-            {{range .}}
+            {{range .Cases}}
             <div hx-get="/pacer-lookup-case"
                 hx-vals='{"caseID": "{{.PacerID}}", "caseNumber": "{{.Number}}", "court": "{{.CourtID}}"}'>
                 {{.Title}}
