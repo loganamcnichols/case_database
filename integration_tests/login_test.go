@@ -97,16 +97,20 @@ func TestGetCaseURL(t *testing.T) {
 func TestGetDocumentURL(t *testing.T) {
 	requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/qryDocument.pl?56135"
 	expectedResponseURL := "https://ecf.almd.uscourts.gov/doc1/01712410676"
+	expectedDeSeqNumb := "6"
 	respURL, err := scraper.GetFormURL(client, requestURL)
 	if err != nil {
 		t.Fatalf("GetDocumentURL() returned error: %v", err)
 	}
-	downLoadLink, err := scraper.GetDownloadLink(client, respURL, requestURL, 1, 72385)
+	downLoadLink, deSeqNumb, err := scraper.GetDownloadLink(client, respURL, requestURL, 1, 72385)
 	if err != nil {
 		t.Fatalf("GetDocumentURL() returned error: %v", err)
 	}
 	if downLoadLink != expectedResponseURL {
 		t.Fatalf("GetDocumentURL() returned incorrect URL: %s", downLoadLink)
+	}
+	if deSeqNumb != expectedDeSeqNumb {
+		t.Fatalf("GetDocumentURL() returned incorrect deSeqNumb: %s", deSeqNumb)
 	}
 }
 
