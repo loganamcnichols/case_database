@@ -102,7 +102,7 @@ func TestGetDocumentURL(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetDocumentURL() returned error: %v", err)
 	}
-	downLoadLink, deSeqNumb, err := scraper.GetDownloadLink(client, respURL, requestURL, 1, 72385)
+	downLoadLink, deSeqNumb, err := scraper.GetDownloadLink(client, respURL, requestURL, "1", "72385")
 	if err != nil {
 		t.Fatalf("GetDocumentURL() returned error: %v", err)
 	}
