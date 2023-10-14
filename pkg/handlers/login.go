@@ -6,8 +6,9 @@ import (
 )
 
 type LoginTemplateData struct {
-	Title    string
-	LoggedIn bool
+	Title         string
+	LoggedIn      bool
+	PacerLoggedIn bool
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -18,11 +19,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		Title    string
-		LoggedIn bool
+		Title         string
+		LoggedIn      bool
+		PacerLoggedIn bool
 	}{
-		Title:    "Pacer Lookup - Case Database",
-		LoggedIn: CheckSession(r),
+		Title:         "Pacer Lookup - Case Database",
+		LoggedIn:      CheckSession(r),
+		PacerLoggedIn: CheckPacerSession(r),
 	}
 
 	err = tmpl.Execute(w, data)
@@ -43,4 +46,10 @@ func CheckSession(r *http.Request) bool {
 	_, ok := sessionStore[cookie.Value]
 	sessionMutex.RUnlock()
 	return ok
+}
+
+func CheckPacerSession(r *http.Request) bool {
+	// Check if the user has a nextgencsocookie
+	_, err := r.Cookie("NextGenCSO")
+	return err == nil
 }

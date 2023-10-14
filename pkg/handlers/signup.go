@@ -6,8 +6,9 @@ import (
 )
 
 type SignupTemplateData struct {
-	Title    string
-	LoggedIn bool
+	Title         string
+	LoggedIn      bool
+	PacerLoggedIn bool
 }
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
@@ -18,11 +19,13 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		Title    string
-		LoggedIn bool
+		Title         string
+		LoggedIn      bool
+		PacerLoggedIn bool
 	}{
-		Title:    "Pacer Lookup - Case Database",
-		LoggedIn: CheckSession(r),
+		Title:         "Pacer Lookup - Case Database",
+		LoggedIn:      CheckSession(r),
+		PacerLoggedIn: CheckPacerSession(r),
 	}
 
 	err = tmpl.Execute(w, data)

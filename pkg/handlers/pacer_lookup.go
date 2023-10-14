@@ -10,8 +10,9 @@ import (
 )
 
 type PacerLookupTemplateData struct {
-	Title    string
-	LoggedIn bool
+	Title         string
+	LoggedIn      bool
+	PacerLoggedIn bool
 }
 
 func PacerLookupHandler(w http.ResponseWriter, r *http.Request) {
@@ -26,11 +27,13 @@ func PacerLookupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		Title    string
-		LoggedIn bool
+		Title         string
+		LoggedIn      bool
+		PacerLoggedIn bool
 	}{
-		Title:    "Pacer Lookup - Case Database",
-		LoggedIn: CheckSession(r),
+		Title:         "Pacer Lookup - Case Database",
+		LoggedIn:      CheckSession(r),
+		PacerLoggedIn: CheckPacerSession(r),
 	}
 
 	err = tmpl.Execute(w, data)
@@ -47,11 +50,13 @@ func PacerLoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		Title    string
-		LoggedIn bool
+		Title         string
+		LoggedIn      bool
+		PacerLoggedIn bool
 	}{
-		Title:    "Pacer Login - Case Database",
-		LoggedIn: CheckSession(r),
+		Title:         "Pacer Login - Case Database",
+		LoggedIn:      CheckSession(r),
+		PacerLoggedIn: CheckPacerSession(r),
 	}
 
 	err = tmpl.Execute(w, data)

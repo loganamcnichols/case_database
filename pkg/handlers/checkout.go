@@ -8,10 +8,11 @@ import (
 )
 
 type CheckoutTemplateData struct {
-	Title    string
-	Amount   string
-	Dollars  string
-	LoggedIn bool
+	Title         string
+	Amount        string
+	Dollars       string
+	LoggedIn      bool
+	PacerLoggedIn bool
 }
 
 func CheckoutHandler(w http.ResponseWriter, r *http.Request) {
@@ -36,15 +37,17 @@ func CheckoutHandler(w http.ResponseWriter, r *http.Request) {
 	dollars := "$" + fmt.Sprintf("%.2f", float64(cents)/100.0)
 
 	data := struct {
-		Title    string
-		Amount   string
-		Dollars  string
-		LoggedIn bool
+		Title         string
+		Amount        string
+		Dollars       string
+		LoggedIn      bool
+		PacerLoggedIn bool
 	}{
-		Title:    "Pacer Lookup - Case Database",
-		Amount:   amount,
-		Dollars:  dollars,
-		LoggedIn: CheckSession(r),
+		Title:         "Pacer Lookup - Case Database",
+		Amount:        amount,
+		Dollars:       dollars,
+		LoggedIn:      CheckSession(r),
+		PacerLoggedIn: CheckPacerSession(r),
 	}
 
 	err = tmpl.Execute(w, data)

@@ -17,8 +17,9 @@ type Case struct {
 }
 
 type HomeTemplateData struct {
-	LoggedIn bool
-	Cases    []Case
+	LoggedIn      bool
+	PacerLoggedIn bool
+	Cases         []Case
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
@@ -52,8 +53,9 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := HomeTemplateData{
-		LoggedIn: loggedIn,
-		Cases:    cases,
+		LoggedIn:      loggedIn,
+		PacerLoggedIn: CheckPacerSession(r),
+		Cases:         cases,
 	}
 
 	err = tmpl.Execute(w, data)
