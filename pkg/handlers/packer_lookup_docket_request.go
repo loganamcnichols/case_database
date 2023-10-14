@@ -15,6 +15,8 @@ func PacerLookupDocketRequest(w http.ResponseWriter, r *http.Request) {
 	caseID := r.FormValue("case-id")
 	court := r.FormValue("court")
 
+	nextGenCSO, _ := r.Cookie("NextGenCSO")
+
 	client, err := scraper.LoginToPacer("", "", nextGenCSO.Value)
 	if err != nil {
 		log.Printf("Error logging in to PACER: %v", err)
@@ -25,13 +27,29 @@ func PacerLookupDocketRequest(w http.ResponseWriter, r *http.Request) {
 	requestURL := fmt.Sprintf("https://ecf.almd.uscourts.gov/cgi-bin/qryDocument.pl?%s", caseID)
 
 	respURL, err := scraper.GetFormURL(client, requestURL)
-	downloadLink, err := scraper.GetDownloadLink(client, respURL, requestURL, docketNumber, caseID)
+	if err != nil {
+		log.Printf("Error getting form URL: %v", err)
+		http.Error(w, "Error getting form URL", http.StatusInternalServerError)
+		return
+	}
+	downloadLink, deSeqNum, err := scraper.GetDownloadLink(client, respURL, requestURL, docketNumber, caseID)
+	if err != nil {
+		log.Printf("Error getting download link: %v", err)
+		http.Error(w, "Error getting download link", http.StatusInternalServerError)
+		return
+	}
 	log.Printf("Received docket number: %s, caseID: %s, court: %s", docketNumber, caseID, court)
-	resDoc, err := scraper.PurchaseDocument(client, downloadLink, "1348139", "9")
+	resDoc, err := scraper.PurchaseDocument(client, downloadLink, caseID, deSeqNum)
+	fmt.Println(resDoc.Find("body").Text())
 	if err != nil {
 		log.Printf("Error purchasing document: %v", err)
 		http.Error(w, "Error purchasing document", http.StatusInternalServerError)
 		return
 	}
-	err = scraper.PerformDownload(client, resDoc, downloadLink, "1348139", "9")
+	err = scraper.PerformDownload(client, resDoc, downloadLink, caseID, docketNumber)
+	if err != nil {
+		log.Printf("Error performing download: %v", err)
+		http.Error(w, "Error performing download", http.StatusInternalServerError)
+		return
+	}
 }
