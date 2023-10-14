@@ -190,30 +190,31 @@ func DocketCountFromCaseId(baseURL string, refererURL string, client *http.Clien
 
 }
 
-func GetDownloadLink(client *http.Client, url string, referer string, docNo int, caseNum int) (string, error) {
+func GetDownloadLink(client *http.Client, url string, referer string, docNo int, caseNum int) (string, string, error) {
 	var downloadLink string
+	var deSeqNum string
 	var buffer bytes.Buffer
 	writer := multipart.NewWriter(&buffer)
 
 	field1, err := writer.CreateFormField(fmt.Sprintf("CaseNum_%d", caseNum))
 	if err != nil {
-		return downloadLink, err
+		return downloadLink, deSeqNum, err
 	}
 	field1.Write([]byte("on"))
 
 	field2, err := writer.CreateFormField("document_number")
 	if err != nil {
-		return downloadLink, err
+		return downloadLink, deSeqNum, err
 	}
 	field2.Write([]byte(strconv.Itoa(docNo)))
 	writer.Close()
 
 	req, err := http.NewRequest("POST", url, &buffer)
 	if err != nil {
-		return downloadLink, err
+		return downloadLink, deSeqNum, err
 	}
 	if err != nil {
-		return downloadLink, err
+		return downloadLink, deSeqNum, err
 	}
 	req.Header.Set("User-Agent", "loganamcnichols")
 	req.Header.Set("Accept", "text/html")
@@ -222,23 +223,23 @@ func GetDownloadLink(client *http.Client, url string, referer string, docNo int,
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return downloadLink, err
+		return downloadLink, deSeqNum, err
 	}
-	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return downloadLink, err
+		return downloadLink, deSeqNum, err
 	}
-	fmt.Println(string(bodyBytes))
 
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return downloadLink, fmt.Errorf("recieved non found code")
+		return downloadLink, deSeqNum, fmt.Errorf("recieved non found code")
 	}
-	u := resp.Request.URL
-	u.RawQuery = ""
-	downloadLink = u.String()
 
-	return downloadLink, nil
+	urlObj := resp.Request.URL
+	deSeqNum = urlObj.Query().Get("de_seq_num")
+	urlObj.RawQuery = ""
+	downloadLink = urlObj.String()
+
+	return downloadLink, deSeqNum, nil
 
 }
 
