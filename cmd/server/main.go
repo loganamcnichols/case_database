@@ -25,6 +25,7 @@ func main() {
 	r.HandleFunc("/pacer-login-submit", handlers.PacerLoginSubmitHandler).Methods("POST")
 	r.HandleFunc("/login", handlers.LoginHandler).Methods("GET", "POST")
 	r.HandleFunc("/signup", handlers.SignupHandler).Methods("GET")
+	r.HandleFunc("/view-docs", handlers.ViewDocsHandler).Methods("GET")
 	r.HandleFunc("/signup-submit", handlers.SignupOnSubmitHandler).Methods("POST")
 	r.HandleFunc("/login-submit", handlers.LoginOnSubmitHandler).Methods("POST")
 	r.HandleFunc("/pacer-lookup-docket-request", handlers.PacerLookupDocketRequest).Methods("POST")
