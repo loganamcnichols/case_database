@@ -7,6 +7,13 @@ import (
 	"net/http"
 )
 
+type CheckoutTemplateData struct {
+	Title    string
+	Amount   string
+	Dollars  string
+	LoggedIn bool
+}
+
 func CheckoutHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	amount := r.FormValue("amount")
@@ -29,13 +36,15 @@ func CheckoutHandler(w http.ResponseWriter, r *http.Request) {
 	dollars := "$" + fmt.Sprintf("%.2f", float64(cents)/100.0)
 
 	data := struct {
-		Title   string
-		Amount  string
-		Dollars string
+		Title    string
+		Amount   string
+		Dollars  string
+		LoggedIn bool
 	}{
-		Title:   "Pacer Lookup - Case Database",
-		Amount:  amount,
-		Dollars: dollars,
+		Title:    "Pacer Lookup - Case Database",
+		Amount:   amount,
+		Dollars:  dollars,
+		LoggedIn: CheckSession(r),
 	}
 
 	err = tmpl.Execute(w, data)
