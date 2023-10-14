@@ -37,6 +37,7 @@
     <main>
         <div>
             {{range .Docs}}
+                <p>{{.Title}}</p>
                 <a href="pdfs/{{.File}}">{{.Description}}</a>
             {{end}}
         </div>
