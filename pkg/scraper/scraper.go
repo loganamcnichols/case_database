@@ -190,13 +190,13 @@ func DocketCountFromCaseId(baseURL string, refererURL string, client *http.Clien
 
 }
 
-func GetDownloadLink(client *http.Client, url string, referer string, docNo int, caseNum int) (string, string, error) {
+func GetDownloadLink(client *http.Client, url string, referer string, docNo string, caseNum string) (string, string, error) {
 	var downloadLink string
 	var deSeqNum string
 	var buffer bytes.Buffer
 	writer := multipart.NewWriter(&buffer)
 
-	field1, err := writer.CreateFormField(fmt.Sprintf("CaseNum_%d", caseNum))
+	field1, err := writer.CreateFormField(fmt.Sprintf("CaseNum_%s", caseNum))
 	if err != nil {
 		return downloadLink, deSeqNum, err
 	}
@@ -206,7 +206,7 @@ func GetDownloadLink(client *http.Client, url string, referer string, docNo int,
 	if err != nil {
 		return downloadLink, deSeqNum, err
 	}
-	field2.Write([]byte(strconv.Itoa(docNo)))
+	field2.Write([]byte(docNo))
 	writer.Close()
 
 	req, err := http.NewRequest("POST", url, &buffer)
