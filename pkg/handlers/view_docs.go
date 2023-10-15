@@ -29,16 +29,8 @@ func ViewDocsHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not load template", http.StatusInternalServerError)
 		return
 	}
-	sessionID, err := r.Cookie("session_id")
-	if err != nil {
-		log.Printf("Error getting session cookie: %v", err)
-	}
 
-	sessionMutex.RLock()
-	userID := sessionStore[sessionID.Value]
-	sessionMutex.RUnlock()
-
-	loggedIn := CheckSession(r)
+	userID := CheckSession(r)
 
 	cnx, err := db.Connect()
 	if err != nil {
@@ -62,7 +54,7 @@ func ViewDocsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := ViewDocsTemplateData{
-		UserID:        loggedIn,
+		UserID:        userID,
 		PacerLoggedIn: CheckPacerSession(r),
 		Docs:          docs,
 	}
