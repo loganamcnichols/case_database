@@ -4,10 +4,11 @@ package handlers
 
 import (
 	"fmt"
-	"net/http"
-
 	"html/template"
+	"net/http"
+	"strconv"
 
+	"github.com/loganamcnichols/case_database/pkg/db"
 	"github.com/loganamcnichols/case_database/pkg/scraper"
 )
 
@@ -20,6 +21,7 @@ type DocumentTemplateData struct {
 func PacerLookupCase(w http.ResponseWriter, r *http.Request) {
 	var docketNumber = template.Must(template.ParseFiles("web/templates/docket-number.html"))
 	// For hx-get with hx-vals, values are sent as query parameters
+	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
 	caseID := r.URL.Query().Get("caseID")
 	court := r.URL.Query().Get("court")
 	caseNumber := r.URL.Query().Get("caseNumber")
@@ -66,4 +68,26 @@ func PacerLookupCase(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, "Docket count: %d\n", count)
 	docketNumber.Execute(w, templateData)
+
+	con, err := db.Connect()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	rows, err := con.Query("SELECT doc_number, description FROM documents WHERE case_id = $1", id)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var docNumber int
+		var description string
+		err = rows.Scan(&docNumber, &description)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Fprintf(w, "DocNumber: %d, Description: %s\n", docNumber, description)
+	}
+
 }
