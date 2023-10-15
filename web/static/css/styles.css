@@ -50,6 +50,11 @@ header {
     transition: background-color 0.3s;
 }
 
+#credit-form input[type="radio"]:checked + .credit-btn {
+    background-color: #1574c7;  /* Change this to your "pressed" color */
+    border: 1px solid #888;  /* Optionally, change the border too */
+}
+
 select, option, input, button {
     font-size: 16px;
     box-sizing: border-box;
