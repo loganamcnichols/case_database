@@ -1,6 +1,3 @@
-//go:build ignore
-// +build ignore
-
 package integrationtests
 
 import (
@@ -33,7 +30,7 @@ func TestPurchaseAndDownload(t *testing.T) {
 }
 
 func TestGetDocumentSummary(t *testing.T) {
-	requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/DktRpt.pl"
+	requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/DktRpt.pl?56135"
 	respURL, err := scraper.GetFormURL(client, requestURL)
 	if err != nil {
 		t.Fatalf("GetDocumentURL() returned error: %v", err)
@@ -42,8 +39,8 @@ func TestGetDocumentSummary(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetDocumentURL() returned error: %v", err)
 	}
-	if document.Find("#cmecfMainContent").Length() == 0 {
+	headingElem := document.Find("h3").First()
+	if !strings.Contains(headingElem.Text(), "2:14-cr-00646") {
 		t.Fatalf("GetDocumentURL() returned incorrect document: %s", document.Find("#cmecfMainContent").Text())
 	}
-
 }
