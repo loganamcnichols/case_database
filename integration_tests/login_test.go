@@ -167,3 +167,19 @@ func TestPacerLookup(t *testing.T) {
 	cnx.Exec("DELETE FROM cases WHERE id != 1")
 
 }
+
+func TestGetPageCount(t *testing.T) {
+	requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/qryDocument.pl?56135"
+	respURL, err := scraper.GetFormURL(client, requestURL)
+	if err != nil {
+		t.Fatalf("GetDocumentURL() returned error: %v", err)
+	}
+	downLoadLink, _, _ := scraper.GetDownloadLink(client, respURL, requestURL, "1", "72385")
+	count, err := scraper.GetPageCount(client, downLoadLink, respURL)
+	if err != nil {
+		t.Fatalf("GetPageCount() returned error: %v", err)
+	}
+	if count != 5 {
+		t.Fatalf("GetPageCount() returned incorrect page count: %d", count)
+	}
+}
