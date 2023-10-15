@@ -11,7 +11,7 @@ import (
 
 type PacerLookupTemplateData struct {
 	Title         string
-	LoggedIn      bool
+	UserID        int
 	PacerLoggedIn bool
 }
 
@@ -28,11 +28,11 @@ func PacerLookupHandler(w http.ResponseWriter, r *http.Request) {
 
 	data := struct {
 		Title         string
-		LoggedIn      bool
+		UserID        int
 		PacerLoggedIn bool
 	}{
 		Title:         "Pacer Lookup - Case Database",
-		LoggedIn:      CheckSession(r),
+		UserID:        CheckSession(r),
 		PacerLoggedIn: CheckPacerSession(r),
 	}
 
@@ -51,11 +51,11 @@ func PacerLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	data := struct {
 		Title         string
-		LoggedIn      bool
+		UserID        int
 		PacerLoggedIn bool
 	}{
 		Title:         "Pacer Login - Case Database",
-		LoggedIn:      CheckSession(r),
+		UserID:        CheckSession(r),
 		PacerLoggedIn: CheckPacerSession(r),
 	}
 

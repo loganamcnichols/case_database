@@ -116,7 +116,8 @@ func QueryUserDocs(cnx Execer, userID int) (*sql.Rows, error) {
 }
 
 func UpdateUserCredits(cnx Execer, userID int, credits int64) error {
-	_, err := cnx.Exec("UPDATE users SET credits = $1 WHERE id = $2", credits, userID)
+	val, err := cnx.Exec("UPDATE users SET credits = $1 WHERE id = $2", credits, userID)
+	fmt.Println(val.RowsAffected())
 	if err != nil {
 		log.Fatal("Error updating user credits:", err)
 	}

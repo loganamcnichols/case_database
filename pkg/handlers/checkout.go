@@ -11,7 +11,7 @@ type CheckoutTemplateData struct {
 	Title         string
 	Amount        string
 	Dollars       string
-	LoggedIn      bool
+	UserID        int
 	PacerLoggedIn bool
 }
 
@@ -40,13 +40,13 @@ func CheckoutHandler(w http.ResponseWriter, r *http.Request) {
 		Title         string
 		Amount        string
 		Dollars       string
-		LoggedIn      bool
+		UserID        int
 		PacerLoggedIn bool
 	}{
 		Title:         "Pacer Lookup - Case Database",
 		Amount:        amount,
 		Dollars:       dollars,
-		LoggedIn:      CheckSession(r),
+		UserID:        CheckSession(r),
 		PacerLoggedIn: CheckPacerSession(r),
 	}
 

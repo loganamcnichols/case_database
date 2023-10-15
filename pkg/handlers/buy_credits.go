@@ -7,8 +7,8 @@ import (
 )
 
 type BuyCreditsTemplateData struct {
-	Title    string
-	LoggedIn bool
+	Title  string
+	UserID int
 }
 
 func BuyCreditsHandler(w http.ResponseWriter, r *http.Request) {
@@ -18,15 +18,15 @@ func BuyCreditsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	loggedIn := CheckSession(r)
+	userID := CheckSession(r)
 
 	data := struct {
 		Title         string
-		LoggedIn      bool
+		UserID        int
 		PacerLoggedIn bool
 	}{
 		Title:         "Pacer Documents Resale Market",
-		LoggedIn:      loggedIn,
+		UserID:        userID,
 		PacerLoggedIn: CheckPacerSession(r),
 	}
 

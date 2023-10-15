@@ -7,7 +7,7 @@ import (
 
 type LoginTemplateData struct {
 	Title         string
-	LoggedIn      bool
+	UserID        int
 	PacerLoggedIn bool
 }
 
@@ -20,11 +20,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	data := struct {
 		Title         string
-		LoggedIn      bool
+		UserID        int
 		PacerLoggedIn bool
 	}{
 		Title:         "Pacer Lookup - Case Database",
-		LoggedIn:      CheckSession(r),
+		UserID:        CheckSession(r),
 		PacerLoggedIn: CheckPacerSession(r),
 	}
 
@@ -34,18 +34,18 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func CheckSession(r *http.Request) bool {
+func CheckSession(r *http.Request) int {
 	// Check if the user has a session ID cookie
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
-		return false
+		return 0
 	}
 
 	// Check if the session ID is in the session store
 	sessionMutex.RLock()
-	_, ok := sessionStore[cookie.Value]
+	val := sessionStore[cookie.Value]
 	sessionMutex.RUnlock()
-	return ok
+	return val
 }
 
 func CheckPacerSession(r *http.Request) bool {

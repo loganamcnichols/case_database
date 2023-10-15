@@ -17,7 +17,7 @@ type Case struct {
 }
 
 type HomeTemplateData struct {
-	LoggedIn      bool
+	UserID        int
 	PacerLoggedIn bool
 	Cases         []Case
 }
@@ -29,7 +29,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	loggedIn := CheckSession(r)
+	userID := CheckSession(r)
 
 	cnx, err := db.Connect()
 	if err != nil {
@@ -53,7 +53,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := HomeTemplateData{
-		LoggedIn:      loggedIn,
+		UserID:        userID,
 		PacerLoggedIn: CheckPacerSession(r),
 		Cases:         cases,
 	}
