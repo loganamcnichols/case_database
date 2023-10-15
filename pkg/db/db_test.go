@@ -95,7 +95,7 @@ func TestQueryUserDocs(t *testing.T) {
 		t.Errorf("Error connecting to database: %v", err)
 	}
 	defer db.Close()
-	rows, err := QueryUserDocs(db, 5)
+	rows, err := QueryUserDocs(db, 1)
 	if err != nil {
 		t.Errorf("Error querying user docs: %v", err)
 	}
@@ -129,8 +129,8 @@ func TestUpdateUserCredits(t *testing.T) {
 		t.Errorf("Error connecting to database: %v", err)
 	}
 	defer con.Close()
-	UpdateUserCredits(con, 5, 1000)
-	row := con.QueryRow("SELECT credits FROM users WHERE id = 5")
+	UpdateUserCredits(con, 1, 1000)
+	row := con.QueryRow("SELECT credits FROM users WHERE id = 1")
 	var credits int
 	err = row.Scan(&credits)
 	if err != nil {
@@ -139,5 +139,5 @@ func TestUpdateUserCredits(t *testing.T) {
 	if credits != 1000 {
 		t.Errorf("updateUserCredits() did not update credits")
 	}
-	UpdateUserCredits(con, 5, 0)
+	UpdateUserCredits(con, 1, 0)
 }
