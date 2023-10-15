@@ -14,6 +14,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -571,4 +572,38 @@ func GetDocumentSummary(client *http.Client, url string, caseID string) (*goquer
 		return document, err
 	}
 	return document, nil
+}
+
+func GetPageCount(client *http.Client, url string, refURL string) (int, error) {
+	var pageCount int
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return pageCount, err
+	}
+	req.Header.Set("User-Agent", "loganamcnichols")
+	req.Header.Set("Accept", "text/html")
+	req.Header.Set("Referer", refURL)
+	resp, err := client.Do(req)
+	if err != nil {
+		return pageCount, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return pageCount, fmt.Errorf("recieved non found code")
+	}
+	document, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return pageCount, err
+	}
+	fmt.Println(document.Text())
+	document.Find("tr").Each(func(i int, s *goquery.Selection) {
+		fmt.Println(s.Text())
+		if strings.Contains(s.Text(), "Pages:") {
+			fmt.Println(s.Text())
+			td := s.Find("td").First()
+			pageString := strings.TrimSpace(td.Text())
+			pageCount, err = strconv.Atoi(pageString)
+		}
+	})
+	return pageCount, nil
 }
