@@ -9,7 +9,7 @@ CREATE TABLE cases(
 INSERT INTO cases (pacer_id, court_id, title, case_number) VALUES (1320666, 'azd', '2:22-cv-02189-SRB Stanley v. Quintairos Prieto Wood & Boyer PA', '2:22-cv-2189');
 
 CREATE TABLE users (id SERIAL PRIMARY KEY, email TEXT, password CHAR(60), credits INT);
-
+INSERT INTO users(email, password, credits) VALUES (5, 'loganamcnichols', 0)
 CREATE TABLE documents (id SERIAL PRIMARY KEY, description TEXT, file TEXT, doc_number INT, case_id INT);
 CREATE TABLE users_by_documents (user_id INT, doc_id INT);
 CREATE INDEX user_id_idx ON users_by_documents (user_id);

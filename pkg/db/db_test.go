@@ -139,4 +139,5 @@ func TestUpdateUserCredits(t *testing.T) {
 	if credits != 1000 {
 		t.Errorf("updateUserCredits() did not update credits")
 	}
+	UpdateUserCredits(con, 5, 0)
 }

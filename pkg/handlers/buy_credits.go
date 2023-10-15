@@ -18,7 +18,7 @@ func BuyCreditsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	loggedIn := CheckSession(r)
+	userID := CheckSession(r)
 
 	data := struct {
 		Title         string
@@ -26,7 +26,7 @@ func BuyCreditsHandler(w http.ResponseWriter, r *http.Request) {
 		PacerLoggedIn bool
 	}{
 		Title:         "Pacer Documents Resale Market",
-		UserID:        loggedIn,
+		UserID:        userID,
 		PacerLoggedIn: CheckPacerSession(r),
 	}
 

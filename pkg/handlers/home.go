@@ -29,7 +29,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	loggedIn := CheckSession(r)
+	userID := CheckSession(r)
 
 	cnx, err := db.Connect()
 	if err != nil {
@@ -53,7 +53,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := HomeTemplateData{
-		UserID:        loggedIn,
+		UserID:        userID,
 		PacerLoggedIn: CheckPacerSession(r),
 		Cases:         cases,
 	}
