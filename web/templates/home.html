@@ -25,8 +25,13 @@
             </nav>
             <nav>
                 {{if gt .UserID 0}}
-                    <a href="/view-docs">View Docs</a>
-                    <a href="/buy-credits">Buy Credits</a>
+                    <div class="logged-in-nav">
+                        <div>Available Credits: {{.Credits}}</div>
+                        <div>
+                            <a href="/view-docs">View Docs</a>
+                            <a href="/buy-credits">Buy Credits</a>
+                        </div>
+                    </div>
                 {{else}}
                     <a href="/login">Log In</a> |
                     <a href="/signup">Sign Up</a>
