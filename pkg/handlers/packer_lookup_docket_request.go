@@ -53,3 +53,40 @@ func PacerLookupDocketRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func PacerLookupSummaryRequest(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	caseID := r.FormValue("case-id")
+	court := r.FormValue("court")
+
+	nextGenCSO, _ := r.Cookie("NextGenCSO")
+
+	client, err := scraper.LoginToPacer("", "", nextGenCSO.Value)
+	if err != nil {
+		log.Printf("Error logging in to PACER: %v", err)
+		http.Error(w, "Error logging in to PACER", http.StatusInternalServerError)
+		return
+	}
+
+	requestURL := fmt.Sprintf("https://ecf.%s.uscourts.gov/cgi-bin/DktRpt.pl?%s", court, caseID)
+	respURL, err := scraper.GetFormURL(client, requestURL)
+	if err != nil {
+		log.Printf("Error getting form URL: %v", err)
+		http.Error(w, "Error getting form URL", http.StatusInternalServerError)
+		return
+	}
+	document, err := scraper.GetDocumentSummary(client, respURL, caseID)
+	if err != nil {
+		log.Printf("Error getting document summary: %v", err)
+		http.Error(w, "Error getting document summary", http.StatusInternalServerError)
+		return
+	}
+
+	data, err := document.Find("#cmecfMainContent").First().Html()
+	if err != nil {
+		log.Printf("Error getting document summary: %v", err)
+		http.Error(w, "Error getting document summary", http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprint(w, data)
+}

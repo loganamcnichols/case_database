@@ -3,3 +3,6 @@
     <input type="number" id="docket-number-input" name="docket-number" min="1" max="{{.Count}}" />
     <button type="submit" value="Submit">Submit</button>
 </form>
+<form hx-post="pacer-lookup-summary-request" hx-vals='{"case-id": "{{.CaseID}}", "court": "{{.Court}}"}'>
+    <button type="submit" value="Submit">Docket Summary</button>
+</form>
