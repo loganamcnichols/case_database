@@ -14,7 +14,6 @@ import (
 	"os"
 	"regexp"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -256,16 +255,6 @@ func AppendToEnvFile(key, value string) error {
 	return err
 }
 
-func GetDocketSummaryLink(doc goquery.Document) string {
-	var docketSummaryLink string
-	doc.Find("table").First().Find("a").Each(func(i int, s *goquery.Selection) {
-		if strings.Contains(s.Text(), "Docket Report") {
-			docketSummaryLink, _ = s.Attr("href")
-		}
-	})
-	return docketSummaryLink
-}
-
 func GetCaseMainPage(client *http.Client, url string, case_id string, case_number string) (*goquery.Document, error) {
 	var document *goquery.Document
 	buffer := bytes.Buffer{}
@@ -475,4 +464,111 @@ func PerformDownload(client *http.Client, doc *goquery.Document, baseURL string,
 	defer out.Close()
 	_, err = io.Copy(out, resp.Body)
 	return err
+}
+
+func GetDocumentSummary(client *http.Client, url string, caseID string) (*goquery.Document, error) {
+	var document *goquery.Document
+	buffer := bytes.Buffer{}
+	writer := multipart.NewWriter(&buffer)
+
+	field1, err := writer.CreateFormField("view_comb_doc_text")
+	if err != nil {
+		return document, err
+	}
+	field1.Write([]byte(""))
+
+	field2, err := writer.CreateFormField("all_case_ids")
+	if err != nil {
+		return document, err
+	}
+	field2.Write([]byte(caseID))
+	field3, err := writer.CreateFormField(fmt.Sprintf("CaseNum_%s", caseID))
+	if err != nil {
+		return document, err
+	}
+	field3.Write([]byte("on"))
+	field4, err := writer.CreateFormField("date_from")
+	if err != nil {
+		return document, err
+	}
+	field4.Write([]byte(""))
+	field5, err := writer.CreateFormField("date_range_type")
+	if err != nil {
+		return document, err
+	}
+	field5.Write([]byte("Filed"))
+	field6, err := writer.CreateFormField("date_from")
+	if err != nil {
+		return document, err
+	}
+	field6.Write([]byte(""))
+	field7, err := writer.CreateFormField("date_to")
+	if err != nil {
+		return document, err
+	}
+	field7.Write([]byte(""))
+	field8, err := writer.CreateFormField("documents_numbered_from_")
+	if err != nil {
+		return document, err
+	}
+	field8.Write([]byte(""))
+	field9, err := writer.CreateFormField("list_of_parties_and_counsel")
+	if err != nil {
+		return document, err
+	}
+	field9.Write([]byte("on"))
+	field10, err := writer.CreateFormField("terminated_parties")
+	if err != nil {
+		return document, err
+	}
+	field10.Write([]byte("on"))
+	field11, err := writer.CreateFormField("pdf_header")
+	if err != nil {
+		return document, err
+	}
+	field11.Write([]byte("pdf_header"))
+	field12, err := writer.CreateFormField("output_format")
+	if err != nil {
+		return document, err
+	}
+	field12.Write([]byte("hml"))
+	field13, err := writer.CreateFormField("PreResetField")
+	if err != nil {
+		return document, err
+	}
+	field13.Write([]byte(""))
+	field14, err := writer.CreateFormField("PreResetFields")
+	if err != nil {
+		return document, err
+	}
+	field14.Write([]byte(""))
+	field15, err := writer.CreateFormField("sort1")
+	if err != nil {
+		return document, err
+	}
+	field15.Write([]byte("oldest date first"))
+	writer.Close()
+
+	req, err := http.NewRequest("POST", url, &buffer)
+	if err != nil {
+		return document, err
+	}
+	req.Header.Set("User-Agent", "loganamcnichols")
+	req.Header.Set("Accept", "text/html")
+	req.Header.Set("Referer", url)
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return document, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return document, fmt.Errorf("recieved non found code")
+	}
+	document, err = goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return document, err
+	}
+	return document, nil
 }

@@ -66,18 +66,6 @@ func TestDocketCountFromCaseId(t *testing.T) {
 	}
 }
 
-func TestGetDocketSummaryLink(t *testing.T) {
-	requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/iquery.pl?154632979339918-L_1_0-1"
-	document, err := scraper.GetCaseMainPage(client, requestURL, "56135", "2:14-cr-646")
-	if err != nil {
-		t.Fatalf("GetCaseMainPage() returned error: %v", err)
-	}
-	queryPage := scraper.GetDocketSummaryLink(*document)
-	if queryPage != "/cgi-bin/DktRpt.pl?56135" {
-		t.Fatalf("GetDocketSummaryLink() returned incorrect URL: %s", queryPage)
-	}
-}
-
 func TestGetCaseURL(t *testing.T) {
 	requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/iquery.pl"
 	respURL, err := scraper.GetFormURL(client, requestURL)

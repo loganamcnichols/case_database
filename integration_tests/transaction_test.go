@@ -1,11 +1,9 @@
-//go:build manualtest
-// +build manualtest
+//go:build ignore
+// +build ignore
 
 package integrationtests
 
 import (
-	"fmt"
-	"net/http"
 	"os"
 	"strings"
 	"testing"
@@ -13,22 +11,11 @@ import (
 	"github.com/loganamcnichols/case_database/pkg/scraper"
 )
 
-var clientTransaction *http.Client
-
-func TestMainTransaction(m *testing.M) {
-	// setup code
-	var err error
-	clientTransaction, err = scraper.LoginToPacer()
-	if err != nil {
-		fmt.Println("Error logging in to PACER")
-		os.Exit(1)
-	}
-	m.Run()
-}
 func TestPurchaseAndDownload(t *testing.T) {
+	os.Chdir("../")
 	reqURL := "https://ecf.azd.uscourts.gov/doc1/025126869583"
 	expectedSRC := "/cgi-bin/show_temp.pl?file=25125414"
-	resDoc, err := scraper.PurchaseDocument(clientTransaction, reqURL, "1348139", "9")
+	resDoc, err := scraper.PurchaseDocument(client, reqURL, "1348139", "9")
 	if err != nil {
 		t.Fatalf("PerformDownload() returned error: %v", err)
 	}
@@ -39,8 +26,24 @@ func TestPurchaseAndDownload(t *testing.T) {
 	if !strings.Contains(src, expectedSRC) {
 		t.Fatalf("PerformDownload() returned incorrect document: %s", src)
 	}
-	err = scraper.PerformDownload(clientTransaction, resDoc, reqURL, "1348139", "9")
+	err = scraper.PerformDownload(client, resDoc, reqURL, "1348139", "9")
 	if err != nil {
 		t.Fatalf("PerformDownload() returned error: %v", err)
 	}
+}
+
+func TestGetDocumentSummary(t *testing.T) {
+	requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/DktRpt.pl"
+	respURL, err := scraper.GetFormURL(client, requestURL)
+	if err != nil {
+		t.Fatalf("GetDocumentURL() returned error: %v", err)
+	}
+	document, err := scraper.GetDocumentSummary(client, respURL, "56135")
+	if err != nil {
+		t.Fatalf("GetDocumentURL() returned error: %v", err)
+	}
+	if document.Find("#cmecfMainContent").Length() == 0 {
+		t.Fatalf("GetDocumentURL() returned incorrect document: %s", document.Find("#cmecfMainContent").Text())
+	}
+
 }
