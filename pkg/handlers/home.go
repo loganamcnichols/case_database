@@ -20,6 +20,7 @@ type HomeTemplateData struct {
 	UserID        int
 	PacerLoggedIn bool
 	Cases         []Case
+	Credits       int
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
@@ -35,6 +36,13 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 		defer cnx.Close()
+	}
+
+	creditRows := cnx.QueryRow("SELECT credits FROM users WHERE id = $1", userID)
+	var credits int
+	err = creditRows.Scan(&credits)
+	if err != nil {
+		log.Printf("Error scanning row: %v", err)
 	}
 
 	rows, err := db.Head(cnx)
@@ -56,6 +64,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		UserID:        userID,
 		PacerLoggedIn: CheckPacerSession(r),
 		Cases:         cases,
+		Credits:       credits,
 	}
 
 	err = tmpl.Execute(w, data)
