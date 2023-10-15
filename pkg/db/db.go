@@ -113,3 +113,11 @@ func QueryUserDocs(cnx Execer, userID int) (*sql.Rows, error) {
 	WHERE users_by_documents.user_id = $1`, userID)
 	return rows, err
 }
+
+func UpdateUserCredits(cnx Execer, userID int, credits int) error {
+	_, err := cnx.Exec("UPDATE users SET credits = $1 WHERE id = $2", credits, userID)
+	if err != nil {
+		log.Fatal("Error updating user credits:", err)
+	}
+	return err
+}

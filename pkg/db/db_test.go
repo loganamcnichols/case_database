@@ -122,3 +122,21 @@ func TestQueryUserDocs(t *testing.T) {
 		t.Errorf("QueryUserDocs() returned wrong docNumber")
 	}
 }
+
+func TestUpdateUserCredits(t *testing.T) {
+	con, err := Connect()
+	if err != nil {
+		t.Errorf("Error connecting to database: %v", err)
+	}
+	defer con.Close()
+	UpdateUserCredits(con, 5, 1000)
+	row := con.QueryRow("SELECT credits FROM users WHERE id = 5")
+	var credits int
+	err = row.Scan(&credits)
+	if err != nil {
+		t.Errorf("Error scanning row: %v", err)
+	}
+	if credits != 1000 {
+		t.Errorf("updateUserCredits() did not update credits")
+	}
+}
