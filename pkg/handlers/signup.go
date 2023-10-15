@@ -7,7 +7,7 @@ import (
 
 type SignupTemplateData struct {
 	Title         string
-	LoggedIn      bool
+	UserID        int
 	PacerLoggedIn bool
 }
 
@@ -20,11 +20,11 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 
 	data := struct {
 		Title         string
-		LoggedIn      bool
+		UserID        int
 		PacerLoggedIn bool
 	}{
 		Title:         "Pacer Lookup - Case Database",
-		LoggedIn:      CheckSession(r),
+		UserID:        CheckSession(r),
 		PacerLoggedIn: CheckPacerSession(r),
 	}
 

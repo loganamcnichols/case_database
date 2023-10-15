@@ -9,7 +9,7 @@ import (
 )
 
 type ViewDocsTemplateData struct {
-	LoggedIn      bool
+	UserID        int
 	PacerLoggedIn bool
 	Docs          []Doc
 }
@@ -62,7 +62,7 @@ func ViewDocsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := ViewDocsTemplateData{
-		LoggedIn:      loggedIn,
+		UserID:        loggedIn,
 		PacerLoggedIn: CheckPacerSession(r),
 		Docs:          docs,
 	}

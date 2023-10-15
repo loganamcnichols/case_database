@@ -24,7 +24,7 @@
                 <a href="/pacer-lookup">Pacer Portal</a> 
             </nav>
             <nav>
-                {{if .LoggedIn}}
+                {{if gt .UserID 0}}
                     <a href="/buy-credits">Buy Credits</a>
                 {{else}}
                     <a href="/login">Log In</a> |
