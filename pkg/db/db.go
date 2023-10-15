@@ -80,7 +80,7 @@ func CreateUser(cnx Execer, email string, password string) error {
 	if err != nil {
 		return err
 	}
-	_, err = cnx.Exec("INSERT INTO users (email, password) VALUES ($1, $2)", email, hashedPassword)
+	_, err = cnx.Exec("INSERT INTO users (email, password, credits) VALUES ($1, $2, 0)", email, hashedPassword)
 	if err != nil {
 		log.Fatal("Error querying database:", err)
 	}
@@ -92,8 +92,9 @@ func GetUserID(cnx Execer, email string, password string) (int, error) {
 
 	user := cnx.QueryRow("SELECT * FROM users WHERE email=$1", email)
 	var hashedPassword []byte
+	var credits int64
 	var userID int
-	err := user.Scan(&userID, &email, &hashedPassword)
+	err := user.Scan(&userID, &email, &hashedPassword, &credits)
 	if err != nil {
 		return userID, errors.New("user profile not found")
 	}
@@ -114,7 +115,7 @@ func QueryUserDocs(cnx Execer, userID int) (*sql.Rows, error) {
 	return rows, err
 }
 
-func UpdateUserCredits(cnx Execer, userID int, credits int) error {
+func UpdateUserCredits(cnx Execer, userID int, credits int64) error {
 	_, err := cnx.Exec("UPDATE users SET credits = $1 WHERE id = $2", credits, userID)
 	if err != nil {
 		log.Fatal("Error updating user credits:", err)

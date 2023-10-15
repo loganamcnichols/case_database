@@ -11,6 +11,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/loganamcnichols/case_database/pkg/db"
 	"github.com/stripe/stripe-go/v75"
 	"github.com/stripe/stripe-go/v75/paymentintent"
 	"github.com/stripe/stripe-go/v75/webhook"
@@ -53,12 +54,28 @@ func HandleCreatePaymentIntent(w http.ResponseWriter, r *http.Request) {
 		log.Printf("json.NewDecoder.Decode: %v", err)
 		return
 	}
+	sessionID, err := r.Cookie("session_id")
+	if err != nil {
+		log.Printf("Error getting session cookie")
+	}
+	if sessionID == nil {
+		log.Printf("Error getting session cookie")
+	}
+	sessionMutex.RLock()
+	var userID int64
+	if sessionID != nil {
+		userID = int64(sessionStore[sessionID.Value])
+	}
+	sessionMutex.RUnlock()
 
 	// Create a PaymentIntent with amount and currency
 	params := &stripe.PaymentIntentParams{
 		Amount:   stripe.Int64(CalculateOrderAmount(req.Items)),
 		Currency: stripe.String(string(stripe.CurrencyUSD)),
 		// In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+		Metadata: map[string]string{
+			"user_id": fmt.Sprint(userID),
+		},
 		AutomaticPaymentMethods: &stripe.PaymentIntentAutomaticPaymentMethodsParams{
 			Enabled: stripe.Bool(true),
 		},
@@ -130,6 +147,23 @@ func HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		log.Printf("Successful payment for %d.", paymentIntent.Amount)
+		con, err := db.Connect()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		userID, err := strconv.Atoi(paymentIntent.Metadata["user_id"])
+		if err != nil {
+			log.Printf("strconv.Atoi: %v", err)
+			return
+		}
+
+		defer con.Close()
+		err = db.UpdateUserCredits(con, userID, paymentIntent.Amount)
+		if err != nil {
+			log.Printf("Error updating user credits: %v", err)
+		}
+
 		// Then define and call a func to handle the successful payment intent.
 		// handlePaymentIntentSucceeded(paymentIntent)
 	// case "payment_method.attached":
