@@ -105,9 +105,10 @@ func TestQueryUserDocs(t *testing.T) {
 	var file string
 	var docNumber string
 	var caseID int
+	var userID int
 	var pages int
 	rows.Next()
-	if err := rows.Scan(&caseTitle, &id, &descritpion, &file, &docNumber, &caseID, &pages); err != nil {
+	if err := rows.Scan(&caseTitle, &id, &descritpion, &file, &docNumber, &caseID, &pages, &userID); err != nil {
 		t.Errorf("Error scanning rows: %v", err)
 	}
 	if caseTitle != "2:22-cv-02189-SRB Stanley v. Quintairos Prieto Wood & Boyer PA" {
