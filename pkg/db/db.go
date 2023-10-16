@@ -82,7 +82,7 @@ func CreateUser(cnx Execer, email string, password string) error {
 	}
 	_, err = cnx.Exec("INSERT INTO users (email, password, credits) VALUES ($1, $2, 0)", email, hashedPassword)
 	if err != nil {
-		log.Fatal("Error querying database:", err)
+		return err
 	}
 	return err
 }
