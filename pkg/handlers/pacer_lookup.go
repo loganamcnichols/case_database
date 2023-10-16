@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/loganamcnichols/case_database/pkg/db"
 	"github.com/loganamcnichols/case_database/pkg/scraper"
 )
 
@@ -25,15 +26,31 @@ func PacerLookupHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not load template", http.StatusInternalServerError)
 		return
 	}
+	cnx, err := db.Connect()
+	if err != nil {
+		log.Println(err)
+		defer cnx.Close()
+	}
+
+	userID := CheckSession(r)
+	defer cnx.Close()
+	creditRows := cnx.QueryRow("SELECT credits FROM users WHERE id = $1", userID)
+	var credits int
+	err = creditRows.Scan(&credits)
+	if err != nil {
+		log.Printf("Error scanning row: %v", err)
+	}
 
 	data := struct {
 		Title         string
 		UserID        int
 		PacerLoggedIn bool
+		Credits       int
 	}{
 		Title:         "Pacer Lookup - Case Database",
-		UserID:        CheckSession(r),
+		UserID:        userID,
 		PacerLoggedIn: CheckPacerSession(r),
+		Credits:       credits,
 	}
 
 	err = tmpl.Execute(w, data)
