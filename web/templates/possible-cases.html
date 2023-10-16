@@ -1,9 +1,11 @@
 <div>
     {{range .Cases.Cases}}
-    <div hx-get="/pacer-lookup-case"
-        hx-vals='{"caseID": "{{.ID}}", "caseNumber": "{{.Number}}", "court": "{{$.Court}}"}'
-        hx-swap="outerHTML">
-        {{.Title}}
+    <div class="case-row" hx-get="/pacer-lookup-case"
+        hx-vals='{"caseID": "{{.ID}}", "caseNumber": "{{.Number}}", "court": "{{$.Court}}"}' hx-swap="outerHTML">
+        <div>
+            {{.Title}}
+        </div>
+        <img class="indicator htmx-indicator" src="/img/indicator.svg" />
     </div>
     {{end}}
 </div>

@@ -137,3 +137,8 @@ a {
 .case-row:hover {
     color:#1574c7;
 }
+
+.indicator {
+    width: 3rem;
+    height: 2rem;
+}
