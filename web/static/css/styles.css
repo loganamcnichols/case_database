@@ -2,12 +2,22 @@ input {
   border: none;
   outline: none;
 }
+button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
 select {
     border: none;
     outline: none;
     color: black;
 }
 input, input:focus {
+    height: 2rem;
+    border-radius: 0.25rem;
+    border: 2px solid black;
+}
+button {
     height: 2rem;
     border-radius: 0.25rem;
     border: 2px solid black;
