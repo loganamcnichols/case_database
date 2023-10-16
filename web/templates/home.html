@@ -40,6 +40,7 @@
             </nav>
         </div>
     </header>
+    <hr>
     <main>
         <h1>We exists for one purpose, to make court case documents as cheap as possible</h1>
         <h2>How it works</h2>
@@ -179,9 +180,38 @@
 
         <div>
             {{range .Cases}}
-            <div hx-get="/pacer-lookup-case"
-                hx-vals='{"id": "{{.ID}}", "caseID": "{{.PacerID}}", "caseNumber": "{{.Number}}", "court": "{{.CourtID}}"}'>
-                {{.Title}}
+            <div class="case-row">
+                <div hx-get="/pacer-lookup-case"
+                    hx-vals='{"id": "{{.ID}}", "caseID": "{{.PacerID}}", "caseNumber": "{{.Number}}", "court": "{{.CourtID}}"}'
+                    hx-indicator=".indicator">
+                    {{.Title}}
+                </div>
+                <svg class="indicator htmx-indicator" viewbox="0 0 75 50" width="3rem" height="2rem" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Background -->
+                    <rect width="100%" height="100%" fill="#fff"/>
+                    <!-- Bars with animation -->
+                    <!-- Bar 1 -->
+                    <rect x="10" y="20" width="5" fill="#000">
+                        <animate attributeName="height" values="10;30;10" dur="1s" repeatCount="indefinite"/>
+                        <animate attributeName="y" values="20;10;20" dur="1s" repeatCount="indefinite"/>
+                    </rect>
+                    <!-- Bar 2 -->
+                    <rect x="20" y="20" width="5" fill="#000">
+                        <animate attributeName="height" values="10;30;10" dur="1s" begin="0.2s" repeatCount="indefinite"/>
+                        <animate attributeName="y" values="20;10;20" dur="1s" begin="0.2s" repeatCount="indefinite"/>
+                    </rect>
+                    <!-- Bar 3 -->
+                    <rect x="30" y="20" width="5" fill="#000">
+                        <animate attributeName="height" values="10;30;10" dur="1s" begin="0.4s" repeatCount="indefinite"/>
+                        <animate attributeName="y" values="20;10;20" dur="1s" begin="0.4s" repeatCount="indefinite"/>
+                    </rect>
+                    <!-- Bar 4 -->
+                    <rect x="40" y="20" width="5" fill="#000">
+                        <animate attributeName="height" values="10;30;10" dur="1s" begin="0.6s" repeatCount="indefinite"/>
+                        <animate attributeName="y" values="20;10;20" dur="1s" begin="0.6s" repeatCount="indefinite"/>
+                    </rect>
+                </svg>
+
             </div>
             {{end}}
         </div>
