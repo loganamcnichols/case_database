@@ -1,3 +1,23 @@
+input {
+  border: none;
+  outline: none;
+}
+select {
+    border: none;
+    outline: none;
+    color: black;
+}
+input, input:focus {
+    height: 2rem;
+    border-radius: 0.25rem;
+    border: 2px solid black;
+}
+
+select, select:focus {
+    height: 2rem;
+    border-radius: 0.25rem;
+    border: 2px solid black;
+}
 html {
     font-size: 16px;
     box-sizing: border-box;
@@ -63,10 +83,6 @@ select, option, input, button {
     line-height: 150%;
 }
 
-input {
-    height: 2rem;
-    border-radius: 0.25rem;
-}
 
 select {
     height: 2rem;
@@ -88,4 +104,26 @@ main {
 
 .logo {
     font-family: 'Titillium Web', sans-serif;
+}
+
+hr {
+    height: 2px;
+    background-color: black;
+    border: none;   
+}
+
+a {
+    font-weight: 600;
+}
+
+.case-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    gap: 1rem;
+}
+
+.case-row:hover {
+    color:#1574c7;
 }
