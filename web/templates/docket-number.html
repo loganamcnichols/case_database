@@ -1,8 +1,10 @@
 <form hx-post="pacer-lookup-docket-request" hx-vals='{"case-id": "{{.CaseID}}", "court": "{{.Court}}"}'>
     <label for="dockent-number-input">Request a docket number:</label>
     <input type="number" id="docket-number-input" name="docket-number" min="1" max="{{.Count}}" />
-    <button type="submit" value="Submit">Submit</button>
+    <button type="submit" value="Submit" htmx-indicator="closest .indicator">Submit</button>
+    <img class="indicator htmx-indicator" src="/img/indicator.svg" />
 </form>
 <form hx-post="pacer-lookup-summary-request" hx-vals='{"case-id": "{{.CaseID}}", "court": "{{.Court}}"}'>
-    <button type="submit" value="Submit">Docket Summary</button>
+    <button type="submit" value="Submit" htmx-indicator="closest .indicator">Docket Summary</button>
+    <img class="indicator htmx-indicator" src="/img/indicator.svg" />
 </form>
