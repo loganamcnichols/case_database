@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300&family=Work+Sans:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300&family=Work+Sans:wght@300&display=swap"
+        rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400&display=swap" rel="stylesheet">
@@ -21,7 +22,7 @@
         <div class="navigation">
             <nav>
                 <a href="/">Browse</a> |
-                <a href="/pacer-lookup">Pacer Lookup</a> 
+                <a href="/pacer-lookup">Pacer Lookup</a>
             </nav>
             <nav>
                 <a href="/login">Log In</a> |
@@ -31,7 +32,7 @@
         </div>
     </header>
     <main>
-        <form hx-post="/pacer-lookup-submit" , hx-target="#response">
+        <form hx-post="/pacer-lookup-submit" , hx-target="#response" hx-indicator=".indicator">
             <select name="court">
                 <option value="" disabled selected>Select Court</option>
                 <option value="almb">Alabama Middle Bankruptcy Court</option>
@@ -248,9 +249,37 @@
             </select>
             <input type="text" name="docket" placeholder="Docket # (e.g., AR-00100)" />
             <button type="submit" value="Submit">Submit</button>
+
+            <svg class="indicator htmx-indicator" viewbox="0 0 75 50" width="3rem" height="2rem"
+                xmlns="http://www.w3.org/2000/svg">
+                <!-- Background -->
+                <rect width="100%" height="100%" fill="#fff" />
+                <!-- Bars with animation -->
+                <!-- Bar 1 -->
+                <rect x="10" y="20" width="5" fill="#000">
+                    <animate attributeName="height" values="10;30;10" dur="1s" repeatCount="indefinite" />
+                    <animate attributeName="y" values="20;10;20" dur="1s" repeatCount="indefinite" />
+                </rect>
+                <!-- Bar 2 -->
+                <rect x="20" y="20" width="5" fill="#000">
+                    <animate attributeName="height" values="10;30;10" dur="1s" begin="0.2s" repeatCount="indefinite" />
+                    <animate attributeName="y" values="20;10;20" dur="1s" begin="0.2s" repeatCount="indefinite" />
+                </rect>
+                <!-- Bar 3 -->
+                <rect x="30" y="20" width="5" fill="#000">
+                    <animate attributeName="height" values="10;30;10" dur="1s" begin="0.4s" repeatCount="indefinite" />
+                    <animate attributeName="y" values="20;10;20" dur="1s" begin="0.4s" repeatCount="indefinite" />
+                </rect>
+                <!-- Bar 4 -->
+                <rect x="40" y="20" width="5" fill="#000">
+                    <animate attributeName="height" values="10;30;10" dur="1s" begin="0.6s" repeatCount="indefinite" />
+                    <animate attributeName="y" values="20;10;20" dur="1s" begin="0.6s" repeatCount="indefinite" />
+                </rect>
+            </svg>
         </form>
         <!-- Placeholder text or area to display results from the Pacer Lookup -->
-        <div id="response">Placeholder text</div>
+        <div id="response">
+        </div>
     </main>
 </body>
 
