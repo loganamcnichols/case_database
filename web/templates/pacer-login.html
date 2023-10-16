@@ -20,15 +20,45 @@
         <h1 class="logo">Case Load</h1>
         <div class="navigation">
             <nav>
-                <a href="/">Browse</a> |
-                <a href="/pacer-lookup">Pacer Portal</a> 
+                <a href="/">
+                    <div class="nav-div">
+                        Browse
+                    </div>
+                </a>
+                <a href="/pacer-lookup">
+                    <div class="nav-div">
+                        Pacer Lookup
+                    </div>
+                </a>
             </nav>
             <nav>
                 {{if gt .UserID 0}}
-                    <a href="/buy-credits">Buy Credits</a>
+                <div class="logged-in-nav">
+                    <div>Available Credits: {{.Credits}}</div>
+                    <div>
+                        <a href="/view-docs">
+                            <div class="nav-div">
+                                View Docs
+                            </div>
+                        </a>
+                        <a href="/buy-credits">
+                            <div class="nav-div">
+                                Buy Credits
+                            </div>
+                        </a>
+                    </div>
+                </div>
                 {{else}}
-                    <a href="/login">Log In</a> |
-                    <a href="/signup">Sign Up</a>
+                <a href="/login">
+                    <div class="nav-div">
+                        Log In
+                    </div>
+                </a>
+                <a href="/signup">
+                    <div class="nav-div">
+                        Sign Up
+                    </div>
+                </a>
                 {{end}}
             </nav>
             </nav>

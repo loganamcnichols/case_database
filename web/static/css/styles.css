@@ -1,3 +1,12 @@
+body, html {
+    margin: 0;
+    padding: 0; 
+    font-size: 16px;
+    box-sizing: border-box;
+    font-family:'Work Sans', sans-serif;
+    font-weight: 400;
+    line-height: 200%;
+}
 input {
   border: none;
   outline: none;
@@ -28,13 +37,6 @@ select, select:focus {
     border-radius: 0.25rem;
     border: 2px solid black;
 }
-html {
-    font-size: 16px;
-    box-sizing: border-box;
-    font-family:'Work Sans', sans-serif;
-    font-weight: 400;
-    line-height: 200%;
-}
 
 h1 {
     margin: 2rem 0rem 2rem 0rem;
@@ -52,10 +54,11 @@ h2 {
 }
 
 header {
-    height: 16vh;
+    height: 100px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    border-bottom: 2px solid black;
 }
 
 .navigation {
@@ -122,10 +125,6 @@ hr {
     border: none;   
 }
 
-a {
-    font-weight: 600;
-}
-
 .case-row {
     display: flex;
     flex-direction: row;
@@ -141,4 +140,25 @@ a {
 .indicator {
     width: 3rem;
     height: 2rem;
+}
+
+
+nav {
+    display: flex;
+    flex-direction: row;
+}
+
+
+nav a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.nav-div {
+  border-bottom: 2px solid transparent;
+  margin: 0 1rem 2px 1rem;
+}
+
+.nav-div:hover {
+  border-bottom: 2px solid #000; /* Set color and thickness as desired */
 }
