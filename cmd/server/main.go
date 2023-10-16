@@ -14,6 +14,7 @@ func main() {
 	stripe.Key = os.Getenv("STRIPE_SK")
 	r := mux.NewRouter()
 	r.HandleFunc("/", handlers.HomeHandler).Methods("GET")
+	r.HandleFunc("/browse", handlers.BrowseHandler).Methods("GET")
 	r.HandleFunc("/webhook", handlers.HandleWebhook).Methods("POST")
 	r.HandleFunc("/pacer-lookup", handlers.PacerLookupHandler).Methods("GET") // Add this line
 	r.HandleFunc("/checkout", handlers.CheckoutHandler).Methods("POST")
