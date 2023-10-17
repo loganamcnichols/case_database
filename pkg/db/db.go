@@ -110,7 +110,7 @@ func QueryUserDocs(cnx Execer, userID int) (*sql.Rows, error) {
 	rows, err := cnx.Query(`
 	SELECT cases.title, documents.* FROM documents
 	INNER JOIN users_by_documents ON documents.id = users_by_documents.doc_id 
-	INNER JOIN cases ON documents.case_id = cases.id
+	INNER JOIN cases ON documents.case_id = cases.pacer_id
 	WHERE users_by_documents.user_id = $1`, userID)
 	return rows, err
 }
