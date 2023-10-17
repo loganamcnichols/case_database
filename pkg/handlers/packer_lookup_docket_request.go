@@ -46,7 +46,7 @@ func PacerLookupDocketRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error purchasing document", http.StatusInternalServerError)
 		return
 	}
-	err = scraper.PerformDownload(client, resDoc, downloadLink[0], caseID, docketNumber)
+	_, err = scraper.PerformDownload(client, resDoc, downloadLink[0], caseID, docketNumber)
 	if err != nil {
 		log.Printf("Error performing download: %v", err)
 		http.Error(w, "Error performing download", http.StatusInternalServerError)
