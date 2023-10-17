@@ -242,7 +242,8 @@ func GetDownloadLinks(client *http.Client, url string, referer string, docNo str
 	if err != nil {
 		return downloadLink, deSeqNum, err
 	}
-	document.Find(fmt.Sprintf("a[href^=%s://%s/doc1]", urlObj.Scheme, urlObj.Host)).Each(func(i int, s *goquery.Selection) {
+	fmt.Println(fmt.Sprintf("a[href^=%s://%s/doc1]", urlObj.Scheme, urlObj.Host))
+	document.Find(fmt.Sprintf("a[href^='%s://%s/doc1']", urlObj.Scheme, urlObj.Host)).Each(func(i int, s *goquery.Selection) {
 		downloadLink = append(downloadLink, s.AttrOr("href", ""))
 	})
 	if len(downloadLink) == 0 {
