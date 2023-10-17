@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/loganamcnichols/case_database/pkg/db"
 	"github.com/loganamcnichols/case_database/pkg/scraper"
 )
 
@@ -16,6 +17,7 @@ func PacerLookupDocketRequest(w http.ResponseWriter, r *http.Request) {
 	court := r.FormValue("court")
 
 	nextGenCSO, _ := r.Cookie("NextGenCSO")
+	userID := CheckSession(r)
 
 	client, err := scraper.LoginToPacer("", "", nextGenCSO.Value)
 	if err != nil {
@@ -52,6 +54,23 @@ func PacerLookupDocketRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error performing download", http.StatusInternalServerError)
 		return
 	}
+
+	cnx, err := db.Connect()
+	if err != nil {
+		log.Printf("Error connecting to database: %v", err)
+		return
+	}
+	defer cnx.Close()
+	pages, err := scraper.GetPageCount(client, downloadLink, respURL)
+	if err != nil {
+		log.Printf("Error getting page count: %v", err)
+		http.Error(w, "Error getting page count", http.StatusInternalServerError)
+		return
+	}
+
+	cnx.Exec(`INSERT INTO documents (description, file, doc_number, case_id, pages, user_id)
+				VALUES ('description', $1, $2, $3, $4, $5)`, docketNumber, docketNumber, caseID, pages, userID)
+
 }
 
 func PacerLookupSummaryRequest(w http.ResponseWriter, r *http.Request) {
