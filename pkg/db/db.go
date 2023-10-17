@@ -114,6 +114,14 @@ func QueryUserDocs(cnx Execer, userID int) (*sql.Rows, error) {
 	WHERE users_by_documents.user_id = $1`, userID)
 	return rows, err
 }
+func QueryDocs(cnx Execer) (*sql.Rows, error) {
+	rows, err := cnx.Query(`
+	SELECT cases.title, documents.* FROM documents
+	INNER JOIN users_by_documents ON documents.id = users_by_documents.doc_id 
+	INNER JOIN cases ON documents.case_id = cases.pacer_id
+	LIMIT 10`)
+	return rows, err
+}
 
 func UpdateUserCredits(cnx Execer, userID int, credits int64) error {
 	val, err := cnx.Exec("UPDATE users SET credits = $1 WHERE id = $2", credits, userID)
