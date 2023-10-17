@@ -26,7 +26,7 @@ func TestPurchaseAndDownload(t *testing.T) {
 	if !strings.Contains(src, expectedSRC) {
 		t.Fatalf("PerformDownload() returned incorrect document: %s", src)
 	}
-	err = scraper.PerformDownload(client, resDoc, reqURL, "1348139", "9")
+	_, err = scraper.PerformDownload(client, resDoc, reqURL, "1348139", "9")
 	if err != nil {
 		t.Fatalf("PerformDownload() returned error: %v", err)
 	}
