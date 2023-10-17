@@ -16,10 +16,22 @@ type Case struct {
 	Number  string `db:"case_number"`
 }
 
-type BrowseTemplateData struct {
+type BrowseDocs struct {
+	Title       string `db:"title"`
+	ID          int    `db:"id"`
+	Description string `db:"description"`
+	File        string `db:"file"`
+	DocNumber   int    `db:"doc_number"`
+	CaseID      int    `db:"case_id"`
+	Pages       int    `db:"pages"`
+	UserID      int    `db:"user_id"`
+	Cost        int
+}
+
+type BrowseDocsTemplate struct {
 	UserID        int
 	PacerLoggedIn bool
-	Cases         []Case
+	Docs          []BrowseDocs
 	Credits       int
 }
 
@@ -45,25 +57,26 @@ func BrowseHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Error scanning row: %v", err)
 	}
 
-	rows, err := db.Head(cnx)
+	rows, err := db.QueryDocs(cnx)
 	if err != nil {
 		log.Printf("Error getting top rows: %v", err)
 	}
 
-	var cases []Case
+	var docs []BrowseDocs
 	for rows.Next() {
-		var c Case
-		err = rows.Scan(&c.ID, &c.PacerID, &c.CourtID, &c.Title, &c.Number)
+		var d BrowseDocs
+		err = rows.Scan(&d.Title, &d.ID, &d.Description, &d.File, &d.DocNumber, &d.CaseID, &d.Pages, &d.UserID)
 		if err != nil {
 			log.Printf("Error scanning row: %v", err)
 		}
-		cases = append(cases, c)
+		d.Cost = d.Pages * 10
+		docs = append(docs, d)
 	}
 
-	data := BrowseTemplateData{
+	data := BrowseDocsTemplate{
 		UserID:        userID,
 		PacerLoggedIn: CheckPacerSession(r),
-		Cases:         cases,
+		Docs:          docs,
 		Credits:       credits,
 	}
 

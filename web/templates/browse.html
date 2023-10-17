@@ -182,13 +182,10 @@
         </select>
 
         <div>
-            {{range .Cases}}
-            <div class="case-row" hx-get="/pacer-lookup-case"
-                hx-vals='{"id": "{{.ID}}", "caseID": "{{.PacerID}}", "caseNumber": "{{.Number}}", "court": "{{.CourtID}}"}'>
-                <div>
-                    {{.Title}}
-                </div>
-                <img class="indicator htmx-indicator" src="/img/indicator.svg" />
+            {{range .Docs}}
+            <div class="case-row" hx-get="/on-purchase" hx-vals='{"id": "{{.ID}}"}'>
+                <div>{{.Description}}</div>
+                <div>cost : {{.Cost}}</div>
             </div>
             {{end}}
         </div>
