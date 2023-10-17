@@ -467,8 +467,8 @@ func PerformDownload(client *http.Client, doc *goquery.Document, baseURL string,
 	if resp.StatusCode != http.StatusOK {
 		return dest, fmt.Errorf("recieved non found code")
 	}
-	dest = fmt.Sprintf("pdfs/%s-%s.pdf", caseID, docNum)
-	out, err := os.Create(dest)
+	dest = fmt.Sprintf("%s-%s.pdf", caseID, docNum)
+	out, err := os.Create("pdfs/" + dest)
 	if err != nil {
 		return dest, err
 	}

@@ -12,6 +12,7 @@ type ViewDocsTemplateData struct {
 	UserID        int
 	PacerLoggedIn bool
 	Docs          []Doc
+	Credits       int
 }
 
 type Doc struct {
@@ -21,6 +22,8 @@ type Doc struct {
 	File        string `db:"file"`
 	DocNumber   int    `db:"doc_number"`
 	CaseID      int    `db:"case_id"`
+	Pages       int    `db:"pages"`
+	UserID      int    `db:"user_id"`
 }
 
 func ViewDocsHandler(w http.ResponseWriter, r *http.Request) {
@@ -38,6 +41,13 @@ func ViewDocsHandler(w http.ResponseWriter, r *http.Request) {
 		defer cnx.Close()
 	}
 
+	creditRows := cnx.QueryRow("SELECT credits FROM users WHERE id = $1", userID)
+	var credits int
+	err = creditRows.Scan(&credits)
+	if err != nil {
+		log.Printf("Error scanning row: %v", err)
+	}
+
 	rows, err := db.QueryUserDocs(cnx, userID)
 	if err != nil {
 		log.Printf("Error getting top rows: %v", err)
@@ -46,7 +56,7 @@ func ViewDocsHandler(w http.ResponseWriter, r *http.Request) {
 	var docs []Doc
 	for rows.Next() {
 		var d Doc
-		err = rows.Scan(&d.Title, &d.ID, &d.Description, &d.File, &d.DocNumber, &d.CaseID)
+		err = rows.Scan(&d.Title, &d.ID, &d.Description, &d.File, &d.DocNumber, &d.CaseID, &d.Pages, &d.UserID)
 		if err != nil {
 			log.Printf("Error scanning row: %v", err)
 		}
@@ -57,6 +67,7 @@ func ViewDocsHandler(w http.ResponseWriter, r *http.Request) {
 		UserID:        userID,
 		PacerLoggedIn: CheckPacerSession(r),
 		Docs:          docs,
+		Credits:       credits,
 	}
 
 	err = tmpl.Execute(w, data)
