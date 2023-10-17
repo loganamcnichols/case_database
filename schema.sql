@@ -15,5 +15,5 @@ CREATE TABLE users_by_documents (user_id INT, doc_id INT);
 CREATE INDEX user_id_idx ON users_by_documents (user_id);
 CREATE INDEX doc_id_idx ON users_by_documents (doc_id);
 
-INSERT INTO documents (description, file, doc_number, case_id, pages, user_id) VALUES ('CORPORATE DISCLOSURE STATEMENT', '1320666-2.pdf', 2, 1, 3, 1);
+INSERT INTO documents (description, file, doc_number, case_id, pages, user_id) VALUES ('CORPORATE DISCLOSURE STATEMENT', '1320666-2.pdf', 2, 1320666, 3, 1);
 INSERT INTO users_by_documents (user_id, doc_id) VALUES (1, 1);
