@@ -22,6 +22,8 @@ type Doc struct {
 	File        string `db:"file"`
 	DocNumber   int    `db:"doc_number"`
 	CaseID      int    `db:"case_id"`
+	Pages       int    `db:"pages"`
+	UserID      int    `db:"user_id"`
 }
 
 func ViewDocsHandler(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +56,7 @@ func ViewDocsHandler(w http.ResponseWriter, r *http.Request) {
 	var docs []Doc
 	for rows.Next() {
 		var d Doc
-		err = rows.Scan(&d.Title, &d.ID, &d.Description, &d.File, &d.DocNumber, &d.CaseID)
+		err = rows.Scan(&d.Title, &d.ID, &d.Description, &d.File, &d.DocNumber, &d.CaseID, &d.Pages, &d.UserID)
 		if err != nil {
 			log.Printf("Error scanning row: %v", err)
 		}

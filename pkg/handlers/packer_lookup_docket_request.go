@@ -48,7 +48,7 @@ func PacerLookupDocketRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error purchasing document", http.StatusInternalServerError)
 		return
 	}
-	_, err = scraper.PerformDownload(client, resDoc, downloadLink[0], caseID, docketNumber)
+	file, err := scraper.PerformDownload(client, resDoc, downloadLink[0], caseID, docketNumber)
 	if err != nil {
 		log.Printf("Error performing download: %v", err)
 		http.Error(w, "Error performing download", http.StatusInternalServerError)
@@ -61,16 +61,27 @@ func PacerLookupDocketRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer cnx.Close()
-	pages, err := scraper.GetPageCount(client, downloadLink, respURL)
+	pages, err := scraper.GetPageCount(client, downloadLink[0], respURL)
 	if err != nil {
 		log.Printf("Error getting page count: %v", err)
 		http.Error(w, "Error getting page count", http.StatusInternalServerError)
 		return
 	}
 
-	cnx.Exec(`INSERT INTO documents (description, file, doc_number, case_id, pages, user_id)
-				VALUES ('description', $1, $2, $3, $4, $5)`, docketNumber, docketNumber, caseID, pages, userID)
-
+	var docID int
+	err = cnx.QueryRow(`
+		INSERT INTO documents (description, file, doc_number, case_id, pages, user_id)
+		VALUES ('description', $1, $2, $3, $4, $5) RETURNING id`,
+		file, docketNumber, caseID, pages, userID).Scan(&docID)
+	if err != nil {
+		log.Printf("Error inserting into database: %v", err)
+		return
+	}
+	_, err = cnx.Exec(`INSERT INTO users_by_documents (user_id, doc_id) VALUES ($1, $2)`, userID, docID)
+	if err != nil {
+		log.Printf("Error inserting into database: %v", err)
+		return
+	}
 }
 
 func PacerLookupSummaryRequest(w http.ResponseWriter, r *http.Request) {
