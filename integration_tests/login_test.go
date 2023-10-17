@@ -90,11 +90,11 @@ func TestGetDocumentURL(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetDocumentURL() returned error: %v", err)
 	}
-	downLoadLink, deSeqNumb, err := scraper.GetDownloadLink(client, respURL, requestURL, "1", "72385")
+	downLoadLink, deSeqNumb, err := scraper.GetDownloadLinks(client, respURL, requestURL, "1", "72385")
 	if err != nil {
 		t.Fatalf("GetDocumentURL() returned error: %v", err)
 	}
-	if downLoadLink != expectedResponseURL {
+	if downLoadLink[0] != expectedResponseURL {
 		t.Fatalf("GetDocumentURL() returned incorrect URL: %s", downLoadLink)
 	}
 	if deSeqNumb != expectedDeSeqNumb {
@@ -174,8 +174,8 @@ func TestGetPageCount(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetDocumentURL() returned error: %v", err)
 	}
-	downLoadLink, _, _ := scraper.GetDownloadLink(client, respURL, requestURL, "1", "72385")
-	count, err := scraper.GetPageCount(client, downLoadLink, respURL)
+	downLoadLink, _, _ := scraper.GetDownloadLinks(client, respURL, requestURL, "1", "72385")
+	count, err := scraper.GetPageCount(client, downLoadLink[0], respURL)
 	if err != nil {
 		t.Fatalf("GetPageCount() returned error: %v", err)
 	}

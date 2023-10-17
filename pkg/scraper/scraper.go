@@ -190,8 +190,8 @@ func DocketCountFromCaseId(baseURL string, refererURL string, client *http.Clien
 
 }
 
-func GetDownloadLink(client *http.Client, url string, referer string, docNo string, caseNum string) (string, string, error) {
-	var downloadLink string
+func GetDownloadLinks(client *http.Client, url string, referer string, docNo string, caseNum string) ([]string, string, error) {
+	var downloadLink []string
 	var deSeqNum string
 	var buffer bytes.Buffer
 	writer := multipart.NewWriter(&buffer)
@@ -237,10 +237,18 @@ func GetDownloadLink(client *http.Client, url string, referer string, docNo stri
 	urlObj := resp.Request.URL
 	deSeqNum = urlObj.Query().Get("de_seq_num")
 	urlObj.RawQuery = ""
-	downloadLink = urlObj.String()
 
+	document, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return downloadLink, deSeqNum, err
+	}
+	document.Find(fmt.Sprintf("a[href^=%s://%s/doc1]", urlObj.Scheme, urlObj.Host)).Each(func(i int, s *goquery.Selection) {
+		downloadLink = append(downloadLink, s.AttrOr("href", ""))
+	})
+	if len(downloadLink) == 0 {
+		downloadLink = append(downloadLink, urlObj.String())
+	}
 	return downloadLink, deSeqNum, nil
-
 }
 
 func AppendToEnvFile(key, value string) error {
@@ -394,7 +402,7 @@ func PurchaseDocument(client *http.Client, reqURL string, caseID string, deSeqNu
 	}
 	field3.Write([]byte("1"))
 	writer.Close()
-	field4, err := writer.CreateFormField("pd_toggle_possible")
+	field4, err := writer.CreateFormField("pdf_toggle_possible")
 	if err != nil {
 		return document, err
 	}
