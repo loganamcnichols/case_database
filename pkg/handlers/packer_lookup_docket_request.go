@@ -32,21 +32,21 @@ func PacerLookupDocketRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error getting form URL", http.StatusInternalServerError)
 		return
 	}
-	downloadLink, deSeqNum, err := scraper.GetDownloadLink(client, respURL, requestURL, docketNumber, caseID)
+	downloadLink, deSeqNum, err := scraper.GetDownloadLinks(client, respURL, requestURL, docketNumber, caseID)
 	if err != nil {
 		log.Printf("Error getting download link: %v", err)
 		http.Error(w, "Error getting download link", http.StatusInternalServerError)
 		return
 	}
 	log.Printf("Received docket number: %s, caseID: %s, court: %s", docketNumber, caseID, court)
-	resDoc, err := scraper.PurchaseDocument(client, downloadLink, caseID, deSeqNum)
+	resDoc, err := scraper.PurchaseDocument(client, downloadLink[0], caseID, deSeqNum)
 	fmt.Println(resDoc.Find("body").Text())
 	if err != nil {
 		log.Printf("Error purchasing document: %v", err)
 		http.Error(w, "Error purchasing document", http.StatusInternalServerError)
 		return
 	}
-	err = scraper.PerformDownload(client, resDoc, downloadLink, caseID, docketNumber)
+	err = scraper.PerformDownload(client, resDoc, downloadLink[0], caseID, docketNumber)
 	if err != nil {
 		log.Printf("Error performing download: %v", err)
 		http.Error(w, "Error performing download", http.StatusInternalServerError)
