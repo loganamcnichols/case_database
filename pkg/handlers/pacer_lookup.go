@@ -136,6 +136,12 @@ func PacerLookupOnSubmit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(res.Cases) == 0 {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.Write([]byte(`<div>No cases found</div>`))
+		return
+	}
+
 	templateData := CaseTemplateData{
 		Court: court,
 		Cases: res,

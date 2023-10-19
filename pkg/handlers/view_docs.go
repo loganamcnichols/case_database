@@ -15,17 +15,6 @@ type ViewDocsTemplateData struct {
 	Credits       int
 }
 
-type Doc struct {
-	Title       string `db:"title"`
-	ID          int    `db:"id"`
-	Description string `db:"description"`
-	File        string `db:"file"`
-	DocNumber   int    `db:"doc_number"`
-	CaseID      int    `db:"case_id"`
-	Pages       int    `db:"pages"`
-	UserID      int    `db:"user_id"`
-}
-
 func ViewDocsHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("web/templates/view-docs.html")
 	if err != nil {
