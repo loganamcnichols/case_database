@@ -1,5 +1,5 @@
 {{range .Docs}}
 <div class="case-row">
-    <div hx-target="/download-doc">Doc Number: {{.DocNumber}} {{.Description}} ({{.Pages}})</div>
+    <div hx-get="/purchase-doc-credits" hx-vals='{"docID": "{{.ID}}", "file": "{{.File}}", "credits": "{{.Credits}}"}'>Doc Number: {{.DocNumber}} {{.Description}} Pages: ({{.Pages}}) Credits: {{.Credits}}</div>
 </div>
 {{end}}
