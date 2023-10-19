@@ -25,6 +25,8 @@ type Doc struct {
 	CaseID      int    `db:"case_id"`
 	Pages       int    `db:"pages"`
 	UserID      int    `db:"user_id"`
+	PacerID     string `db:"pacer_id"`
+	Court       string `db:"court"`
 }
 
 type BrowseDocs struct {
@@ -196,7 +198,7 @@ func BrowseDocsHandler(w http.ResponseWriter, r *http.Request) {
 	var docs []Doc
 	var d Doc
 	for rows.Next() {
-		if err := rows.Scan(&d.ID, &d.Description, &d.File, &d.DocNumber, &d.CaseID, &d.Pages, &d.UserID); err != nil {
+		if err := rows.Scan(&d.ID, &d.Description, &d.File, &d.DocNumber, &d.CaseID, &d.Pages, &d.UserID, &d.PacerID, &d.Court); err != nil {
 			log.Printf("Error scanning row: %v", err)
 			continue // Skip this iteration and move to the next one
 		}
