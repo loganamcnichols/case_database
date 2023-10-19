@@ -190,31 +190,31 @@ func DocketCountFromCaseId(baseURL string, refererURL string, client *http.Clien
 
 }
 
-func GetDownloadLinks(client *http.Client, url string, referer string, docNo string, caseNum string) ([]string, string, error) {
-	var downloadLink []string
+func GetDocIDs(client *http.Client, url string, referer string, docNo string, caseNum string) ([]string, string, error) {
+	var docIDs []string
 	var deSeqNum string
 	var buffer bytes.Buffer
 	writer := multipart.NewWriter(&buffer)
 
 	field1, err := writer.CreateFormField(fmt.Sprintf("CaseNum_%s", caseNum))
 	if err != nil {
-		return downloadLink, deSeqNum, err
+		return docIDs, deSeqNum, err
 	}
 	field1.Write([]byte("on"))
 
 	field2, err := writer.CreateFormField("document_number")
 	if err != nil {
-		return downloadLink, deSeqNum, err
+		return docIDs, deSeqNum, err
 	}
 	field2.Write([]byte(docNo))
 	writer.Close()
 
 	req, err := http.NewRequest("POST", url, &buffer)
 	if err != nil {
-		return downloadLink, deSeqNum, err
+		return docIDs, deSeqNum, err
 	}
 	if err != nil {
-		return downloadLink, deSeqNum, err
+		return docIDs, deSeqNum, err
 	}
 	req.Header.Set("User-Agent", "loganamcnichols")
 	req.Header.Set("Accept", "text/html")
@@ -223,15 +223,15 @@ func GetDownloadLinks(client *http.Client, url string, referer string, docNo str
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return downloadLink, deSeqNum, err
+		return docIDs, deSeqNum, err
 	}
 	if err != nil {
-		return downloadLink, deSeqNum, err
+		return docIDs, deSeqNum, err
 	}
 
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return downloadLink, deSeqNum, fmt.Errorf("recieved non found code")
+		return docIDs, deSeqNum, fmt.Errorf("recieved non found code")
 	}
 
 	urlObj := resp.Request.URL
@@ -240,16 +240,20 @@ func GetDownloadLinks(client *http.Client, url string, referer string, docNo str
 
 	document, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		return downloadLink, deSeqNum, err
+		return docIDs, deSeqNum, err
 	}
-	fmt.Println(fmt.Sprintf("a[href^=%s://%s/doc1]", urlObj.Scheme, urlObj.Host))
 	document.Find(fmt.Sprintf("a[href^='%s://%s/doc1']", urlObj.Scheme, urlObj.Host)).Each(func(i int, s *goquery.Selection) {
-		downloadLink = append(downloadLink, s.AttrOr("href", ""))
+
+		downloadLink := s.AttrOr("href", "")
+		linkParts := strings.Split(downloadLink, "/")
+		docID := linkParts[len(linkParts)-1]
+		docIDs = append(docIDs, docID)
 	})
-	if len(downloadLink) == 0 {
-		downloadLink = append(downloadLink, urlObj.String())
+
+	if len(docIDs) == 0 {
+		docIDs = append(docIDs, urlObj.String())
 	}
-	return downloadLink, deSeqNum, nil
+	return docIDs, deSeqNum, nil
 }
 
 func AppendToEnvFile(key, value string) error {
@@ -616,4 +620,31 @@ func GetPageCount(client *http.Client, url string, refURL string) (int, error) {
 		}
 	})
 	return pageCount, nil
+}
+
+func GetCostTable(client *http.Client, url string, refURL string) (string, error) {
+	var costTable string
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return costTable, err
+	}
+	req.Header.Set("User-Agent", "loganamcnichols")
+	req.Header.Set("Accept", "text/html")
+	req.Header.Set("Referer", refURL)
+	resp, err := client.Do(req)
+	if err != nil {
+		return costTable, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return costTable, fmt.Errorf("recieved non found code")
+	}
+	document, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return costTable, err
+	}
+
+	table := document.Find("table")
+	costTable, err = table.Html()
+	return costTable, nil
 }
