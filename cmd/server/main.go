@@ -17,6 +17,8 @@ func main() {
 	r.HandleFunc("/credits", handlers.CreditsHandler).Methods("GET")
 	r.HandleFunc("/home", handlers.HomeHandler).Methods("GET")
 	r.HandleFunc("/browse", handlers.BrowseHandler).Methods("GET")
+	r.HandleFunc("/browse-search", handlers.BrowseSearchHandler).Methods("GET")
+	r.HandleFunc("/browse-scroll", handlers.BrowseScrollHandler).Methods("GET")
 	r.HandleFunc("/webhook", handlers.HandleWebhook).Methods("POST")
 	r.HandleFunc("/pacer-lookup", handlers.PacerLookupHandler).Methods("GET") // Add this line
 	r.HandleFunc("/checkout", handlers.CheckoutHandler).Methods("POST")

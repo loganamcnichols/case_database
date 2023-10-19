@@ -29,32 +29,36 @@ type BrowseDocs struct {
 }
 
 func BrowseHandler(w http.ResponseWriter, r *http.Request) {
-
 	cnx, err := db.Connect()
 	if err != nil {
 		log.Println(err)
 		defer cnx.Close()
 	}
-
-	rows, err := db.QueryDocs(cnx)
+	rows, err := cnx.Query("SELECT * FROM cases LIMIT 20")
 	if err != nil {
-		log.Printf("Error getting top rows: %v", err)
+		log.Println(err)
 	}
-
-	var docs []BrowseDocs
+	defer rows.Close()
+	var cases []Case
+	var c Case
 	for rows.Next() {
-		var d BrowseDocs
-		err = rows.Scan(&d.Title, &d.ID, &d.Description, &d.File, &d.DocNumber, &d.CaseID, &d.Pages, &d.UserID)
-		if err != nil {
+		if err := rows.Scan(&c.ID, &c.PacerID, &c.CourtID, &c.Title, &c.Number); err != nil {
 			log.Printf("Error scanning row: %v", err)
+			continue // Skip this iteration and move to the next one
 		}
-		d.Cost = d.Pages * 10
-		docs = append(docs, d)
+		cases = append(cases, c)
 	}
-
+	data := struct {
+		Cases  []Case
+		Search string
+		CaseID int
+	}{
+		Cases:  cases,
+		CaseID: c.ID,
+	}
 	// Exec full page reload if needed.
 	if isHtmx := r.Header.Get("HX-Request"); isHtmx != "true" {
-		LoadPage(w, r, "web/templates/browse.html", &docs)
+		LoadPage(w, r, "web/templates/browse.html", &data)
 		return
 	}
 	tmpl, err := template.ParseFiles("web/templates/browse.html")
@@ -63,7 +67,104 @@ func BrowseHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = tmpl.Execute(w, &docs)
+	err = tmpl.Execute(w, &data)
+	if err != nil {
+		http.Error(w, "Could not write template", http.StatusInternalServerError)
+	}
+}
+
+func BrowseSearchHandler(w http.ResponseWriter, r *http.Request) {
+	search := r.URL.Query().Get("search")
+
+	cnx, err := db.Connect()
+	if err != nil {
+		log.Println(err)
+		defer cnx.Close()
+	}
+	rows, err := cnx.Query("SELECT * FROM cases WHERE title ILIKE '%' || $1 || '%' LIMIT 20", search)
+	if err != nil {
+		log.Println(err)
+	}
+	defer rows.Close()
+	var cases []Case
+	var c Case
+	for rows.Next() {
+		if err := rows.Scan(&c.ID, &c.PacerID, &c.CourtID, &c.Title, &c.Number); err != nil {
+			log.Printf("Error scanning row: %v", err)
+			continue // Skip this iteration and move to the next one
+		}
+		cases = append(cases, c)
+	}
+
+	data := struct {
+		Cases  []Case
+		Search string
+		caseID int
+	}{
+		Cases:  cases,
+		Search: search,
+		caseID: c.ID,
+	}
+
+	// Exec full page reload if needed.
+	if isHtmx := r.Header.Get("HX-Request"); isHtmx != "true" {
+		LoadPage(w, r, "web/templates/browse-search.html", &data)
+		return
+	}
+	tmpl, err := template.ParseFiles("web/templates/browse-search.html")
+	if err != nil {
+		http.Error(w, "Could not load template", http.StatusInternalServerError)
+		return
+	}
+
+	err = tmpl.Execute(w, &data)
+	if err != nil {
+		http.Error(w, "Could not write template", http.StatusInternalServerError)
+	}
+}
+
+func BrowseScrollHandler(w http.ResponseWriter, r *http.Request) {
+	search := r.URL.Query().Get("search")
+	caseID := r.URL.Query().Get("caseID")
+	cnx, err := db.Connect()
+	if err != nil {
+		log.Println(err)
+		defer cnx.Close()
+	}
+	rows, err := cnx.Query("SELECT * FROM cases WHERE title ILIKE '%' || $1 || '%' AND id > $2 LIMIT 20", search, caseID)
+	if err != nil {
+		log.Println(err)
+	}
+	defer rows.Close()
+	var cases []Case
+	var c Case
+	for rows.Next() {
+		if err := rows.Scan(&c.ID, &c.PacerID, &c.CourtID, &c.Title, &c.Number); err != nil {
+			log.Printf("Error scanning row: %v", err)
+			continue // Skip this iteration and move to the next one
+		}
+		cases = append(cases, c)
+	}
+	data := struct {
+		Cases  []Case
+		Search string
+		caseID int
+	}{
+		Cases:  cases,
+		caseID: c.ID,
+	}
+	// Exec full page reload if needed.
+	if isHtmx := r.Header.Get("HX-Request"); isHtmx != "true" {
+		LoadPage(w, r, "web/templates/browse-scroll.html", &data)
+		return
+	}
+	tmpl, err := template.ParseFiles("web/templates/browse-scroll.html")
+	if err != nil {
+		http.Error(w, "Could not load template", http.StatusInternalServerError)
+		return
+	}
+
+	err = tmpl.Execute(w, &data)
 	if err != nil {
 		http.Error(w, "Could not write template", http.StatusInternalServerError)
 	}
