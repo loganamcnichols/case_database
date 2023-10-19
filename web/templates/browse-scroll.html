@@ -1,5 +1,5 @@
 {{range .Cases}}
-<div class="case-row" hx-get="/browse-docs" hx-vals='{"caseID": "{{.ID}}"}'>
+<div class="case-row" hx-get="/browse-docs" hx-vals='{"caseID": "{{.PacerID}}"}'>
     {{.Title}}
 </div>
 {{end}}
