@@ -1,10 +1,10 @@
 {{range .Cases}}
-    <div class="case-row" hx-get="/browse-docs" hx-vals='{"caseID": "{{.PacerID}}"}' hx-target="#doc-list-{{.PacerID}}">
-        <div>
-            {{.Title}}
-        </div>
-        <img class="plus" src="/img/plus.svg" />
+<div class="case-row" hx-get="/browse-docs" hx-vals='{"caseID": "{{.PacerID}}"}' hx-swap="outerHTML">
+    <div id="title" hx-preserve="true">
+        {{.Title}}
     </div>
-    <div id="doc-list-{{.PacerID}}" class="doc-list"></div>
+    <img class="plus" src="/img/plus.svg" />
+</div>
 {{end}}
-<div hx-get="/browse-scroll" hx-trigger="revealed" hx-swap="outerHTML" hx-vals='{"search": "{{.Search}}", "caseID": "{{.CaseID}}"}'></div>
+<div hx-get="/browse-scroll" hx-trigger="revealed" hx-swap="outerHTML"
+    hx-vals='{"search": "{{.Search}}", "caseID": "{{.CaseID}}"}'></div>

@@ -202,9 +202,11 @@ func BrowseDocsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		Docs []DocInfo
+		Docs    []DocInfo
+		PacerID string
 	}{
-		Docs: docs,
+		Docs:    docs,
+		PacerID: caseID,
 	}
 	tmpl, err := template.ParseFiles("web/templates/browse-docs.html")
 	if err != nil {
