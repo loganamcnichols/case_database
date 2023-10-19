@@ -41,13 +41,6 @@ func ViewDocsHandler(w http.ResponseWriter, r *http.Request) {
 		defer cnx.Close()
 	}
 
-	creditRows := cnx.QueryRow("SELECT credits FROM users WHERE id = $1", userID)
-	var credits int
-	err = creditRows.Scan(&credits)
-	if err != nil {
-		log.Printf("Error scanning row: %v", err)
-	}
-
 	rows, err := db.QueryUserDocs(cnx, userID)
 	if err != nil {
 		log.Printf("Error getting top rows: %v", err)
@@ -63,14 +56,7 @@ func ViewDocsHandler(w http.ResponseWriter, r *http.Request) {
 		docs = append(docs, d)
 	}
 
-	data := ViewDocsTemplateData{
-		UserID:        userID,
-		PacerLoggedIn: CheckPacerSession(r),
-		Docs:          docs,
-		Credits:       credits,
-	}
-
-	err = tmpl.Execute(w, data)
+	err = tmpl.Execute(w, docs)
 	if err != nil {
 		http.Error(w, "Could not write template", http.StatusInternalServerError)
 	}

@@ -1,298 +1,224 @@
-<!DOCTYPE html>
-<html lang="en">
+<main>
+    <form hx-post="/pacer-lookup-submit" , hx-target="#response" hx-indicator=".indicator">
+        <select name="court">
+            <option value="" disabled selected>Select Court</option>
+            <option value="almb">Alabama Middle Bankruptcy Court</option>
+            <option value="almd">Alabama Middle District Court</option>
+            <option value="alnb">Alabama Northern Bankruptcy Court</option>
+            <option value="alnd">Alabama Northern District Court</option>
+            <option value="alsb">Alabama Southern Bankruptcy Court</option>
+            <option value="alsd">Alabama Southern District Court</option>
+            <option value="akb">Alaska Bankruptcy Court</option>
+            <option value="akd">Alaska District Court</option>
+            <option value="azb">Arizona Bankruptcy Court</option>
+            <option value="azd">Arizona District Court</option>
+            <option value="areb">Arkansas Eastern Bankruptcy Court</option>
+            <option value="ared">Arkansas Eastern District Court</option>
+            <option value="arwb">Arkansas Western Bankruptcy Court</option>
+            <option value="arwd">Arkansas Western District Court</option>
+            <option value="cacb">California Central Bankruptcy Court</option>
+            <option value="cacd">California Central District Court</option>
+            <option value="caeb">California Eastern Bankruptcy Court</option>
+            <option value="caed">California Eastern District Court</option>
+            <option value="canb">California Northern Bankruptcy Court</option>
+            <option value="cand">California Northern District Court</option>
+            <option value="casb">California Southern Bankruptcy Court</option>
+            <option value="casd">California Southern District Court</option>
+            <option value="cob">Colorado Bankruptcy Court</option>
+            <option value="cod">Colorado District Court</option>
+            <option value="ctb">Connecticut Bankruptcy Court</option>
+            <option value="ctd">Connecticut District Court</option>
+            <option value="deb">Delaware Bankruptcy Court</option>
+            <option value="ded">Delaware District Court</option>
+            <option value="dcb">District of Columbia Bankruptcy Court</option>
+            <option value="dcd">District of Columbia District Court</option>
+            <option value="flmb">Florida Middle Bankruptcy Court</option>
+            <option value="flmd">Florida Middle District Court</option>
+            <option value="flnb">Florida Northern Bankruptcy Court</option>
+            <option value="flnd">Florida Northern District Court</option>
+            <option value="flsb">Florida Southern Bankruptcy Court</option>
+            <option value="flsd">Florida Southern District Court</option>
+            <option value="gamb">Georgia Middle Bankruptcy Court</option>
+            <option value="gamd">Georgia Middle District Court</option>
+            <option value="ganb">Georgia Northern Bankruptcy Court</option>
+            <option value="gand">Georgia Northern District Court</option>
+            <option value="gasb">Georgia Southern Bankruptcy Court</option>
+            <option value="gasd">Georgia Southern District Court</option>
+            <option value="gub">Guam Bankruptcy Court</option>
+            <option value="gud">Guam District Court</option>
+            <option value="hib">Hawaii Bankruptcy Court</option>
+            <option value="hid">Hawaii District Court</option>
+            <option value="idb">Idaho Bankruptcy Court</option>
+            <option value="idd">Idaho District Court</option>
+            <option value="ilcb">Illinois Central Bankruptcy Court</option>
+            <option value="ilcd">Illinois Central District Court</option>
+            <option value="ilnb">Illinois Northern Bankruptcy Court</option>
+            <option value="ilnd">Illinois Northern District Court</option>
+            <option value="ilsb">Illinois Southern Bankruptcy Court</option>
+            <option value="ilsd">Illinois Southern District Court</option>
+            <option value="innb">Indiana Northern Bankruptcy Court</option>
+            <option value="innd">Indiana Northern District Court</option>
+            <option value="insb">Indiana Southern Bankruptcy Court</option>
+            <option value="insd">Indiana Southern District Court</option>
+            <option value="ianb">Iowa Northern Bankruptcy Court</option>
+            <option value="iand">Iowa Northern District Court</option>
+            <option value="iasb">Iowa Southern Bankruptcy Court</option>
+            <option value="iasd">Iowa Southern District Court</option>
+            <option value="jpml">Judicial Panel On Multidistrict Litigation</option>
+            <option value="ksb">Kansas Bankruptcy Court</option>
+            <option value="ksd">Kansas District Court</option>
+            <option value="kyeb">Kentucky Eastern Bankruptcy Court</option>
+            <option value="kyed">Kentucky Eastern District Court</option>
+            <option value="kywb">Kentucky Western Bankruptcy Court</option>
+            <option value="kywd">Kentucky Western District Court</option>
+            <option value="laeb">Louisiana Eastern Bankruptcy Court</option>
+            <option value="laed">Louisiana Eastern District Court</option>
+            <option value="lamb">Louisiana Middle Bankruptcy Court</option>
+            <option value="lamd">Louisiana Middle District Court</option>
+            <option value="lawb">Louisiana Western Bankruptcy Court</option>
+            <option value="lawd">Louisiana Western District Court</option>
+            <option value="meb">Maine Bankruptcy Court</option>
+            <option value="med">Maine District Court</option>
+            <option value="mdb">Maryland Bankruptcy Court</option>
+            <option value="mdd">Maryland District Court</option>
+            <option value="mab">Massachusetts Bankruptcy Court</option>
+            <option value="mad">Massachusetts District Court</option>
+            <option value="mieb">Michigan Eastern Bankruptcy Court</option>
+            <option value="mied">Michigan Eastern District Court</option>
+            <option value="miwb">Michigan Western Bankruptcy Court</option>
+            <option value="miwd">Michigan Western District Court</option>
+            <option value="mnb">Minnesota Bankruptcy Court</option>
+            <option value="mnd">Minnesota District Court</option>
+            <option value="msnb">Mississippi Northern Bankruptcy Court</option>
+            <option value="msnd">Mississippi Northern District Court</option>
+            <option value="mssb">Mississippi Southern Bankruptcy Court</option>
+            <option value="mssd">Mississippi Southern District Court</option>
+            <option value="moeb">Missouri Eastern Bankruptcy Court</option>
+            <option value="moed">Missouri Eastern District Court</option>
+            <option value="mowb">Missouri Western Bankruptcy Court</option>
+            <option value="mowd">Missouri Western District Court</option>
+            <option value="mtb">Montana Bankruptcy Court</option>
+            <option value="mtd">Montana District Court</option>
+            <option value="neb">Nebraska Bankruptcy Court</option>
+            <option value="ned">Nebraska District Court</option>
+            <option value="nvb">Nevada Bankruptcy Court</option>
+            <option value="nvd">Nevada District Court</option>
+            <option value="nhb">New Hampshire Bankruptcy Court</option>
+            <option value="nhd">New Hampshire District Court</option>
+            <option value="njb">New Jersey Bankruptcy Court</option>
+            <option value="njd">New Jersey District Court</option>
+            <option value="nmb">New Mexico Bankruptcy Court</option>
+            <option value="nmd">New Mexico District Court</option>
+            <option value="nyeb">New York Eastern Bankruptcy Court</option>
+            <option value="nyed">New York Eastern District Court</option>
+            <option value="nynb">New York Northern Bankruptcy Court</option>
+            <option value="nynd">New York Northern District Court</option>
+            <option value="nysb">New York Southern Bankruptcy Court</option>
+            <option value="nysd">New York Southern District Court</option>
+            <option value="nywb">New York Western Bankruptcy Court</option>
+            <option value="nywd">New York Western District Court</option>
+            <option value="nceb">North Carolina Eastern Bankruptcy Court</option>
+            <option value="nced">North Carolina Eastern District Court</option>
+            <option value="ncmb">North Carolina Middle Bankruptcy Court</option>
+            <option value="ncmd">North Carolina Middle District Court</option>
+            <option value="ncwb">North Carolina Western Bankruptcy Court</option>
+            <option value="ncwd">North Carolina Western District Court</option>
+            <option value="ndb">North Dakota Bankruptcy Court</option>
+            <option value="ndd">North Dakota District Court</option>
+            <option value="nmib">Northern Mariana Islands Bankruptcy</option>
+            <option value="nmid">Northern Mariana Islands District Court</option>
+            <option value="ohnb">Ohio Northern Bankruptcy Court</option>
+            <option value="ohnd">Ohio Northern District Court</option>
+            <option value="ohndad">Ohio Northern District Court (asbestos)</option>
+            <option value="ohsb">Ohio Southern Bankruptcy Court</option>
+            <option value="ohsd">Ohio Southern District Court</option>
+            <option value="okeb">Oklahoma Eastern Bankruptcy Court</option>
+            <option value="oked">Oklahoma Eastern District Court</option>
+            <option value="oknb">Oklahoma Northern Bankruptcy Court</option>
+            <option value="oknd">Oklahoma Northern District Court</option>
+            <option value="okwb">Oklahoma Western Bankruptcy Court</option>
+            <option value="okwd">Oklahoma Western District Court</option>
+            <option value="orb">Oregon Bankruptcy Court</option>
+            <option value="ord">Oregon District Court</option>
+            <option value="uscourts">Pacer Case Locator</option>
+            <option value="paeb">Pennsylvania Eastern Bankruptcy Court</option>
+            <option value="paed">Pennsylvania Eastern District Court</option>
+            <option value="pamb">Pennsylvania Middle Bankruptcy Court</option>
+            <option value="pamd">Pennsylvania Middle District Court</option>
+            <option value="pawb">Pennsylvania Western Bankruptcy Court</option>
+            <option value="pawd">Pennsylvania Western District Court</option>
+            <option value="prb">Puerto Rico Bankruptcy Court</option>
+            <option value="prd">Puerto Rico District Court</option>
+            <option value="rib">Rhode Island Bankruptcy Court</option>
+            <option value="rid">Rhode Island District Court</option>
+            <option value="scb">South Carolina Bankruptcy Court</option>
+            <option value="scd">South Carolina District Court</option>
+            <option value="sdb">South Dakota Bankruptcy Court</option>
+            <option value="sdd">South Dakota District Court</option>
+            <option value="nan">Supreme Court of the United States</option>
+            <option value="tneb">Tennessee Eastern Bankruptcy Court</option>
+            <option value="tned">Tennessee Eastern District Court</option>
+            <option value="tnmb">Tennessee Middle Bankruptcy Court</option>
+            <option value="tnmd">Tennessee Middle District Court</option>
+            <option value="tnwb">Tennessee Western Bankruptcy Court</option>
+            <option value="tnwd">Tennessee Western District Court</option>
+            <option value="txeb">Texas Eastern Bankruptcy Court</option>
+            <option value="txed">Texas Eastern District Court</option>
+            <option value="txnb">Texas Northern Bankruptcy Court</option>
+            <option value="txnd">Texas Northern District Court</option>
+            <option value="txsb">Texas Southern Bankruptcy Court</option>
+            <option value="txsd">Texas Southern District Court</option>
+            <option value="txwb">Texas Western Bankruptcy Court</option>
+            <option value="txwd">Texas Western District Court</option>
+            <option value="cadc">U.S. Court of Appeals, D.C. Circuit</option>
+            <option value="ca8">U.S. Court of Appeals, Eighth Circuit</option>
+            <option value="ca11">U.S. Court of Appeals, Eleventh Circuit</option>
+            <option value="cafc">U.S. Court of Appeals, Federal Circuit</option>
+            <option value="ca5">U.S. Court of Appeals, Fifth Circuit</option>
+            <option value="ca1">U.S. Court of Appeals, First Circuit</option>
+            <option value="ca1">U.S. Court of Appeals, First Circuit BAP</option>
+            <option value="ca4">U.S. Court of Appeals, Fourth Circuit</option>
+            <option value="ca9">U.S. Court of Appeals, Ninth Circuit</option>
+            <option value="ca9">U.S. Court of Appeals, Ninth Circuit BAP</option>
+            <option value="ca2">U.S. Court of Appeals, Second Circuit</option>
+            <option value="ca7">U.S. Court of Appeals, Seventh Circuit</option>
+            <option value="ca6">U.S. Court of Appeals, Sixth Circuit</option>
+            <option value="ca10">U.S. Court of Appeals, Tenth Circuit</option>
+            <option value="ca10">U.S. Court of Appeals, Tenth Circuit BAP</option>
+            <option value="ca3">U.S. Court of Appeals, Third Circuit</option>
+            <option value="cofc">U.S. Court of Federal Claims</option>
+            <option value="cit">U.S. Court of International Trade</option>
+            <option value="utb">Utah Bankruptcy Court</option>
+            <option value="utd">Utah District Court</option>
+            <option value="vtb">Vermont Bankruptcy Court</option>
+            <option value="vtd">Vermont District Court</option>
+            <option value="vib">Virgin Islands Bankruptcy Court</option>
+            <option value="vid">Virgin Islands District Court</option>
+            <option value="vaeb">Virginia Eastern Bankruptcy Court</option>
+            <option value="vaed">Virginia Eastern District Court</option>
+            <option value="vawb">Virginia Western Bankruptcy Court</option>
+            <option value="vawd">Virginia Western District Court</option>
+            <option value="waeb">Washington Eastern Bankruptcy Court</option>
+            <option value="waed">Washington Eastern District Court</option>
+            <option value="wawb">Washington Western Bankruptcy Court</option>
+            <option value="wawd">Washington Western District Court</option>
+            <option value="wvnb">West Virginia Northern Bankruptcy Court</option>
+            <option value="wvnd">West Virginia Northern District Court</option>
+            <option value="wvsb">West Virginia Southern Bankruptcy Court</option>
+            <option value="wvsd">West Virginia Southern District Court</option>
+            <option value="wieb">Wisconsin Eastern Bankruptcy Court</option>
+            <option value="wied">Wisconsin Eastern District Court</option>
+            <option value="wiwb">Wisconsin Western Bankruptcy Court</option>
+            <option value="wiwd">Wisconsin Western District Court</option>
+            <option value="wyb">Wyoming Bankruptcy Court</option>
+            <option value="wyd">Wyoming District Court</option>
 
-<head>
-    <meta charset="UTF-8">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300&family=Work+Sans:wght@300&display=swap"
-        rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/styles.css" />
-    <title>Case Load</title>
-    <script src="https://unpkg.com/htmx.org"></script>
-</head>
-
-<body>
-    <header>
-        <h1 class="logo">Case Load</h1>
-        <div class="navigation">
-            <nav>
-                <a href="/">
-                    <div class="nav-div">
-                       Home 
-                    </div>
-                <a href="/browse">
-                    <div class="nav-div">
-                        Browse
-                    </div>
-                </a>
-                <a href="/pacer-lookup">
-                    <div class="nav-div">
-                        Pacer Lookup
-                    </div>
-                </a>
-            </nav>
-            <nav>
-                {{if gt .UserID 0}}
-                <div class="logged-in-nav">
-                    <div>Available Credits: {{.Credits}}</div>
-                    <div>
-                        <a href="/view-docs">
-                            <div class="nav-div">
-                                View Docs
-                            </div>
-                        </a>
-                        <a href="/buy-credits">
-                            <div class="nav-div">
-                                Buy Credits
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                {{else}}
-                <a href="/login">
-                    <div class="nav-div">
-                        Log In
-                    </div>
-                </a>
-                <a href="/signup">
-                    <div class="nav-div">
-                        Sign Up
-                    </div>
-                </a>
-                {{end}}
-            </nav>
-            </nav>
-        </div>
-    </header>
-    <main>
-        <form hx-post="/pacer-lookup-submit" , hx-target="#response" hx-indicator=".indicator">
-            <select name="court">
-                <option value="" disabled selected>Select Court</option>
-                <option value="almb">Alabama Middle Bankruptcy Court</option>
-                <option value="almd">Alabama Middle District Court</option>
-                <option value="alnb">Alabama Northern Bankruptcy Court</option>
-                <option value="alnd">Alabama Northern District Court</option>
-                <option value="alsb">Alabama Southern Bankruptcy Court</option>
-                <option value="alsd">Alabama Southern District Court</option>
-                <option value="akb">Alaska Bankruptcy Court</option>
-                <option value="akd">Alaska District Court</option>
-                <option value="azb">Arizona Bankruptcy Court</option>
-                <option value="azd">Arizona District Court</option>
-                <option value="areb">Arkansas Eastern Bankruptcy Court</option>
-                <option value="ared">Arkansas Eastern District Court</option>
-                <option value="arwb">Arkansas Western Bankruptcy Court</option>
-                <option value="arwd">Arkansas Western District Court</option>
-                <option value="cacb">California Central Bankruptcy Court</option>
-                <option value="cacd">California Central District Court</option>
-                <option value="caeb">California Eastern Bankruptcy Court</option>
-                <option value="caed">California Eastern District Court</option>
-                <option value="canb">California Northern Bankruptcy Court</option>
-                <option value="cand">California Northern District Court</option>
-                <option value="casb">California Southern Bankruptcy Court</option>
-                <option value="casd">California Southern District Court</option>
-                <option value="cob">Colorado Bankruptcy Court</option>
-                <option value="cod">Colorado District Court</option>
-                <option value="ctb">Connecticut Bankruptcy Court</option>
-                <option value="ctd">Connecticut District Court</option>
-                <option value="deb">Delaware Bankruptcy Court</option>
-                <option value="ded">Delaware District Court</option>
-                <option value="dcb">District of Columbia Bankruptcy Court</option>
-                <option value="dcd">District of Columbia District Court</option>
-                <option value="flmb">Florida Middle Bankruptcy Court</option>
-                <option value="flmd">Florida Middle District Court</option>
-                <option value="flnb">Florida Northern Bankruptcy Court</option>
-                <option value="flnd">Florida Northern District Court</option>
-                <option value="flsb">Florida Southern Bankruptcy Court</option>
-                <option value="flsd">Florida Southern District Court</option>
-                <option value="gamb">Georgia Middle Bankruptcy Court</option>
-                <option value="gamd">Georgia Middle District Court</option>
-                <option value="ganb">Georgia Northern Bankruptcy Court</option>
-                <option value="gand">Georgia Northern District Court</option>
-                <option value="gasb">Georgia Southern Bankruptcy Court</option>
-                <option value="gasd">Georgia Southern District Court</option>
-                <option value="gub">Guam Bankruptcy Court</option>
-                <option value="gud">Guam District Court</option>
-                <option value="hib">Hawaii Bankruptcy Court</option>
-                <option value="hid">Hawaii District Court</option>
-                <option value="idb">Idaho Bankruptcy Court</option>
-                <option value="idd">Idaho District Court</option>
-                <option value="ilcb">Illinois Central Bankruptcy Court</option>
-                <option value="ilcd">Illinois Central District Court</option>
-                <option value="ilnb">Illinois Northern Bankruptcy Court</option>
-                <option value="ilnd">Illinois Northern District Court</option>
-                <option value="ilsb">Illinois Southern Bankruptcy Court</option>
-                <option value="ilsd">Illinois Southern District Court</option>
-                <option value="innb">Indiana Northern Bankruptcy Court</option>
-                <option value="innd">Indiana Northern District Court</option>
-                <option value="insb">Indiana Southern Bankruptcy Court</option>
-                <option value="insd">Indiana Southern District Court</option>
-                <option value="ianb">Iowa Northern Bankruptcy Court</option>
-                <option value="iand">Iowa Northern District Court</option>
-                <option value="iasb">Iowa Southern Bankruptcy Court</option>
-                <option value="iasd">Iowa Southern District Court</option>
-                <option value="jpml">Judicial Panel On Multidistrict Litigation</option>
-                <option value="ksb">Kansas Bankruptcy Court</option>
-                <option value="ksd">Kansas District Court</option>
-                <option value="kyeb">Kentucky Eastern Bankruptcy Court</option>
-                <option value="kyed">Kentucky Eastern District Court</option>
-                <option value="kywb">Kentucky Western Bankruptcy Court</option>
-                <option value="kywd">Kentucky Western District Court</option>
-                <option value="laeb">Louisiana Eastern Bankruptcy Court</option>
-                <option value="laed">Louisiana Eastern District Court</option>
-                <option value="lamb">Louisiana Middle Bankruptcy Court</option>
-                <option value="lamd">Louisiana Middle District Court</option>
-                <option value="lawb">Louisiana Western Bankruptcy Court</option>
-                <option value="lawd">Louisiana Western District Court</option>
-                <option value="meb">Maine Bankruptcy Court</option>
-                <option value="med">Maine District Court</option>
-                <option value="mdb">Maryland Bankruptcy Court</option>
-                <option value="mdd">Maryland District Court</option>
-                <option value="mab">Massachusetts Bankruptcy Court</option>
-                <option value="mad">Massachusetts District Court</option>
-                <option value="mieb">Michigan Eastern Bankruptcy Court</option>
-                <option value="mied">Michigan Eastern District Court</option>
-                <option value="miwb">Michigan Western Bankruptcy Court</option>
-                <option value="miwd">Michigan Western District Court</option>
-                <option value="mnb">Minnesota Bankruptcy Court</option>
-                <option value="mnd">Minnesota District Court</option>
-                <option value="msnb">Mississippi Northern Bankruptcy Court</option>
-                <option value="msnd">Mississippi Northern District Court</option>
-                <option value="mssb">Mississippi Southern Bankruptcy Court</option>
-                <option value="mssd">Mississippi Southern District Court</option>
-                <option value="moeb">Missouri Eastern Bankruptcy Court</option>
-                <option value="moed">Missouri Eastern District Court</option>
-                <option value="mowb">Missouri Western Bankruptcy Court</option>
-                <option value="mowd">Missouri Western District Court</option>
-                <option value="mtb">Montana Bankruptcy Court</option>
-                <option value="mtd">Montana District Court</option>
-                <option value="neb">Nebraska Bankruptcy Court</option>
-                <option value="ned">Nebraska District Court</option>
-                <option value="nvb">Nevada Bankruptcy Court</option>
-                <option value="nvd">Nevada District Court</option>
-                <option value="nhb">New Hampshire Bankruptcy Court</option>
-                <option value="nhd">New Hampshire District Court</option>
-                <option value="njb">New Jersey Bankruptcy Court</option>
-                <option value="njd">New Jersey District Court</option>
-                <option value="nmb">New Mexico Bankruptcy Court</option>
-                <option value="nmd">New Mexico District Court</option>
-                <option value="nyeb">New York Eastern Bankruptcy Court</option>
-                <option value="nyed">New York Eastern District Court</option>
-                <option value="nynb">New York Northern Bankruptcy Court</option>
-                <option value="nynd">New York Northern District Court</option>
-                <option value="nysb">New York Southern Bankruptcy Court</option>
-                <option value="nysd">New York Southern District Court</option>
-                <option value="nywb">New York Western Bankruptcy Court</option>
-                <option value="nywd">New York Western District Court</option>
-                <option value="nceb">North Carolina Eastern Bankruptcy Court</option>
-                <option value="nced">North Carolina Eastern District Court</option>
-                <option value="ncmb">North Carolina Middle Bankruptcy Court</option>
-                <option value="ncmd">North Carolina Middle District Court</option>
-                <option value="ncwb">North Carolina Western Bankruptcy Court</option>
-                <option value="ncwd">North Carolina Western District Court</option>
-                <option value="ndb">North Dakota Bankruptcy Court</option>
-                <option value="ndd">North Dakota District Court</option>
-                <option value="nmib">Northern Mariana Islands Bankruptcy</option>
-                <option value="nmid">Northern Mariana Islands District Court</option>
-                <option value="ohnb">Ohio Northern Bankruptcy Court</option>
-                <option value="ohnd">Ohio Northern District Court</option>
-                <option value="ohndad">Ohio Northern District Court (asbestos)</option>
-                <option value="ohsb">Ohio Southern Bankruptcy Court</option>
-                <option value="ohsd">Ohio Southern District Court</option>
-                <option value="okeb">Oklahoma Eastern Bankruptcy Court</option>
-                <option value="oked">Oklahoma Eastern District Court</option>
-                <option value="oknb">Oklahoma Northern Bankruptcy Court</option>
-                <option value="oknd">Oklahoma Northern District Court</option>
-                <option value="okwb">Oklahoma Western Bankruptcy Court</option>
-                <option value="okwd">Oklahoma Western District Court</option>
-                <option value="orb">Oregon Bankruptcy Court</option>
-                <option value="ord">Oregon District Court</option>
-                <option value="uscourts">Pacer Case Locator</option>
-                <option value="paeb">Pennsylvania Eastern Bankruptcy Court</option>
-                <option value="paed">Pennsylvania Eastern District Court</option>
-                <option value="pamb">Pennsylvania Middle Bankruptcy Court</option>
-                <option value="pamd">Pennsylvania Middle District Court</option>
-                <option value="pawb">Pennsylvania Western Bankruptcy Court</option>
-                <option value="pawd">Pennsylvania Western District Court</option>
-                <option value="prb">Puerto Rico Bankruptcy Court</option>
-                <option value="prd">Puerto Rico District Court</option>
-                <option value="rib">Rhode Island Bankruptcy Court</option>
-                <option value="rid">Rhode Island District Court</option>
-                <option value="scb">South Carolina Bankruptcy Court</option>
-                <option value="scd">South Carolina District Court</option>
-                <option value="sdb">South Dakota Bankruptcy Court</option>
-                <option value="sdd">South Dakota District Court</option>
-                <option value="nan">Supreme Court of the United States</option>
-                <option value="tneb">Tennessee Eastern Bankruptcy Court</option>
-                <option value="tned">Tennessee Eastern District Court</option>
-                <option value="tnmb">Tennessee Middle Bankruptcy Court</option>
-                <option value="tnmd">Tennessee Middle District Court</option>
-                <option value="tnwb">Tennessee Western Bankruptcy Court</option>
-                <option value="tnwd">Tennessee Western District Court</option>
-                <option value="txeb">Texas Eastern Bankruptcy Court</option>
-                <option value="txed">Texas Eastern District Court</option>
-                <option value="txnb">Texas Northern Bankruptcy Court</option>
-                <option value="txnd">Texas Northern District Court</option>
-                <option value="txsb">Texas Southern Bankruptcy Court</option>
-                <option value="txsd">Texas Southern District Court</option>
-                <option value="txwb">Texas Western Bankruptcy Court</option>
-                <option value="txwd">Texas Western District Court</option>
-                <option value="cadc">U.S. Court of Appeals, D.C. Circuit</option>
-                <option value="ca8">U.S. Court of Appeals, Eighth Circuit</option>
-                <option value="ca11">U.S. Court of Appeals, Eleventh Circuit</option>
-                <option value="cafc">U.S. Court of Appeals, Federal Circuit</option>
-                <option value="ca5">U.S. Court of Appeals, Fifth Circuit</option>
-                <option value="ca1">U.S. Court of Appeals, First Circuit</option>
-                <option value="ca1">U.S. Court of Appeals, First Circuit BAP</option>
-                <option value="ca4">U.S. Court of Appeals, Fourth Circuit</option>
-                <option value="ca9">U.S. Court of Appeals, Ninth Circuit</option>
-                <option value="ca9">U.S. Court of Appeals, Ninth Circuit BAP</option>
-                <option value="ca2">U.S. Court of Appeals, Second Circuit</option>
-                <option value="ca7">U.S. Court of Appeals, Seventh Circuit</option>
-                <option value="ca6">U.S. Court of Appeals, Sixth Circuit</option>
-                <option value="ca10">U.S. Court of Appeals, Tenth Circuit</option>
-                <option value="ca10">U.S. Court of Appeals, Tenth Circuit BAP</option>
-                <option value="ca3">U.S. Court of Appeals, Third Circuit</option>
-                <option value="cofc">U.S. Court of Federal Claims</option>
-                <option value="cit">U.S. Court of International Trade</option>
-                <option value="utb">Utah Bankruptcy Court</option>
-                <option value="utd">Utah District Court</option>
-                <option value="vtb">Vermont Bankruptcy Court</option>
-                <option value="vtd">Vermont District Court</option>
-                <option value="vib">Virgin Islands Bankruptcy Court</option>
-                <option value="vid">Virgin Islands District Court</option>
-                <option value="vaeb">Virginia Eastern Bankruptcy Court</option>
-                <option value="vaed">Virginia Eastern District Court</option>
-                <option value="vawb">Virginia Western Bankruptcy Court</option>
-                <option value="vawd">Virginia Western District Court</option>
-                <option value="waeb">Washington Eastern Bankruptcy Court</option>
-                <option value="waed">Washington Eastern District Court</option>
-                <option value="wawb">Washington Western Bankruptcy Court</option>
-                <option value="wawd">Washington Western District Court</option>
-                <option value="wvnb">West Virginia Northern Bankruptcy Court</option>
-                <option value="wvnd">West Virginia Northern District Court</option>
-                <option value="wvsb">West Virginia Southern Bankruptcy Court</option>
-                <option value="wvsd">West Virginia Southern District Court</option>
-                <option value="wieb">Wisconsin Eastern Bankruptcy Court</option>
-                <option value="wied">Wisconsin Eastern District Court</option>
-                <option value="wiwb">Wisconsin Western Bankruptcy Court</option>
-                <option value="wiwd">Wisconsin Western District Court</option>
-                <option value="wyb">Wyoming Bankruptcy Court</option>
-                <option value="wyd">Wyoming District Court</option>
-
-            </select>
-            <input type="text" name="docket" placeholder="Docket # (e.g., AR-00100)" />
-            <button type="submit" value="Submit">Submit</button>
-            <img class="indicator htmx-indicator" src="/img/indicator.svg" />
-        </form>
-        <!-- Placeholder text or area to display results from the Pacer Lookup -->
-        <div id="response">
-        </div>
-    </main>
-</body>
-
-</html>
+        </select>
+        <input type="text" name="docket" placeholder="Docket # (e.g., AR-00100)" />
+        <button type="submit" value="Submit">Submit</button>
+        <img class="indicator htmx-indicator" src="/img/indicator.svg" />
+    </form>
+    <!-- Placeholder text or area to display results from the Pacer Lookup -->
+    <div id="response">
+    </div>
+</main>

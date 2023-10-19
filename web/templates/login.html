@@ -1,93 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300&family=Work+Sans:wght@300&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/styles.css" />
-    <title>Case Load</title>
-    <script src="https://unpkg.com/htmx.org"></script>
-</head>
-
-<body>
-    <header>
-        <h1 class="logo">Case Load</h1>
-        <div class="navigation">
-            <nav>
-                <a href="/">
-                    <div class="nav-div">
-                       Home 
-                    </div>
-                <a href="/browse">
-                    <div class="nav-div">
-                        Browse
-                    </div>
-                </a>
-                <a href="/pacer-lookup">
-                    <div class="nav-div">
-                        Pacer Lookup
-                    </div>
-                </a>
-            </nav>
-            <nav>
-                {{if gt .UserID 0}}
-                <div class="logged-in-nav">
-                    <div>Available Credits: {{.Credits}}</div>
-                    <div>
-                        <a href="/view-docs">
-                            <div class="nav-div">
-                                View Docs
-                            </div>
-                        </a>
-                        <a href="/buy-credits">
-                            <div class="nav-div">
-                                Buy Credits
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                {{else}}
-                <a href="/login">
-                    <div class="nav-div">
-                        Log In
-                    </div>
-                </a>
-                <a href="/signup">
-                    <div class="nav-div">
-                        Sign Up
-                    </div>
-                </a>
-                {{end}}
-            </nav>
-            </nav>
-        </div>
-    </header>
-    <main>
-        <section class="login-section">
-            <h2>Login</h2>
-            <form action="/login-submit" method="post">
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" name="email" id="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" name="password" id="password" required>
-                </div>
-                <button type="submit">Log In</button>
-            </form>
-        </section>
-    </main>
-
-    <footer>
-        <!-- Include any footer information here -->
-    </footer>
-</body>
-
-</html>
+<main>
+    <section class="login-section">
+        <h2>Login</h2>
+        <form action="/login-submit" method="post">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" name="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" name="password" id="password" required>
+            </div>
+            <button type="submit" value="Submit">Log In</button>
+        </form>
+    </section>
+</main>

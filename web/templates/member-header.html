@@ -1,0 +1,40 @@
+<header>
+    <h1 class="logo">Case Load</h1>
+    <div class="navigation">
+        <nav>
+            <a hx-get="/home" hx-target="main">
+                <div class="nav-div">
+                    Home
+                </div>
+            </a>
+            <a hx-get="/browse" hx-target="main" hx-push-url="true">
+                <div class="nav-div">
+                    Browse
+                </div>
+            </a>
+            <a hx-get="/pacer-lookup" hx-target="main" hx-push-url="true">
+                <div class="nav-div">
+                    Pacer Lookup
+                </div>
+            </a>
+        </nav>
+        <div class="logged-in-nav">
+            <div class="blank-nav-div" hx-get="/credits" hx-trigger="every 3s">
+                Available Credits: 
+                <img class="indicator" src="/img/indicator.svg" />
+            </div>
+            <nav>
+                <a hx-get="/view-docs" hx-target="main" hx-push-url="true">
+                    <div class="nav-div"> 
+                        View Docs
+                    </div>
+                </a>
+                <a hx-get="/buy-credits" hx-target="main" hx-push-url="true" >
+                    <div class="nav-div">
+                        Buy Credits
+                    </div>
+                </a>
+            </nav>
+        </div>
+    </div>
+</header>
