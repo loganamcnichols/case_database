@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/loganamcnichols/case_database/pkg/db"
@@ -220,9 +221,18 @@ func BrowseDocsHandler(w http.ResponseWriter, r *http.Request) {
 func PurchaseDocCreditsHandler(w http.ResponseWriter, r *http.Request) {
 	docID := r.URL.Query().Get("docID")
 	file := r.URL.Query().Get("file")
-	credits := r.URL.Query().Get("credits")
+	creditsDue, err := strconv.Atoi(r.URL.Query().Get("credits"))
+	if err != nil {
+		log.Println(err)
+	}
 
 	userID := CheckSession(r)
+	if userID == 0 {
+		w.Header().Set("HX-Retarget", "main")
+		LoginHandler(w, r)
+		return
+	}
+
 	cnx, err := db.Connect()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -230,9 +240,15 @@ func PurchaseDocCreditsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer cnx.Close()
+	var credits int
+	cnx.QueryRow("SELECT credits FROM users WHERE id = $1", userID).Scan(&credits)
 
-	cnx.Exec("INSERT INTO users_by_documents (user_id, doc_id) VALUES ($1, $2)", userID, docID)
-	cnx.Exec("UPDATE users SET credits = credits - $1 WHERE id = $2", credits, userID)
+	if credits > creditsDue {
+		cnx.Exec("INSERT INTO users_by_documents (user_id, doc_id) VALUES ($1, $2)", userID, docID)
+		cnx.Exec("UPDATE users SET credits = credits - $1 WHERE id = $2", creditsDue, userID)
+	} else {
+		w.Write([]byte("Not enough credits"))
+	}
 
 	tmpl, err := template.ParseFiles("web/templates/view-pdf.html")
 	if err != nil {
@@ -249,7 +265,8 @@ func ViewPDFHandler(w http.ResponseWriter, r *http.Request) {
 	file := pathPart[len(pathPart)-1]
 	userID := CheckSession(r)
 	if userID == 0 {
-		http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
+		w.Header().Set("HX-Retarget", "main")
+		LoginHandler(w, r)
 		return
 	}
 	cnx, err := db.Connect()
