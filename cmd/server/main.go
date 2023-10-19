@@ -15,6 +15,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", handlers.HomeHandler).Methods("GET", "POST")
 	r.HandleFunc("/credits", handlers.CreditsHandler).Methods("GET")
+	r.HandleFunc("/browse-docs", handlers.BrowseDocsHandler).Methods("GET")
 	r.HandleFunc("/home", handlers.HomeHandler).Methods("GET")
 	r.HandleFunc("/browse", handlers.BrowseHandler).Methods("GET")
 	r.HandleFunc("/browse-search", handlers.BrowseSearchHandler).Methods("GET")

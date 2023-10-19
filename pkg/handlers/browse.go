@@ -16,6 +16,17 @@ type Case struct {
 	Number  string `db:"case_number"`
 }
 
+type Doc struct {
+	Title       string `db:"title"`
+	ID          int    `db:"id"`
+	Description string `db:"description"`
+	File        string `db:"file"`
+	DocNumber   int    `db:"doc_number"`
+	CaseID      int    `db:"case_id"`
+	Pages       int    `db:"pages"`
+	UserID      int    `db:"user_id"`
+}
+
 type BrowseDocs struct {
 	Title       string `db:"title"`
 	ID          int    `db:"id"`
@@ -159,6 +170,44 @@ func BrowseScrollHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tmpl, err := template.ParseFiles("web/templates/browse-scroll.html")
+	if err != nil {
+		http.Error(w, "Could not load template", http.StatusInternalServerError)
+		return
+	}
+
+	err = tmpl.Execute(w, &data)
+	if err != nil {
+		http.Error(w, "Could not write template", http.StatusInternalServerError)
+	}
+}
+
+func BrowseDocsHandler(w http.ResponseWriter, r *http.Request) {
+	caseID := r.URL.Query().Get("caseID")
+	cnx, err := db.Connect()
+	if err != nil {
+		log.Println(err)
+		defer cnx.Close()
+	}
+	rows, err := cnx.Query("SELECT * FROM docs WHERE case_id = $1", caseID)
+	if err != nil {
+		log.Println(err)
+	}
+	defer rows.Close()
+	var docs []Doc
+	var d Doc
+	for rows.Next() {
+		if err := rows.Scan(d.ID, d.Description, d.File, d.DocNumber, d.CaseID, d.Pages, d.UserID); err != nil {
+			log.Printf("Error scanning row: %v", err)
+			continue // Skip this iteration and move to the next one
+		}
+		docs = append(docs, d)
+	}
+	data := struct {
+		Docs []Doc
+	}{
+		Docs: docs,
+	}
+	tmpl, err := template.ParseFiles("web/templates/browse-docs.html")
 	if err != nil {
 		http.Error(w, "Could not load template", http.StatusInternalServerError)
 		return
