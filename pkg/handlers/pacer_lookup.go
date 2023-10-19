@@ -414,7 +414,7 @@ func PurchaseDocHandler(w http.ResponseWriter, r *http.Request) {
 	var id int
 	err = cnx.QueryRow(`
 		INSERT INTO documents (description, file, doc_number, case_id, pages, user_id, pacer_id, court)
-		VALUES ('description', $1, $2, $3, $4, $5) RETURNING id`,
+		VALUES ('description', $1, $2, $3, $4, $5, $6, $7) RETURNING id`,
 		file, docketNumber, caseID, pages, userID, docID, court).Scan(&id)
 	if err != nil {
 		log.Printf("Error inserting into database: %v", err)

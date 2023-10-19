@@ -41,17 +41,17 @@ func Connect() (*sql.DB, error) {
 }
 
 func QueryCases(cnx Execer, courtID string, caseID int) ([]string, error) {
+	titles := []string{}
 	rows, err := cnx.Query("SELECT title FROM cases WHERE court_id=$1 AND pacer_id=$2", courtID, caseID)
 	if err != nil {
-		log.Fatal("Error querying database:", err)
+		return titles, err
 	}
 	defer rows.Close()
-	var titles []string
 	for rows.Next() {
 		var title string
 		err := rows.Scan(&title)
 		if err != nil {
-			log.Fatal("Error scanning rows:", err)
+			return titles, err
 		}
 		titles = append(titles, title)
 	}
@@ -60,18 +60,11 @@ func QueryCases(cnx Execer, courtID string, caseID int) ([]string, error) {
 
 func InsertCases(cnx Execer, courtID string, caseID int, title string, caseNumber string) error {
 	_, err := cnx.Exec("INSERT INTO cases (court_id, pacer_id, title, case_number) VALUES ($1, $2, $3, $4)", courtID, caseID, title, caseNumber)
-	if err != nil {
-		log.Fatal("Error inserting into database:", err)
-	}
 	return err
 }
 
 func Head(cnx Execer) (*sql.Rows, error) {
-	rows, err := cnx.Query("SELECT * FROM cases LIMIT 20")
-	if err != nil {
-		log.Fatal("Error querying database:", err)
-	}
-	return rows, err
+	return cnx.Query("SELECT * FROM cases LIMIT 20")
 }
 
 func CreateUser(cnx Execer, email string, password string) error {
@@ -124,10 +117,6 @@ func QueryDocs(cnx Execer) (*sql.Rows, error) {
 }
 
 func UpdateUserCredits(cnx Execer, userID int, credits int64) error {
-	val, err := cnx.Exec("UPDATE users SET credits = $1 WHERE id = $2", credits, userID)
-	fmt.Println(val.RowsAffected())
-	if err != nil {
-		log.Fatal("Error updating user credits:", err)
-	}
+	_, err := cnx.Exec("UPDATE users SET credits = $1 WHERE id = $2", credits, userID)
 	return err
 }

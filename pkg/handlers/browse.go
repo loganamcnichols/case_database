@@ -244,6 +244,7 @@ func PurchaseDocCreditsHandler(w http.ResponseWriter, r *http.Request) {
 	cnx.QueryRow("SELECT credits FROM users WHERE id = $1", userID).Scan(&credits)
 
 	if credits > creditsDue {
+		cnx.Exec("UPDATE users SET credits = credits + $1 - 10 WHERE id IN (SELECT user_id FROM documents WHERE id = $2)", creditsDue, docID)
 		cnx.Exec("INSERT INTO users_by_documents (user_id, doc_id) VALUES ($1, $2)", userID, docID)
 		cnx.Exec("UPDATE users SET credits = credits - $1 WHERE id = $2", creditsDue, userID)
 	} else {
