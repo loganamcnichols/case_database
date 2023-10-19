@@ -81,18 +81,18 @@ func TestGetCaseURL(t *testing.T) {
 
 func TestGetDocumentURL(t *testing.T) {
 	requestURL := "https://ecf.almd.uscourts.gov/cgi-bin/qryDocument.pl?56135"
-	expectedResponseURL := "https://ecf.almd.uscourts.gov/doc1/01712410676"
+	expectedDocID := "01712410676"
 	expectedDeSeqNumb := "6"
 	respURL, err := scraper.GetFormURL(client, requestURL)
 	if err != nil {
 		t.Fatalf("GetDocumentURL() returned error: %v", err)
 	}
-	downLoadLink, deSeqNumb, err := scraper.GetDownloadLinks(client, respURL, requestURL, "1", "72385")
+	docIDs, deSeqNumb, err := scraper.GetDocIDs(client, respURL, requestURL, "1", "72385")
 	if err != nil {
 		t.Fatalf("GetDocumentURL() returned error: %v", err)
 	}
-	if downLoadLink[0] != expectedResponseURL {
-		t.Fatalf("GetDocumentURL() returned incorrect URL: %s", downLoadLink)
+	if docIDs[0] != expectedDocID {
+		t.Fatalf("GetDocumentURL() returned incorrect doc id: %s", docIDs[0])
 	}
 	if deSeqNumb != expectedDeSeqNumb {
 		t.Fatalf("GetDocumentURL() returned incorrect deSeqNumb: %s", deSeqNumb)
@@ -171,8 +171,9 @@ func TestGetPageCount(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetDocumentURL() returned error: %v", err)
 	}
-	downLoadLink, _, _ := scraper.GetDownloadLinks(client, respURL, requestURL, "1", "72385")
-	count, err := scraper.GetPageCount(client, downLoadLink[0], respURL)
+	docIDs, _, _ := scraper.GetDocIDs(client, respURL, requestURL, "1", "72385")
+	downloadLink := fmt.Sprintf("https://ecf.almd.uscourts.gov/doc1/%s", docIDs[0])
+	count, err := scraper.GetPageCount(client, downloadLink, respURL)
 	if err != nil {
 		t.Fatalf("GetPageCount() returned error: %v", err)
 	}

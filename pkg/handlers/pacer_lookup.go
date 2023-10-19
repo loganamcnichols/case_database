@@ -250,7 +250,7 @@ func PacerLookupDocketRequest(w http.ResponseWriter, r *http.Request) {
 	court := r.FormValue("court")
 
 	nextGenCSO, _ := r.Cookie("NextGenCSO")
-	userID := CheckSession(r)
+	// userID := CheckSession(r)
 
 	client, err := scraper.LoginToPacer("", "", nextGenCSO.Value)
 	if err != nil {
@@ -267,26 +267,126 @@ func PacerLookupDocketRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error getting form URL", http.StatusInternalServerError)
 		return
 	}
-	downloadLink, deSeqNum, err := scraper.GetDownloadLinks(client, respURL, requestURL, docketNumber, caseID)
+	docIDs, deSeqNum, err := scraper.GetDocIDs(client, respURL, requestURL, docketNumber, caseID)
+	downloadLink := fmt.Sprintf("https://ecf.%s.uscourts.gov/doc1/%s", court, docIDs[0])
 	if err != nil {
 		log.Printf("Error getting download link: %v", err)
 		http.Error(w, "Error getting download link", http.StatusInternalServerError)
 		return
 	}
-	log.Printf("Received docket number: %s, caseID: %s, court: %s", docketNumber, caseID, court)
-	resDoc, err := scraper.PurchaseDocument(client, downloadLink[0], caseID, deSeqNum)
+	pageCount, err := scraper.GetPageCount(client, downloadLink, respURL)
+	if err != nil {
+		log.Printf("Error getting page count: %v", err)
+		http.Error(w, "Error getting page count", http.StatusInternalServerError)
+		return
+	}
+	cost := float32(pageCount) / 10.0
+	data := struct {
+		DocID        string
+		Court        string
+		Pages        int
+		Cost         string
+		CaseID       string
+		DeSeqNum     string
+		DocketNumber string
+	}{
+		DocID:        docIDs[0],
+		Court:        court,
+		Pages:        pageCount,
+		Cost:         fmt.Sprintf("$%.2f", cost),
+		CaseID:       caseID,
+		DeSeqNum:     deSeqNum,
+		DocketNumber: docketNumber,
+	}
+	tmpl, err := template.ParseFiles("web/templates/doc-purchase.html")
+	if err != nil {
+		http.Error(w, "Could not load template", http.StatusInternalServerError)
+		return
+	}
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		http.Error(w, "Could not write template", http.StatusInternalServerError)
+	}
+
+	// log.Printf("Received docket number: %s, caseID: %s, court: %s", docketNumber, caseID, court)
+	// resDoc, err := scraper.PurchaseDocument(client, downloadLink[0], caseID, deSeqNum)
+	// fmt.Println(resDoc.Find("body").Text())
+	// if err != nil {
+	// 	log.Printf("Error purchasing document: %v", err)
+	// 	http.Error(w, "Error purchasing document", http.StatusInternalServerError)
+	// 	return
+	// }
+	// file, err := scraper.PerformDownload(client, resDoc, downloadLink[0], caseID, docketNumber)
+	// if err != nil {
+	// 	log.Printf("Error performing download: %v", err)
+	// 	http.Error(w, "Error performing download", http.StatusInternalServerError)
+	// 	return
+	// }
+	// w.Write([]byte("Downloaded file: " + file + "\n"))
+
+	// cnx, err := db.Connect()
+	// if err != nil {
+	// 	log.Printf("Error connecting to database: %v", err)
+	// 	return
+	// }
+	// defer cnx.Close()
+	// pages, err := scraper.GetPageCount(client, downloadLink[0], respURL)
+	// if err != nil {
+	// 	log.Printf("Error getting page count: %v", err)
+	// 	http.Error(w, "Error getting page count", http.StatusInternalServerError)
+	// 	return
+	// }
+
+	// var docID int
+	// err = cnx.QueryRow(`
+	// 	INSERT INTO documents (description, file, doc_number, case_id, pages, user_id)
+	// 	VALUES ('description', $1, $2, $3, $4, $5) RETURNING id`,
+	// 	file, docketNumber, caseID, pages, userID).Scan(&docID)
+	// if err != nil {
+	// 	log.Printf("Error inserting into database: %v", err)
+	// 	return
+	// }
+	// _, err = cnx.Exec(`INSERT INTO users_by_documents (user_id, doc_id) VALUES ($1, $2)`, userID, docID)
+	// if err != nil {
+	// 	log.Printf("Error inserting into database: %v", err)
+	// 	return
+	// }
+}
+
+func PurchaseDocHandler(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	docID := r.FormValue("docID")
+	court := r.FormValue("court")
+	caseID := r.FormValue("caseID")
+	deSeqNum := r.FormValue("deSeqNum")
+	docketNumber := r.FormValue("docketNumber")
+	pages := r.FormValue("pages")
+
+	nextGenCSO, _ := r.Cookie("NextGenCSO")
+	userID := CheckSession(r)
+
+	client, err := scraper.LoginToPacer("", "", nextGenCSO.Value)
+	if err != nil {
+		log.Printf("Error logging in to PACER: %v", err)
+		http.Error(w, "Error logging in to PACER", http.StatusInternalServerError)
+		return
+	}
+
+	downloadLink := fmt.Sprintf("https://ecf.%s.uscourts.gov/doc1/%s", court, docID)
+	resDoc, err := scraper.PurchaseDocument(client, downloadLink, caseID, deSeqNum)
 	fmt.Println(resDoc.Find("body").Text())
 	if err != nil {
 		log.Printf("Error purchasing document: %v", err)
 		http.Error(w, "Error purchasing document", http.StatusInternalServerError)
 		return
 	}
-	file, err := scraper.PerformDownload(client, resDoc, downloadLink[0], caseID, docketNumber)
+	file, err := scraper.PerformDownload(client, resDoc, downloadLink, caseID, docketNumber)
 	if err != nil {
 		log.Printf("Error performing download: %v", err)
 		http.Error(w, "Error performing download", http.StatusInternalServerError)
 		return
 	}
+	w.Write([]byte("Downloaded file: " + file + "\n"))
 
 	cnx, err := db.Connect()
 	if err != nil {
@@ -294,18 +394,12 @@ func PacerLookupDocketRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer cnx.Close()
-	pages, err := scraper.GetPageCount(client, downloadLink[0], respURL)
-	if err != nil {
-		log.Printf("Error getting page count: %v", err)
-		http.Error(w, "Error getting page count", http.StatusInternalServerError)
-		return
-	}
 
-	var docID int
+	var id int
 	err = cnx.QueryRow(`
 		INSERT INTO documents (description, file, doc_number, case_id, pages, user_id)
 		VALUES ('description', $1, $2, $3, $4, $5) RETURNING id`,
-		file, docketNumber, caseID, pages, userID).Scan(&docID)
+		file, docketNumber, caseID, pages, userID).Scan(&id)
 	if err != nil {
 		log.Printf("Error inserting into database: %v", err)
 		return

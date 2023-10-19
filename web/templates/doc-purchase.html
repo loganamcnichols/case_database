@@ -1,0 +1,7 @@
+<form hx-post="/purchase-doc"
+    hx-vals='{"court": "{{.Court}}", "docID": "{{.DocID}}", "caseID": "{{.CaseID}}", "deSeqNum": "{{.DeSeqNum}}", "docketNumber": "{{.DocketNumber}}", "pages": "{{.Pages}}"}'>
+    <label for="submit" name="pages" value="{{.Pages}}">
+        Pages: {{.Pages}}
+    </label>
+    <button id="submit" type="submit" value="Submit">Purchase for {{.Cost}}</button>
+</form>
