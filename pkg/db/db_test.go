@@ -54,7 +54,7 @@ func TestInsertCases(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error beginning transaction: %v", err)
 	}
-	err = InsertCases(db, "azd", 1303801, "Test Case", "2:22-mj-2189")
+	err = InsertCases(tx, "azd", 1303801, "Test Case", "2:22-mj-2189")
 	if err != nil {
 		t.Errorf("Error inserting cases: %v", err)
 	}
@@ -122,8 +122,10 @@ func TestQueryUserDocs(t *testing.T) {
 	var caseID int
 	var userID int
 	var pages int
+	var pacerID string
+	var court string
 	rows.Next()
-	if err := rows.Scan(&caseTitle, &id, &descritpion, &file, &docNumber, &caseID, &pages, &userID); err != nil {
+	if err := rows.Scan(&caseTitle, &id, &descritpion, &file, &docNumber, &caseID, &pages, &userID, &pacerID, &court); err != nil {
 		t.Errorf("Error scanning rows: %v", err)
 	}
 	if caseTitle != "2:22-cv-02189-SRB Stanley v. Quintairos Prieto Wood & Boyer PA" {
