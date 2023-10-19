@@ -1,6 +1,7 @@
 {{range .Cases}}
-<div class="case-row" hx-get="/browse-docs" hx-vals='{"caseID": "{{.PacerID}}"}'>
+<div class="case-row" hx-get="/browse-docs" hx-vals='{"caseID": "{{.PacerID}}"}' hx-target=".doc-list">
     {{.Title}}
+    <div class="doc-list"></div>
 </div>
 {{end}}
 <div hx-get="/browse-scroll" hx-trigger="revealed" hx-swap="outerHTML" hx-vals='{"search": "{{.Search}}", "caseID": "{{.CaseID}}"}'></div>
