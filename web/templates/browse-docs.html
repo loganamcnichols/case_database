@@ -1,4 +1,5 @@
 {{range .Docs}}
 <div class="doc-row">
-    <div hx-target="/download-doc" hx-vals='{"docID": "{{.DocID}}"}'>Doc Number: {{.DocNumber}} {{.Description}} ({{.Pages}})</div>
-</div>"
+    <div hx-target="/download-doc">Doc Number: {{.DocNumber}} {{.Description}} ({{.Pages}})</div>
+</div>
+{{end}}
