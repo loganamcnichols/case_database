@@ -167,3 +167,12 @@ nav a {
   border-bottom: 2px solid #000; /* Set color and thickness as desired */
   cursor: pointer;
 }
+
+.plus {
+    width: 1rem;
+    height: 1rem;
+}
+
+.doc-list {
+    margin-left: 1rem;
+}
