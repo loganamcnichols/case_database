@@ -207,7 +207,10 @@ func GetDocIDs(client *http.Client, url string, referer string, docNo string, ca
 		return docIDs, deSeqNum, err
 	}
 	field2.Write([]byte(docNo))
-	writer.Close()
+	err = writer.Close()
+	if err != nil {
+		return docIDs, deSeqNum, err
+	}
 
 	req, err := http.NewRequest("POST", url, &buffer)
 	if err != nil {
@@ -286,12 +289,18 @@ func GetCaseMainPage(client *http.Client, url string, case_id string, case_numbe
 	if err != nil {
 		return document, err
 	}
-	field2.Write([]byte(case_id))
+	_, err = field2.Write([]byte(case_id))
+	if err != nil {
+		return document, err
+	}
 	field3, err := writer.CreateFormField("case_num")
 	if err != nil {
 		return document, err
 	}
-	field3.Write([]byte(case_number))
+	_, err = field3.Write([]byte(case_number))
+	if err != nil {
+		return document, err
+	}
 	_, err = writer.CreateFormField("Qry_filed_from")
 	if err != nil {
 		return document, err
@@ -324,7 +333,10 @@ func GetCaseMainPage(client *http.Client, url string, case_id string, case_numbe
 	if err != nil {
 		return document, err
 	}
-	writer.Close()
+	err = writer.Close()
+	if err != nil {
+		return document, err
+	}
 
 	req, err := http.NewRequest("POST", url, &buffer)
 	if err != nil {
@@ -398,24 +410,42 @@ func PurchaseDocument(client *http.Client, reqURL string, caseID string, deSeqNu
 	if err != nil {
 		return document, err
 	}
-	field1.Write([]byte(caseID))
+	_, err = field1.Write([]byte(caseID))
+	if err != nil {
+		return document, err
+	}
 	field2, err := writer.CreateFormField("de_seq_num")
 	if err != nil {
 		return document, err
 	}
-	field2.Write([]byte(deSeqNum))
+	_, err = field2.Write([]byte(deSeqNum))
+	if err != nil {
+		return document, err
+	}
 	field3, err := writer.CreateFormField("got_receipt")
 	if err != nil {
 		return document, err
 	}
-	field3.Write([]byte("1"))
-	writer.Close()
+	_, err = field3.Write([]byte("1"))
+	if err != nil {
+		return document, err
+	}
+	err = writer.Close()
+	if err != nil {
+		return document, err
+	}
 	field4, err := writer.CreateFormField("pdf_toggle_possible")
 	if err != nil {
 		return document, err
 	}
-	field4.Write([]byte("1"))
-	writer.Close()
+	_, err = field4.Write([]byte("1"))
+	if err != nil {
+		return document, err
+	}
+	err = writer.Close()
+	if err != nil {
+		return document, err
+	}
 
 	req, err := http.NewRequest("POST", reqURL, &buffer)
 	if err != nil {
@@ -493,79 +523,127 @@ func GetDocumentSummary(client *http.Client, url string, caseID string) (*goquer
 	if err != nil {
 		return document, err
 	}
-	field1.Write([]byte(""))
+	_, err = field1.Write([]byte(""))
+	if err != nil {
+		return document, err
+	}
 
 	field2, err := writer.CreateFormField("all_case_ids")
 	if err != nil {
 		return document, err
 	}
-	field2.Write([]byte(caseID))
+	_, err = field2.Write([]byte(caseID))
+	if err != nil {
+		return document, err
+	}
 	field3, err := writer.CreateFormField(fmt.Sprintf("CaseNum_%s", caseID))
 	if err != nil {
 		return document, err
 	}
-	field3.Write([]byte("on"))
+	_, err = field3.Write([]byte("on"))
+	if err != nil {
+		return document, err
+	}
 	field4, err := writer.CreateFormField("date_from")
 	if err != nil {
 		return document, err
 	}
-	field4.Write([]byte(""))
+	_, err = field4.Write([]byte(""))
+	if err != nil {
+		return document, err
+	}
 	field5, err := writer.CreateFormField("date_range_type")
 	if err != nil {
 		return document, err
 	}
-	field5.Write([]byte("Filed"))
+	_, err = field5.Write([]byte("Filed"))
+	if err != nil {
+		return document, err
+	}
 	field6, err := writer.CreateFormField("date_from")
 	if err != nil {
 		return document, err
 	}
-	field6.Write([]byte(""))
+	_, err = field6.Write([]byte(""))
+	if err != nil {
+		return document, err
+	}
 	field7, err := writer.CreateFormField("date_to")
 	if err != nil {
 		return document, err
 	}
-	field7.Write([]byte(""))
+	_, err = field7.Write([]byte(""))
+	if err != nil {
+		return document, err
+	}
 	field8, err := writer.CreateFormField("documents_numbered_from_")
 	if err != nil {
 		return document, err
 	}
-	field8.Write([]byte(""))
+	_, err = field8.Write([]byte(""))
+	if err != nil {
+		return document, err
+	}
 	field9, err := writer.CreateFormField("list_of_parties_and_counsel")
 	if err != nil {
 		return document, err
 	}
-	field9.Write([]byte("on"))
+	_, err = field9.Write([]byte("on"))
+	if err != nil {
+		return document, err
+	}
 	field10, err := writer.CreateFormField("terminated_parties")
 	if err != nil {
 		return document, err
 	}
-	field10.Write([]byte("on"))
+	_, err = field10.Write([]byte("on"))
+	if err != nil {
+		return document, err
+	}
 	field11, err := writer.CreateFormField("pdf_header")
 	if err != nil {
 		return document, err
 	}
-	field11.Write([]byte("pdf_header"))
+	_, err = field11.Write([]byte("pdf_header"))
+	if err != nil {
+		return document, err
+	}
 	field12, err := writer.CreateFormField("output_format")
 	if err != nil {
 		return document, err
 	}
-	field12.Write([]byte("hml"))
+	_, err = field12.Write([]byte("hml"))
+	if err != nil {
+		return document, err
+	}
 	field13, err := writer.CreateFormField("PreResetField")
 	if err != nil {
 		return document, err
 	}
-	field13.Write([]byte(""))
+	_, err = field13.Write([]byte(""))
+	if err != nil {
+		return document, err
+	}
 	field14, err := writer.CreateFormField("PreResetFields")
 	if err != nil {
 		return document, err
 	}
-	field14.Write([]byte(""))
+	_, err = field14.Write([]byte(""))
+	if err != nil {
+		return document, err
+	}
 	field15, err := writer.CreateFormField("sort1")
 	if err != nil {
 		return document, err
 	}
-	field15.Write([]byte("oldest date first"))
-	writer.Close()
+	_, err = field15.Write([]byte("oldest date first"))
+	if err != nil {
+		return document, err
+	}
+	err = writer.Close()
+	if err != nil {
+		return document, err
+	}
 
 	req, err := http.NewRequest("POST", url, &buffer)
 	if err != nil {

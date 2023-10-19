@@ -16,7 +16,11 @@ type CheckoutTemplateData struct {
 }
 
 func CheckoutHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	err := r.ParseForm()
+	if err != nil {
+		log.Printf("Error parsing form: %v", err)
+		return
+	}
 	amount := r.FormValue("amount")
 	log.Printf("Received amount: %s", amount)
 	tmpl, err := template.ParseFiles("web/templates/checkout.html")

@@ -37,7 +37,11 @@ func BuyCreditsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func BuyCreditsOnSubmit(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	err := r.ParseForm()
+	if err != nil {
+		log.Printf("Error parsing form: %v", err)
+		return
+	}
 	amount := r.FormValue("amount")
 	log.Printf("Received amount: %s", amount)
 }
