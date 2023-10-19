@@ -1,11 +1,9 @@
 package handlers
 
 import (
+	"bytes"
 	"html/template"
-	"log"
 	"net/http"
-
-	"github.com/loganamcnichols/case_database/pkg/db"
 )
 
 type HomeTemplateData struct {
@@ -14,36 +12,88 @@ type HomeTemplateData struct {
 	Credits       int
 }
 
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("web/templates/home.html")
+func LoadPage(w http.ResponseWriter, r *http.Request, page string, data any) {
+	var mainBuf bytes.Buffer
+	var headerBuf bytes.Buffer
+	if CheckSession(r) > 0 {
+		headerTemplate, err := template.ParseFiles("web/templates/member-header.html")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		err = headerTemplate.Execute(&headerBuf, nil)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	} else {
+		headerTemplate, err := template.ParseFiles("web/templates/guest-header.html")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		err = headerTemplate.Execute(&headerBuf, nil)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+	mainTemplate, err := template.ParseFiles(page)
 	if err != nil {
-		http.Error(w, "Could not load template", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	userID := CheckSession(r)
-
-	cnx, err := db.Connect()
+	err = mainTemplate.Execute(&mainBuf, data)
 	if err != nil {
-		log.Println(err)
-		defer cnx.Close()
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-
-	creditRows := cnx.QueryRow("SELECT credits FROM users WHERE id = $1", userID)
-	var credits int
-	err = creditRows.Scan(&credits)
+	layoutTemplate, err := template.ParseFiles("web/templates/layout.html")
 	if err != nil {
-		log.Printf("Error scanning row: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-
-	data := HomeTemplateData{
-		UserID:        userID,
-		PacerLoggedIn: CheckPacerSession(r),
-		Credits:       credits,
-	}
-
-	err = tmpl.Execute(w, data)
+	err = layoutTemplate.Execute(w, struct {
+		Header template.HTML
+		Main   template.HTML
+	}{
+		Header: template.HTML(headerBuf.String()),
+		Main:   template.HTML(mainBuf.String()),
+	})
 	if err != nil {
-		http.Error(w, "Could not write template", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+}
+
+func HomeHandler(w http.ResponseWriter, r *http.Request) {
+	// Exec full page reload if needed.
+	if isHtmx := r.Header.Get("HX-Request"); isHtmx != "true" {
+		LoadPage(w, r, "web/templates/home.html", nil)
+		return
+	}
+	tmpl, err := template.ParseFiles("web/templates/home.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = tmpl.Execute(w, nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func CheckSession(r *http.Request) int {
+	// Check if the user has a session ID cookie
+	cookie, err := r.Cookie("session_id")
+	if err != nil {
+		return 0
+	}
+
+	// Check if the session ID is in the session store
+	sessionMutex.RLock()
+	val := sessionStore[cookie.Value]
+	sessionMutex.RUnlock()
+	return val
 }

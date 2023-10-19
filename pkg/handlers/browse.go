@@ -28,33 +28,12 @@ type BrowseDocs struct {
 	Cost        int
 }
 
-type BrowseDocsTemplate struct {
-	UserID        int
-	PacerLoggedIn bool
-	Docs          []BrowseDocs
-	Credits       int
-}
-
 func BrowseHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("web/templates/browse.html")
-	if err != nil {
-		http.Error(w, "Could not load template", http.StatusInternalServerError)
-		return
-	}
-
-	userID := CheckSession(r)
 
 	cnx, err := db.Connect()
 	if err != nil {
 		log.Println(err)
 		defer cnx.Close()
-	}
-
-	creditRows := cnx.QueryRow("SELECT credits FROM users WHERE id = $1", userID)
-	var credits int
-	err = creditRows.Scan(&credits)
-	if err != nil {
-		log.Printf("Error scanning row: %v", err)
 	}
 
 	rows, err := db.QueryDocs(cnx)
@@ -73,14 +52,18 @@ func BrowseHandler(w http.ResponseWriter, r *http.Request) {
 		docs = append(docs, d)
 	}
 
-	data := BrowseDocsTemplate{
-		UserID:        userID,
-		PacerLoggedIn: CheckPacerSession(r),
-		Docs:          docs,
-		Credits:       credits,
+	// Exec full page reload if needed.
+	if isHtmx := r.Header.Get("HX-Request"); isHtmx != "true" {
+		LoadPage(w, r, "web/templates/browse.html", &docs)
+		return
+	}
+	tmpl, err := template.ParseFiles("web/templates/browse.html")
+	if err != nil {
+		http.Error(w, "Could not load template", http.StatusInternalServerError)
+		return
 	}
 
-	err = tmpl.Execute(w, data)
+	err = tmpl.Execute(w, &docs)
 	if err != nil {
 		http.Error(w, "Could not write template", http.StatusInternalServerError)
 	}

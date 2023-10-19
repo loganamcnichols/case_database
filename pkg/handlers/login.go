@@ -1,51 +1,76 @@
 package handlers
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"html/template"
+	"log"
 	"net/http"
+	"sync"
+
+	"github.com/loganamcnichols/case_database/pkg/db"
 )
 
-type LoginTemplateData struct {
-	Title         string
-	UserID        int
-	PacerLoggedIn bool
+var sessionStore = make(map[string]int) // map[sessionID]userID
+var sessionMutex = &sync.RWMutex{}
+
+func generateSessionID() string {
+	bytes := make([]byte, 16)
+	_, err := rand.Read(bytes)
+	if err != nil {
+		return ""
+	}
+	return hex.EncodeToString(bytes)
 }
 
-func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("web/templates/login.html")
+func LoginOnSubmitHandler(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+
+	log.Printf("Received email: %s, password: %s", email, password)
+
+	cnx, err := db.Connect()
 	if err != nil {
-		http.Error(w, "Could not load template", http.StatusInternalServerError)
+		log.Println(err)
+	}
+	defer cnx.Close()
+	userID, err := db.GetUserID(cnx, email, password)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	// Generate a session ID
+	sessionID := generateSessionID()
+
+	// Store the session ID and user ID in the session store
+	sessionMutex.Lock()
+	sessionStore[sessionID] = userID
+	sessionMutex.Unlock()
+
+	// Set the session ID in a cookie for the user
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_id",
+		Value:    sessionID,
+		Path:     "/",
+		HttpOnly: true,
+		// Add other cookie settings like Secure, SameSite, etc., as needed.
+	})
+	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+}
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	if isHtmx := r.Header.Get("HX-Request"); isHtmx != "true" {
+		LoadPage(w, r, "web/templates/browse.html", nil)
 		return
 	}
-
-	data := struct {
-		Title         string
-		UserID        int
-		PacerLoggedIn bool
-	}{
-		Title:         "Pacer Lookup - Case Database",
-		UserID:        CheckSession(r),
-		PacerLoggedIn: CheckPacerSession(r),
-	}
-
-	err = tmpl.Execute(w, data)
+	tmpl, err := template.ParseFiles("web/templates/login.html")
 	if err != nil {
-		http.Error(w, "Could not write template", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-}
-
-func CheckSession(r *http.Request) int {
-	// Check if the user has a session ID cookie
-	cookie, err := r.Cookie("session_id")
+	err = tmpl.Execute(w, nil)
 	if err != nil {
-		return 0
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-
-	// Check if the session ID is in the session store
-	sessionMutex.RLock()
-	val := sessionStore[cookie.Value]
-	sessionMutex.RUnlock()
-	return val
 }
 
 func CheckPacerSession(r *http.Request) bool {

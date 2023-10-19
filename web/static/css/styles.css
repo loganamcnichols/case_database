@@ -159,6 +159,11 @@ nav a {
   margin: 0 1rem 2px 1rem;
 }
 
+.blank-nav-div {
+    margin: 0 1rem 2px 1rem;
+}
+
 .nav-div:hover {
   border-bottom: 2px solid #000; /* Set color and thickness as desired */
+  cursor: pointer;
 }

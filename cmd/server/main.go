@@ -13,7 +13,9 @@ import (
 func main() {
 	stripe.Key = os.Getenv("STRIPE_SK")
 	r := mux.NewRouter()
-	r.HandleFunc("/", handlers.HomeHandler).Methods("GET")
+	r.HandleFunc("/", handlers.HomeHandler).Methods("GET", "POST")
+	r.HandleFunc("/credits", handlers.CreditsHandler).Methods("GET")
+	r.HandleFunc("/home", handlers.HomeHandler).Methods("GET")
 	r.HandleFunc("/browse", handlers.BrowseHandler).Methods("GET")
 	r.HandleFunc("/webhook", handlers.HandleWebhook).Methods("POST")
 	r.HandleFunc("/pacer-lookup", handlers.PacerLookupHandler).Methods("GET") // Add this line
@@ -22,7 +24,7 @@ func main() {
 	r.HandleFunc("/credit-purchase-submit", handlers.BuyCreditsOnSubmit).Methods("POST")
 	r.HandleFunc("/pacer-lookup-submit", handlers.PacerLookupOnSubmit).Methods("POST")
 	r.HandleFunc("/pacer-lookup-case", handlers.PacerLookupCase).Methods("GET")
-	r.HandleFunc("/pacer-login", handlers.PacerLoginHandler).Methods("GET")
+	r.HandleFunc("/pacer-login", handlers.PacerLoginHandler).Methods("GET", "POST")
 	r.HandleFunc("/pacer-login-submit", handlers.PacerLoginSubmitHandler).Methods("POST")
 	r.HandleFunc("/login", handlers.LoginHandler).Methods("GET", "POST")
 	r.HandleFunc("/signup", handlers.SignupHandler).Methods("GET")
