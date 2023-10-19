@@ -251,7 +251,10 @@ func GetDocIDs(client *http.Client, url string, referer string, docNo string, ca
 	})
 
 	if len(docIDs) == 0 {
-		docIDs = append(docIDs, urlObj.String())
+		url := urlObj.String()
+		linkParts := strings.Split(url, "/")
+		docID := linkParts[len(linkParts)-1]
+		docIDs = append(docIDs, docID)
 	}
 	return docIDs, deSeqNum, nil
 }
@@ -645,6 +648,5 @@ func GetCostTable(client *http.Client, url string, refURL string) (string, error
 	}
 
 	table := document.Find("table")
-	costTable, err = table.Html()
-	return costTable, nil
+	return table.Html()
 }
