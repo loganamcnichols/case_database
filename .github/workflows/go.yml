@@ -20,7 +20,7 @@ jobs:
         env:
           POSTGRES_USER: logan
           POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD }}
-          POSTGRES_DB: casedatabase
+          POSTGRES_DB: test_db 
         ports:
           - 5432:5432
         options: >-
@@ -40,7 +40,7 @@ jobs:
 
     - name: set up database schema
       run: |
-        psql -h localhost -U logan -d casedatabase -a -f schema.sql
+        psql -h localhost -U logan -d test_db -a -f schema.sql
       env:
         PGPASSWORD: ${{ secrets.PGPASSWORD }}
 

@@ -2,21 +2,36 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
+	"log"
+	"os"
 	"testing"
 )
 
-func TestConnect(t *testing.T) {
-	db, err := Connect()
+func ConnectTest() (*sql.DB, error) {
+	dbPassword := os.Getenv("PGPASSWORD")
+	connStr := fmt.Sprintf("user=logan dbname=test_db password=%s host=localhost sslmode=disable", dbPassword)
+
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		t.Errorf("Error connecting to database: %v", err)
+		log.Fatal(err)
 	}
-	defer db.Close()
+	// defer db.Close()
+
+	// Your database operations here
+	err = db.Ping()
+	if err != nil {
+		log.Fatal("Error while pinging database:", err)
+	} else {
+		fmt.Println("Successfully ConnectTested to the database.")
+	}
+	return db, err
 }
 
 func TestQueryCases(t *testing.T) {
-	db, err := Connect()
+	db, err := ConnectTest()
 	if err != nil {
-		t.Errorf("Error connecting to database: %v", err)
+		t.Errorf("Error ConnectTesting to database: %v", err)
 	}
 	defer db.Close()
 	cases, err := QueryCases(db, "azd", 1320666)
@@ -29,9 +44,9 @@ func TestQueryCases(t *testing.T) {
 }
 
 func TestInsertCases(t *testing.T) {
-	db, err := Connect()
+	db, err := ConnectTest()
 	if err != nil {
-		t.Errorf("Error connecting to database: %v", err)
+		t.Errorf("Error ConnectTesting to database: %v", err)
 	}
 	defer db.Close()
 
@@ -59,9 +74,9 @@ func TestInsertCases(t *testing.T) {
 }
 
 func TestUser(t *testing.T) {
-	db, err := Connect()
+	db, err := ConnectTest()
 	if err != nil {
-		t.Errorf("Error connecting to database: %v", err)
+		t.Errorf("Error ConnectTesting to database: %v", err)
 	}
 	defer db.Close()
 	email := "testuser@test.com"
@@ -90,9 +105,9 @@ func TestUser(t *testing.T) {
 }
 
 func TestQueryUserDocs(t *testing.T) {
-	db, err := Connect()
+	db, err := ConnectTest()
 	if err != nil {
-		t.Errorf("Error connecting to database: %v", err)
+		t.Errorf("Error ConnectTesting to database: %v", err)
 	}
 	defer db.Close()
 	rows, err := QueryUserDocs(db, 1)
@@ -126,9 +141,9 @@ func TestQueryUserDocs(t *testing.T) {
 }
 
 func TestUpdateUserCredits(t *testing.T) {
-	con, err := Connect()
+	con, err := ConnectTest()
 	if err != nil {
-		t.Errorf("Error connecting to database: %v", err)
+		t.Errorf("Error ConnectTesting to database: %v", err)
 	}
 	defer con.Close()
 	UpdateUserCredits(con, 1, 1000)
