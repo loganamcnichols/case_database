@@ -32,7 +32,11 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SignupOnSubmitHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	err := r.ParseForm()
+	if err != nil {
+		log.Printf("Error parsing form: %v", err)
+		return
+	}
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 

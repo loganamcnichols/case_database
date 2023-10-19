@@ -70,7 +70,11 @@ func PacerLoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func PacerLoginSubmitHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	err := r.ParseForm()
+	if err != nil {
+		log.Printf("Error parsing form: %v", err)
+		return
+	}
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 	log.Printf("Received username: %s", username)
@@ -109,7 +113,11 @@ func PacerLoginSubmitHandler(w http.ResponseWriter, r *http.Request) {
 
 func PacerLookupOnSubmit(w http.ResponseWriter, r *http.Request) {
 	var possibleCasesTemplate = template.Must(template.ParseFiles("web/templates/possible-cases.html"))
-	r.ParseForm()
+	err := r.ParseForm()
+	if err != nil {
+		log.Printf("Error parsing form: %v", err)
+		return
+	}
 	court := r.FormValue("court")
 	docket := r.FormValue("docket")
 	match, _ := regexp.MatchString(`\d{2}-\d{5}`, docket)
@@ -244,7 +252,11 @@ func PacerLookupCase(w http.ResponseWriter, r *http.Request) {
 
 func PacerLookupDocketRequest(w http.ResponseWriter, r *http.Request) {
 
-	r.ParseForm()
+	err := r.ParseForm()
+	if err != nil {
+		log.Printf("Error parsing form: %v", err)
+		return
+	}
 	docketNumber := r.FormValue("docket-number")
 	caseID := r.FormValue("case-id")
 	court := r.FormValue("court")
@@ -354,7 +366,11 @@ func PacerLookupDocketRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func PurchaseDocHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	err := r.ParseForm()
+	if err != nil {
+		log.Printf("Error parsing form: %v", err)
+		return
+	}
 	docID := r.FormValue("docID")
 	court := r.FormValue("court")
 	caseID := r.FormValue("caseID")
@@ -412,7 +428,11 @@ func PurchaseDocHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func PacerLookupSummaryRequest(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	err := r.ParseForm()
+	if err != nil {
+		log.Printf("Error parsing form: %v", err)
+		return
+	}
 	caseID := r.FormValue("case-id")
 	court := r.FormValue("court")
 
