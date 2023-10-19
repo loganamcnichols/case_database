@@ -207,7 +207,10 @@ func GetDocIDs(client *http.Client, url string, referer string, docNo string, ca
 		return docIDs, deSeqNum, err
 	}
 	field2.Write([]byte(docNo))
-	writer.Close()
+	err = writer.Close()
+	if err != nil {
+		return docIDs, deSeqNum, err
+	}
 
 	req, err := http.NewRequest("POST", url, &buffer)
 	if err != nil {
@@ -330,7 +333,10 @@ func GetCaseMainPage(client *http.Client, url string, case_id string, case_numbe
 	if err != nil {
 		return document, err
 	}
-	writer.Close()
+	err = writer.Close()
+	if err != nil {
+		return document, err
+	}
 
 	req, err := http.NewRequest("POST", url, &buffer)
 	if err != nil {
@@ -424,7 +430,10 @@ func PurchaseDocument(client *http.Client, reqURL string, caseID string, deSeqNu
 	if err != nil {
 		return document, err
 	}
-	writer.Close()
+	err = writer.Close()
+	if err != nil {
+		return document, err
+	}
 	field4, err := writer.CreateFormField("pdf_toggle_possible")
 	if err != nil {
 		return document, err
@@ -433,7 +442,10 @@ func PurchaseDocument(client *http.Client, reqURL string, caseID string, deSeqNu
 	if err != nil {
 		return document, err
 	}
-	writer.Close()
+	err = writer.Close()
+	if err != nil {
+		return document, err
+	}
 
 	req, err := http.NewRequest("POST", reqURL, &buffer)
 	if err != nil {
@@ -628,7 +640,10 @@ func GetDocumentSummary(client *http.Client, url string, caseID string) (*goquer
 	if err != nil {
 		return document, err
 	}
-	writer.Close()
+	err = writer.Close()
+	if err != nil {
+		return document, err
+	}
 
 	req, err := http.NewRequest("POST", url, &buffer)
 	if err != nil {
