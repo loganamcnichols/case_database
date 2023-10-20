@@ -289,3 +289,22 @@ func ViewPDFHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	http.ServeFile(w, r, filePath)
 }
+
+func DocsCollapseHandler(w http.ResponseWriter, r *http.Request) {
+	caseID := r.URL.Query().Get("caseID")
+	data := struct {
+		PacerID string
+	}{
+		PacerID: caseID,
+	}
+	tmpl, err := template.ParseFiles("web/templates/collapse-docs.html")
+	if err != nil {
+		http.Error(w, "Could not load template", http.StatusInternalServerError)
+		return
+	}
+
+	err = tmpl.Execute(w, &data)
+	if err != nil {
+		http.Error(w, "Could not write template", http.StatusInternalServerError)
+	}
+}
