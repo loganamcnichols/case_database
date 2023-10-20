@@ -460,7 +460,7 @@ func PacerLookupSummaryRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := document.Find("#cmecfMainContent").First().Html()
+	data, err := document.Find("table[align='center']").First().Html()
 	if err != nil {
 		log.Printf("Error getting document summary: %v", err)
 		http.Error(w, "Error getting document summary", http.StatusInternalServerError)
