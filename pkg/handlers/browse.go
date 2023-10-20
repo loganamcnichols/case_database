@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/loganamcnichols/case_database/pkg/db"
 )
@@ -29,16 +30,9 @@ type Doc struct {
 	Court       string `db:"court"`
 }
 
-type BrowseDocs struct {
-	Title       string `db:"title"`
-	ID          int    `db:"id"`
-	Description string `db:"description"`
-	File        string `db:"file"`
-	DocNumber   int    `db:"doc_number"`
-	CaseID      int    `db:"case_id"`
-	Pages       int    `db:"pages"`
-	UserID      int    `db:"user_id"`
-	Cost        int
+type DocInfo struct {
+	Doc
+	Credits int
 }
 
 func BrowseHandler(w http.ResponseWriter, r *http.Request) {
@@ -195,17 +189,19 @@ func BrowseDocsHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 	defer rows.Close()
-	var docs []Doc
-	var d Doc
+	var docs []DocInfo
+	var d DocInfo
 	for rows.Next() {
 		if err := rows.Scan(&d.ID, &d.Description, &d.File, &d.DocNumber, &d.CaseID, &d.Pages, &d.UserID, &d.PacerID, &d.Court); err != nil {
 			log.Printf("Error scanning row: %v", err)
 			continue // Skip this iteration and move to the next one
 		}
+		d.Credits = d.Pages * 50
 		docs = append(docs, d)
 	}
+
 	data := struct {
-		Docs []Doc
+		Docs []DocInfo
 	}{
 		Docs: docs,
 	}
@@ -219,4 +215,57 @@ func BrowseDocsHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Could not write template", http.StatusInternalServerError)
 	}
+}
+
+func PurchaseDocCreditsHandler(w http.ResponseWriter, r *http.Request) {
+	docID := r.URL.Query().Get("docID")
+	file := r.URL.Query().Get("file")
+	credits := r.URL.Query().Get("credits")
+
+	userID := CheckSession(r)
+	cnx, err := db.Connect()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		cnx.Close()
+		return
+	}
+	defer cnx.Close()
+
+	cnx.Exec("INSERT INTO users_by_documents (user_id, doc_id) VALUES ($1, $2)", userID, docID)
+	cnx.Exec("UPDATE users SET credits = credits - $1 WHERE id = $2", credits, userID)
+
+	tmpl, err := template.ParseFiles("web/templates/view-pdf.html")
+	if err != nil {
+		http.Error(w, "Could not load template", http.StatusInternalServerError)
+		return
+	}
+	tmpl.Execute(w, "/pdfs/"+file)
+}
+
+func ViewPDFHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/pdf")
+	filePath := r.URL.Path[1:]
+	pathPart := strings.Split(filePath, "/")
+	file := pathPart[len(pathPart)-1]
+	userID := CheckSession(r)
+	if userID == 0 {
+		http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
+		return
+	}
+	cnx, err := db.Connect()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		cnx.Close()
+		return
+	}
+	defer cnx.Close()
+
+	rows := cnx.QueryRow("SELECT user_id, doc_id FROM users_by_documents WHERE user_id = $1 AND doc_id IN (SELECT doc_id FROM documents WHERE file = $2)", userID, file)
+
+	err = rows.Scan(&userID, &file)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.ServeFile(w, r, filePath)
 }

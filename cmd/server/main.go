@@ -18,6 +18,7 @@ func main() {
 	r.HandleFunc("/browse-docs", handlers.BrowseDocsHandler).Methods("GET")
 	r.HandleFunc("/home", handlers.HomeHandler).Methods("GET")
 	r.HandleFunc("/purchase-doc", handlers.PurchaseDocHandler).Methods("POST")
+	r.HandleFunc("/purchase-doc-credits", handlers.PurchaseDocCreditsHandler).Methods("GET")
 	r.HandleFunc("/browse", handlers.BrowseHandler).Methods("GET")
 	r.HandleFunc("/browse-search", handlers.BrowseSearchHandler).Methods("GET")
 	r.HandleFunc("/browse-scroll", handlers.BrowseScrollHandler).Methods("GET")
@@ -46,10 +47,7 @@ func main() {
 		w.Header().Set("Content-Type", "image/svg+xml")
 		http.ServeFile(w, r, "web/static"+r.URL.Path)
 	})
-	r.PathPrefix("/pdfs/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/pdf")
-		http.ServeFile(w, r, r.URL.Path[1:])
-	})
+	r.PathPrefix("/pdfs/").HandlerFunc(handlers.ViewPDFHandler).Methods("GET")
 	r.PathPrefix("/js/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/javascript")
 		http.ServeFile(w, r, "web/static"+r.URL.Path)
