@@ -1,6 +1,6 @@
-<div class="case-block">
-    <div class="case-row" hx-get="/collapse-docs" hx-vals='{"caseID": "{{.PacerID}}"}' hx-swap="outerHTML" hx-target=".case-block">
-        <div id="title" hx-preserve></div>
+<div id="case-block-{{.PacerID}}">
+    <div class="case-row" hx-get="/collapse-docs" hx-vals='{"caseID": "{{.PacerID}}"}' hx-swap="outerHTML" hx-target="#case-block-{{.PacerID}}">
+        <div id="title-{{.PacerID}}" hx-preserve></div>
         <img class="plus" src="/img/minus.svg" />
     </div>
     <div class="doc-list">
