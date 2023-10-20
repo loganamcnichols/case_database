@@ -212,6 +212,7 @@ func PacerLookupCase(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error getting case metadata", http.StatusInternalServerError)
 		return
 	}
+	fmt.Fprint(w, "<h2>Case Metadata</h2>")
 	fmt.Fprint(w, metadataHTML)
 
 	count, err := scraper.DocketCountFromCaseId(moblileURL, caseURL, client, caseID)
