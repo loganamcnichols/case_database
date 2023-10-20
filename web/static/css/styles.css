@@ -8,12 +8,31 @@ body, html {
     line-height: 200%;
 }
 
-form {
+.pacer-lookup-form {
     margin: 0;
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 1rem;
+}
+
+.login-form {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.login-button {
+    width: 20rem;
+}
+
+.login-form-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 20rem;
 }
 
 input {

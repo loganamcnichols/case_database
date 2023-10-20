@@ -1,24 +1,24 @@
 <main>
     <section class="signup-section">
         <h2>Sign Up</h2>
-        <form action="/signup-submit" method="post">
-            <div class="form-group">
+        <form class="login-form" action="/signup-submit" method="post">
+            <div class="login-form-group">
                 <label for="fullname">Full Name:</label>
                 <input type="text" name="fullname" id="fullname" required>
             </div>
-            <div class="form-group">
+            <div class="login-form-group">
                 <label for="email">Email:</label>
                 <input type="email" name="email" id="email" required>
             </div>
-            <div class="form-group">
+            <div class="login-form-group">
                 <label for="password">Password:</label>
                 <input type="password" name="password" id="password" required>
             </div>
-            <div class="form-group">
-                <label for="confirm-password">Confirm Password:</label>
+            <div class="login-form-group">
+                <label for="confirm-password">Confirm:</label>
                 <input type="password" name="confirm-password" id="confirm-password" required>
             </div>
-            <button type="submit">Sign Up</button>
+            <button class="login-button" type="submit">Sign Up</button>
         </form>
     </section>
 </main>
