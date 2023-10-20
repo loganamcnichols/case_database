@@ -1,5 +1,13 @@
-{{range .Docs}}
-<div class="case-row">
-    <div hx-get="/purchase-doc-credits" hx-vals='{"docID": "{{.ID}}", "file": "{{.File}}", "credits": "{{.Credits}}"}'>Doc Number: {{.DocNumber}} {{.Description}} Pages: ({{.Pages}}) Credits: {{.Credits}}</div>
+<div class="case-row" hx-get="/collapse-docs" hx-vals='{"caseID": "{{.PacerID}}"}' hx-swap="outerHTML">
+    <div id="title" hx-preserve></div>
+    <img class="plus" src="/img/minus.svg" />
 </div>
-{{end}}
+<div class="doc-list">
+    {{range .Docs}}
+    <div class="case-row">
+        <div hx-get="/purchase-doc-credits"
+            hx-vals='{"docID": "{{.ID}}", "file": "{{.File}}", "credits": "{{.Credits}}"}'>
+            Doc Number: {{.DocNumber}} {{.Description}} Pages: ({{.Pages}}) Credits: {{.Credits}}</div>
+    </div>
+    {{end}}
+</div>
