@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"html/template"
 	"log"
 	"net/http"
@@ -19,21 +20,26 @@ type Case struct {
 }
 
 type Doc struct {
-	Title       string `db:"title"`
-	ID          int    `db:"id"`
-	Description string `db:"description"`
-	File        string `db:"file"`
-	DocNumber   int    `db:"doc_number"`
-	CaseID      int    `db:"case_id"`
-	Pages       int    `db:"pages"`
-	UserID      int    `db:"user_id"`
-	PacerID     string `db:"pacer_id"`
-	Court       string `db:"court"`
+	Title       string         `db:"title"`
+	ID          int            `db:"id"`
+	Description sql.NullString `db:"description"`
+	File        sql.NullString `db:"file"`
+	DocNumber   int            `db:"doc_number"`
+	CaseID      int            `db:"case_id"`
+	Pages       sql.NullInt64  `db:"pages"`
+	UserID      sql.NullInt64  `db:"user_id"`
+	PacerID     sql.NullString `db:"pacer_id"`
+	Court       string         `db:"court"`
+	StartDate   sql.NullString `db:"start_date"`
 }
 
 type DocInfo struct {
-	Doc
-	Credits int
+	File        string
+	ID          int
+	Credits     int64
+	Description string
+	DocNumber   int
+	Pages       int64
 }
 
 func BrowseHandler(w http.ResponseWriter, r *http.Request) {
@@ -191,14 +197,24 @@ func BrowseDocsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 	var docs []DocInfo
-	var d DocInfo
+	var d Doc
 	for rows.Next() {
-		if err := rows.Scan(&d.ID, &d.Description, &d.File, &d.DocNumber, &d.CaseID, &d.Pages, &d.UserID, &d.PacerID, &d.Court); err != nil {
+		if err := rows.Scan(&d.ID, &d.Description, &d.File, &d.DocNumber, &d.CaseID, &d.Pages, &d.UserID, &d.PacerID, &d.Court, &d.StartDate); err != nil {
 			log.Printf("Error scanning row: %v", err)
 			continue // Skip this iteration and move to the next one
 		}
-		d.Credits = d.Pages * 50
-		docs = append(docs, d)
+		var credits int64
+		if d.Pages.Valid {
+			credits = d.Pages.Int64 * 50
+		}
+		docs = append(docs, DocInfo{
+			d.File.String,
+			d.ID,
+			credits,
+			d.Description.String,
+			d.DocNumber,
+			d.Pages.Int64,
+		})
 	}
 
 	data := struct {
@@ -208,6 +224,7 @@ func BrowseDocsHandler(w http.ResponseWriter, r *http.Request) {
 		Docs:    docs,
 		PacerID: caseID,
 	}
+
 	tmpl, err := template.ParseFiles("web/templates/browse-docs.html")
 	if err != nil {
 		http.Error(w, "Could not load template", http.StatusInternalServerError)

@@ -5,11 +5,13 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"fmt"
 	"regexp"
 	"strconv"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/loganamcnichols/case_database/pkg/db"
 	"github.com/loganamcnichols/case_database/pkg/scraper"
 )
@@ -459,12 +461,56 @@ func PacerLookupSummaryRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error getting document summary", http.StatusInternalServerError)
 		return
 	}
-
-	data, err := document.Find("table[align='center']").First().Html()
+	table := document.Find("table[align='center']").First()
 	if err != nil {
 		log.Printf("Error getting document summary: %v", err)
 		http.Error(w, "Error getting document summary", http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprint(w, data)
+	tableString, err := table.Html()
+	if err != nil {
+		log.Printf("Error getting document summary: %v", err)
+		http.Error(w, "Error getting document summary", http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprint(w, tableString)
+	var tableData [][]string
+	table.Find("tr").Each(func(i int, rowHTML *goquery.Selection) {
+		var rowData []string
+		skipRow := false // control flag to decide if a row should be skipped
+		rowHTML.Find("td").Each(func(j int, cellHtml *goquery.Selection) {
+			cellText := strings.TrimSpace(cellHtml.Text())
+			if cellText == "" {
+				skipRow = true
+				return
+			}
+			rowData = append(rowData, cellText)
+		})
+		if skipRow {
+			return
+		}
+		tableData = append(tableData, rowData)
+	})
+
+	cnx, err := db.Connect()
+	if err != nil {
+		log.Printf("Error connecting to database: %v", err)
+		cnx.Close()
+		return
+	}
+	defer cnx.Close()
+	stmt, err := cnx.Prepare("INSERT INTO documents (date_filed, doc_number, description, case_id, court) VALUES ($1, $2, $3, $4, $5)")
+	if err != nil {
+		log.Printf("Error preparing statement: %v", err)
+		return
+	}
+
+	tableData = tableData[1:]
+	for _, row := range tableData {
+		_, err := stmt.Exec(row[0], row[1], row[2], caseID, court)
+		if err != nil {
+			log.Printf("Error executing statement: %v", err)
+			return
+		}
+	}
 }

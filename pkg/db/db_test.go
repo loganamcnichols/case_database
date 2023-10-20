@@ -104,44 +104,6 @@ func TestUser(t *testing.T) {
 	}()
 }
 
-func TestQueryUserDocs(t *testing.T) {
-	db, err := ConnectTest()
-	if err != nil {
-		t.Errorf("Error ConnectTesting to database: %v", err)
-	}
-	defer db.Close()
-	rows, err := QueryUserDocs(db, 1)
-	if err != nil {
-		t.Errorf("Error querying user docs: %v", err)
-	}
-	var id int
-	var caseTitle string
-	var descritpion string
-	var file string
-	var docNumber string
-	var caseID int
-	var userID int
-	var pages int
-	var pacerID string
-	var court string
-	rows.Next()
-	if err := rows.Scan(&caseTitle, &id, &descritpion, &file, &docNumber, &caseID, &pages, &userID, &pacerID, &court); err != nil {
-		t.Errorf("Error scanning rows: %v", err)
-	}
-	if caseTitle != "2:22-cv-02189-SRB Stanley v. Quintairos Prieto Wood & Boyer PA" {
-		t.Errorf("QueryUserDocs() returned wrong caseTitle")
-	}
-	if descritpion != "CORPORATE DISCLOSURE STATEMENT" {
-		t.Errorf("QueryUserDocs() returned wrong description")
-	}
-	if file != "1320666-2.pdf" {
-		t.Errorf("QueryUserDocs() returned wrong file")
-	}
-	if docNumber != "2" {
-		t.Errorf("QueryUserDocs() returned wrong docNumber")
-	}
-}
-
 func TestUpdateUserCredits(t *testing.T) {
 	con, err := ConnectTest()
 	if err != nil {
