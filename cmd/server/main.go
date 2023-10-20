@@ -17,6 +17,7 @@ func main() {
 	r.HandleFunc("/credits", handlers.CreditsHandler).Methods("GET")
 	r.HandleFunc("/browse-docs", handlers.BrowseDocsHandler).Methods("GET")
 	r.HandleFunc("/home", handlers.HomeHandler).Methods("GET")
+	r.HandleFunc("/collapse-docs", handlers.DocsCollapseHandler).Methods("GET")
 	r.HandleFunc("/purchase-doc", handlers.PurchaseDocHandler).Methods("POST")
 	r.HandleFunc("/purchase-doc-credits", handlers.PurchaseDocCreditsHandler).Methods("GET")
 	r.HandleFunc("/browse", handlers.BrowseHandler).Methods("GET")
