@@ -1,7 +1,7 @@
 {{range .Cases}}
-<div class="case-block">
-    <div class="case-row" hx-get="/browse-docs" hx-vals='{"caseID": "{{.PacerID}}"}' hx-swap="outerHTML">
-        <div id="title" hx-preserve="true">
+<div id="case-block-{{.PacerID}}">
+    <div class="case-row" hx-get="/browse-docs" hx-vals='{"caseID": "{{.PacerID}}"}' hx-swap="outerHTML" hx-target="#case-block-{{.PacerID}}">
+        <div id="title-{{.PacerID}}" hx-preserve="true">
             {{.Title}}
         </div>
         <img class="plus" src="/img/plus.svg" />
